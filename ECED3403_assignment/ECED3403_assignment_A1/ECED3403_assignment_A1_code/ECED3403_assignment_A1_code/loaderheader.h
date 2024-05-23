@@ -55,7 +55,7 @@ int read_address(const char* srecord, int* address, int reccount, int* checksumc
 
 int load_file(FILE* file);
 
-void file_found_print(const char* filename, int startaddress);
+void file_found_print(int startaddress);
 
 void prompt_file();
 

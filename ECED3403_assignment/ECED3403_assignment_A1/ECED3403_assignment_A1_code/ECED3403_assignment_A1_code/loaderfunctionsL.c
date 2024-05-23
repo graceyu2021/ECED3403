@@ -7,7 +7,7 @@ professor: Dr. Larry Hughes
 assignment: A1
 submission date: May 23rd, 2024
 
-This is the main file of my program.
+This is the main file of my program
 */
 
 #include "LOADERHEADER.H"
@@ -16,6 +16,8 @@ This is the main file of my program.
 // declared array for file name, imem, and dmem global
 union memory imem; // instruction memory
 union memory dmem; // data memory
+int recname[SREC_MAX]; // asm file name
+int recnamecount; // size of recname
 
 // print menu to screen
 char print_menu() {
@@ -47,9 +49,7 @@ int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 	char stype[BYTE + 1]; // + 1 for '\0'
 
 	sscanf(srecord, "%2s", stype);
-	printf("helpppp: %s\n", stype);
 	*srectype = str_to_int(stype);
-	printf("\nsrectype: %d", *srectype);
 	reccount += BYTE; // += BYTE (2) because record indicator is from 1 byte
 	return reccount;
 }
@@ -57,7 +57,7 @@ int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 int read_record_len(const char* srecord, int* reclength, int reccount, int* checksumcount) {
 	sscanf(srecord + reccount, "%2x", reclength); // + reccount to offset the previous bytes
 	reccount += BYTE;
-	*checksumcount += *reclength; // add reclength bytes to checksumcount
+	printf("checksum: %x\n", *checksumcount);
 	return reccount;
 }
 
@@ -67,10 +67,12 @@ int read_address(const char* srecord, int* address, int reccount, int* checksumc
 	sscanf(srecord + reccount, "%2x", &addresshi); // scan address high
 	reccount += BYTE; // += BYTE *2 (4) because address is from 2 bytes
 	*checksumcount += addresshi; // add address high bytes to checksumcount
+	printf("added addresshi %x to checksum: %x\n", addresshi, *checksumcount);
 
 	sscanf(srecord + reccount, "%2x", &addresslow); //scan address low
 	reccount += BYTE;
 	*checksumcount += addresslow; // add address high bytes to checksumcount
+	printf("added addresslow %x to checksum: %x\n", addresslow, *checksumcount);
 	*address = addresslow;
 
 	*address = addresshi << 8 | addresslow; // combine high and low bytes of address
@@ -80,12 +82,14 @@ int read_address(const char* srecord, int* address, int reccount, int* checksumc
 
 int load_file(FILE* file) {
 	char srecord[SREC_MAX + 1];
-	int reclength = 0, address = 0, startaddress = 0, tempbytes = 0, recname[SREC_MAX];
+	int reclength = 0, address = 0, startaddress = 0, tempbytes = 0;
 	srecordtype srectype;
 
 	while (fgets(srecord, SREC_MAX + 1, file) != NULL) {// obtain complete record from file. SREC_MAX + 1 because of '/0'
 		int reccount = 0, checksumcount = 0;
-		int len = strlen(srecord), recnamecount = 0;
+		int len = strlen(srecord);
+
+		printf("record: %s", srecord);
 
 		// read first two chars of line to obtain type of s-record and increment record count
 		reccount = read_s_record(srecord, &srectype, reccount);
@@ -100,7 +104,6 @@ int load_file(FILE* file) {
 			startaddress = address;
 		}
 
-		printf("\naddress: %2x", address);
 		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
 			switch (srectype) {
 			case S0:
@@ -108,6 +111,8 @@ int load_file(FILE* file) {
 				recname[recnamecount] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
+				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
+
 				recnamecount++;
 				break;
 
@@ -116,6 +121,7 @@ int load_file(FILE* file) {
 				imem.byte_mem[address] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
+				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
 				address++;
 				break;
 
@@ -124,6 +130,7 @@ int load_file(FILE* file) {
 				dmem.byte_mem[address] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
+				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
 				address++;
 				break;
 
@@ -131,24 +138,24 @@ int load_file(FILE* file) {
 				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
+				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
 				break;
 			}
-			printf("added %2x at memory location %d\n", tempbytes, address - 1);
 		}
-		printf("\n\n checmsum is: %x", checksumcount);
 	}
 	return startaddress;
 }
 
-void file_found_print(const char* filename, int startaddress) {
-	int filelength;
+void file_found_print(int startaddress) {
+	int i = 0;
 
-	// change filename to .asm instead of .xme
-	filelength = strlen(filename);
-	strcpy(filename + filelength - 3, "asm");
+	printf("Source filename: ");
 
-	printf("Source filename: %s\n", filename);
-	printf("File read - no errors detected. Starting address: %.4x\n", startaddress);
+	for (i = 0; i < recnamecount; i++) {
+		printf("%c", (char)recname[i]);
+	}
+
+	printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);
 }
 
 // locate file based on user inputted file name
@@ -167,6 +174,6 @@ void prompt_file() {
 	}
 	else { // successfully located file
 		startaddress = load_file(file);
-		file_found_print(filename, startaddress);
+		file_found_print(startaddress);
 	}
 }

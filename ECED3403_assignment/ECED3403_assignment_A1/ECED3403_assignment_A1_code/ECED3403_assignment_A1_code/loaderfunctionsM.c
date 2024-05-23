@@ -41,7 +41,7 @@ void display_mem() {
 
 			case('D'):
 			case('d'):
-				printf("%02x", dmem.byte_mem[lowboundtemp]);
+				printf("%02x ", dmem.byte_mem[lowboundtemp]);
 				break;
 
 			default:
