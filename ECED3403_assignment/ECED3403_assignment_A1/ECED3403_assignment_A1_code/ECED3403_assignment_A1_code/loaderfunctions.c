@@ -25,10 +25,11 @@ char print_menu() {
 }
 
 
-void load_file(FILE* file) {
+
+int load_file(FILE* file) {
 	char srecord[SREC_MAX], 
 		stype[BYTE + 1]; // + 1 for '\0'
-	int reclength = 0, reccount = 0, address = 0;
+	int reclength = 0, reccount = 0, address = 0, startaddress = 0;
 
 	// obtain complete record from file
 	fgets(srecord, BYTE, file);
@@ -45,6 +46,9 @@ void load_file(FILE* file) {
 	// read address field
 	sscanf(srecord + reccount, "%2x", address);
 	reccount += BYTE * 2; // += BYTE *2 (4) because address is from 2 bytes
+	if (srectype == S9) { // S9 address records the starting address
+		startaddress = address;
+	}
 
 	// read name or data/instruction byte(s)
 	while (reccount < reclength && reccount < SREC_MAX) {
@@ -65,11 +69,22 @@ void load_file(FILE* file) {
 
 }
 
+void file_found_print(const char* filename, int startaddress) {
+	int filelength;
+
+	// change filename to .asm instead of .xme
+	filelength = strlen(filename);
+	strcpy(filename + filelength - 3, "asm");
+
+	printf("Source filename: %s\n", filename);
+	printf("File read - no errors detected. Starting address: %.4x\n", startaddress);
+}
+
 // locate file based on user inputted file name
 void prompt_file() {
 	FILE* file = NULL;
 	char filename[FILE_NAME_MAX];
-	int filelength = 0;
+	int filelength = 0, startaddress = 0;
 
 	// prompt user for filename and scan
 	printf("Enter .XME file to load\n");
@@ -84,7 +99,8 @@ void prompt_file() {
 		printf("Can't open >%s<\n", filename);
 	}
 	else { // successfully located file
-		load_file(file);
+		startaddress = load_file(file);
+		file_found_print(filename, startaddress);
 	}
 }
 
