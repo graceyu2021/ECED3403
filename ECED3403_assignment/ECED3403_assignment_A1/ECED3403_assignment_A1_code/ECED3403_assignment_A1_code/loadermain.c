@@ -32,13 +32,16 @@ int main() {
 			prompt_file();
 			break;
 
-		case 'M': // display menu
+		case 'M': // display memory
 		case 'm':
+			display_mem();
 			break;
 		}
 
-		printf("Option: ");
-		scanf(" %c", &option);
+		if (option != '?') {
+			printf("Option: ");
+			scanf(" %c", &option);
+		}
 	}
 	return 0;
 }

@@ -47,7 +47,7 @@ int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 	char stype[BYTE + 1]; // + 1 for '\0'
 
 	sscanf(srecord, "%2s", stype);
-	printf("helpppp: %s", stype);
+	printf("helpppp: %s\n", stype);
 	*srectype = str_to_int(stype);
 	printf("\nsrectype: %d", *srectype);
 	reccount += BYTE; // += BYTE (2) because record indicator is from 1 byte
@@ -100,10 +100,11 @@ int load_file(FILE* file) {
 			startaddress = address;
 		}
 
-		while (reccount > (BYTE * 4) && reccount < (reclength - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
+		printf("\naddress: %2x", address);
+		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
 			switch (srectype) {
 			case S0:
-				sscanf(srecord + reccount, "%2x", tempbytes); // + reccount to offset the previous bytes
+				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				recname[recnamecount] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
@@ -111,7 +112,7 @@ int load_file(FILE* file) {
 				break;
 
 			case S1:
-				sscanf(srecord + reccount, "%2x", tempbytes); // + reccount to offset the previous bytes
+				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				imem.byte_mem[address] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
@@ -119,7 +120,7 @@ int load_file(FILE* file) {
 				break;
 
 			case S2:
-				sscanf(srecord + reccount, "%2x", tempbytes); // + reccount to offset the previous bytes
+				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				dmem.byte_mem[address] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
@@ -127,14 +128,14 @@ int load_file(FILE* file) {
 				break;
 
 			case S9:
-				sscanf(srecord + reccount, "%2x", tempbytes); // + reccount to offset the previous bytes
+				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-				address++;
 				break;
 			}
+			printf("added %2x at memory location %d\n", tempbytes, address - 1);
 		}
-		//memset(srecord, '\0', sizeof(srecord));*/
+		printf("\n\n checmsum is: %x", checksumcount);
 	}
 	return startaddress;
 }
@@ -159,10 +160,6 @@ void prompt_file() {
 	// prompt user for filename and scan
 	printf("Enter .XME file to load\n");
 	scanf("%s", filename);
-
-	// set last char to '\0'
-	//filelength = strlen(filestr);
-	//filestr[filelength] = '\0';
 	file = fopen(filename, "r");
 
 	if (file == NULL) { // could not locate file

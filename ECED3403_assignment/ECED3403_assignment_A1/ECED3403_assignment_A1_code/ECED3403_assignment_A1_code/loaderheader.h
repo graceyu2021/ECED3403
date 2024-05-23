@@ -21,6 +21,8 @@ This is the header file of my program.
 #define BYTE 2
 #define LABEL_MAX 64
 
+#define HEXRANGE 16
+
 #define BYTEMEMSIZE (1 << 16) // 65,546 //defined macros for byte/word memory size
 #define WORDMEMSIZE (1 << 15) // 32,768
 
@@ -29,6 +31,10 @@ typedef union memory {
 	unsigned char byte_mem[BYTEMEMSIZE];
 	unsigned short word_mem[WORDMEMSIZE];
 }memory;
+
+// global arrays for imem and dmem
+extern memory imem;
+extern memory dmem;
 
 typedef enum srecord { // enumerator of s-record types
 	S0,
@@ -52,5 +58,7 @@ int load_file(FILE* file);
 void file_found_print(const char* filename, int startaddress);
 
 void prompt_file();
+
+void display_mem();
 
 #endif //LOADERHEADER_H

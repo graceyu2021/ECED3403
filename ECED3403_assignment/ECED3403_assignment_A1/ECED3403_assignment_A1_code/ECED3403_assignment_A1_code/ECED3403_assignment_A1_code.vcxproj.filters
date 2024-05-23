@@ -18,7 +18,10 @@
     <ClCompile Include="loadermain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="loaderfunctions.c">
+    <ClCompile Include="loaderfunctionsL.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loaderfunctionsM.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

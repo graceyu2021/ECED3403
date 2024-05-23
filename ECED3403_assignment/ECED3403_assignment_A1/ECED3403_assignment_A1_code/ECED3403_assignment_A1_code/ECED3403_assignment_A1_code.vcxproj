@@ -127,7 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="loaderfunctions.c" />
+    <ClCompile Include="loaderfunctionsL.c" />
+    <ClCompile Include="loaderfunctionsM.c" />
     <ClCompile Include="loadermain.c" />
   </ItemGroup>
   <ItemGroup>
