@@ -57,13 +57,15 @@ int read_address(const char* srecord, int* address, int reccount, unsigned int* 
 
 int compare_checksum(const char* srecord, int reccount, unsigned int checksumcount);
 
-int load_file(FILE* file);
+int load_file(FILE* file, int* startaddress);
 
 void file_found_print(int startaddress);
 
 void prompt_file();
 
 void print_char(int lowbound, memory idmem[]);
+
+void idmem_print(memory array[], int lowbound);
 
 void display_mem();
 

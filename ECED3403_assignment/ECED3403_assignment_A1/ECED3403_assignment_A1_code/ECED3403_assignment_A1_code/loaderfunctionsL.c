@@ -89,7 +89,6 @@ void memory_save(const char* srecord, int* reccount, int* address, memory array[
 }
 
 //id memory_save_zero_nine
-
 int compare_checksum(const char* srecord, int reccount, unsigned int checksumcount) {
 	unsigned int checksum = 0;
 	sscanf(srecord + reccount, "%2x", &checksum);
@@ -100,9 +99,9 @@ int compare_checksum(const char* srecord, int reccount, unsigned int checksumcou
 
 }
 
-int load_file(FILE* file) {
+int load_file(FILE* file, int* startaddress) {
 	char srecord[SREC_MAX + 1];
-	int reclength = 0, address = 0, startaddress = 0, tempbytes = 0;
+	int reclength = 0, address = 0, tempbytes = 0;
 	srecordtype srectype;
 
 	while (fgets(srecord, SREC_MAX + 1, file) != NULL) {// obtain complete record from file. SREC_MAX + 1 because of '/0'
@@ -120,7 +119,7 @@ int load_file(FILE* file) {
 		reccount = read_address(srecord, &address, reccount, &checksumcount);
 
 		if (srectype == S9) { // S9 address records the starting address
-			startaddress = address;
+			*startaddress = address;
 		}
 
 		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
@@ -159,10 +158,12 @@ int load_file(FILE* file) {
 			}
 
 			printf("Invalid checksum: > %s", srecord);
+
+			return FALSE;
 		}
 
 	}
-	return startaddress;
+	return TRUE;
 }
 
 void file_found_print(int startaddress) {
@@ -190,9 +191,13 @@ void prompt_file() {
 
 	if (file == NULL) { // could not locate file
 		printf("Can't open >%s<\n", filename);
+		return;
 	}
-	else { // successfully located file
-		startaddress = load_file(file);
+	
+	if (load_file(file, &startaddress)) {
 		file_found_print(startaddress);
 	}
+		
+		
+	
 }

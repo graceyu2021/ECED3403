@@ -14,6 +14,18 @@ This is the main file of my program.
 #include "LOADERHEADER.H"
 #include <stdio.h>
 
+void idmem_print(memory array[], int lowbound) {
+	char idnumtemp;
+
+	idnumtemp = (char)array->byte_mem[lowbound];
+	if ((idnumtemp >= ' ') && (idnumtemp <= '~')) {
+		printf("%c", idnumtemp);
+	}
+	else {
+		printf(".");
+	}
+}
+
 void display_mem() {
 	char memtype, inumtemp, dnumtemp;
 	int lowbound = 0, upbound = 0, lowboundtemp = 0, upboundtemp = 0;
@@ -55,25 +67,12 @@ void display_mem() {
 			switch (memtype) {
 			case('I'):
 			case('i'):
-				inumtemp = (char)imem.byte_mem[lowbound];
-
-				if (inumtemp > 31 && inumtemp < 127) {
-					printf("%c", inumtemp);
-				}
-				else {
-					printf(".");
-				}
+				idmem_print(imem.byte_mem, lowbound);
 				break;
 
 			case('D'):
 			case('d'):
-				dnumtemp = (char)dmem.byte_mem[lowbound];
-				if (dnumtemp > 31 && dnumtemp < 127) {
-					printf("%c", dnumtemp);
-				}
-				else {
-					printf(".");
-				}
+				idmem_print(dmem.byte_mem, lowbound);
 				break;
 
 			default:
