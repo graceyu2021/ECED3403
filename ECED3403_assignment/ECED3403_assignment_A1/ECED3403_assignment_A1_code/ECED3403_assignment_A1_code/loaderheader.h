@@ -17,6 +17,7 @@ This is the header file of my program.
 
 #define FILE_NAME_MAX 100
 #define STYPE_MAX 3
+#define LABEL_MAX 31
 
 enum srecord { // enumerator of s-record types
 	S0,
@@ -27,6 +28,6 @@ enum srecord { // enumerator of s-record types
 
 char print_menu();
 
-void prompt_file(char* filestr, int filelength, FILE* filename);
+void prompt_file();
 
 #endif //LOADERHEADER_H
