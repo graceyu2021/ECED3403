@@ -17,22 +17,18 @@ This is the header file of my program.
 
 #define FILE_NAME_MAX 100 // defined macros for file
 
-#define SREC_MAX 33 // defined macros for records
+#define SREC_MAX 67 // defined macros for records
 #define BYTE 2
-#define LABEL_MAX 31
+#define LABEL_MAX 64
 
 #define BYTEMEMSIZE (1 << 16) // 65,546 //defined macros for byte/word memory size
 #define WORDMEMSIZE (1 << 15) // 32,768
 
 // union for byte/word memory size
-union memory {
+typedef union memory {
 	unsigned char byte_mem[BYTEMEMSIZE];
 	unsigned short word_mem[WORDMEMSIZE];
-};
-
-// declared array for imem and dmem global
-union memory imem; // instruction memory
-union memory dmem; // data memory
+}memory;
 
 typedef enum srecord { // enumerator of s-record types
 	S0,
@@ -43,9 +39,13 @@ typedef enum srecord { // enumerator of s-record types
 
 char print_menu();
 
-int read_s_record_type(const char* srecord, int reccount, srecordtype* srectype);
+enum srecordtype str_to_int(char* stype);
 
-int read_record_len(const char* srecord, int* reclength, int reccount);
+int read_s_record(const char* srecord, srecordtype* srectype, int reccount);
+
+int read_record_len(const char* srecord, int* reclength, int reccount, int* checksumcount);
+
+int read_address(const char* srecord, int* address, int reccount, int* checksumcount);
 
 int load_file(FILE* file);
 
