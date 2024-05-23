@@ -26,16 +26,43 @@ char print_menu() {
 
 
 void load_file(FILE* file) {
-	char stype[STYPE_MAX];
-	int reclength = 0, labelnumcount = 0;
+	char srecord[SREC_MAX], 
+		stype[BYTE + 1]; // + 1 for '\0'
+	int reclength = 0, reccount = 0, address = 0;
 
+	// obtain complete record from file
+	fgets(srecord, BYTE, file);
 
 	// read first two chars of line to obtain type of s-record
-	sscanf(stype, "%2c", file);
-	enum srecord srectype = str_to_int(stype);
+	sscanf(srecord, "%2c", &stype);
+	enum srecordtype srectype = str_to_int(stype);
+	reccount += BYTE; // += BYTE (2) because record indicator is from 1 byte
 
 	// read record length
-	sscanf(labelnumcount, "%x", file);
+	sscanf(srecord + reccount, "%2x", reclength); // + reccount to offset the previous bytes
+	reccount += BYTE;
+
+	// read address field
+	sscanf(srecord + reccount, "%2x", address);
+	reccount += BYTE * 2; // += BYTE *2 (4) because address is from 2 bytes
+
+	// read name or data/instruction byte(s)
+	while (reccount < reclength && reccount < SREC_MAX) {
+		switch (srectype) {
+		case S0:
+			break;
+		case S1:
+			break;
+
+		case S2:
+			break;
+
+		case S9:
+			break;
+		}
+
+	}
+
 }
 
 // locate file based on user inputted file name
@@ -57,10 +84,10 @@ void prompt_file() {
 		printf("Can't open >%s<\n", filename);
 	}
 	else { // successfully located file
-		printf("hello");
 		load_file(file);
 	}
 }
+
 enum srecordtype str_to_int(char* stype) {
 	if (strcmp(stype, "S0")) {
 		return S0;

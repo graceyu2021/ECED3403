@@ -15,9 +15,23 @@ This is the header file of my program.
 
 #include <stdio.h>
 
-#define FILE_NAME_MAX 100
-#define STYPE_MAX 3
+#define FILE_NAME_MAX 100 // defined macros for file
+
+#define SREC_MAX 33 // defined macros for records
+#define BYTE 2
 #define LABEL_MAX 31
+
+#define BYTEMEMSIZE (1 << 16) // 65,546 //defined macros for byte/word memory size
+#define WORDMEMSIZE (1 << 15) // 32,768
+
+// union for byte/word memory size
+union Memory {
+	unsigned char byte_mem[BYTEMEMSIZE];
+	unsigned short word_mem[WORDMEMSIZE];
+};
+
+// declared array for memory global
+union Memory memory;
 
 enum srecord { // enumerator of s-record types
 	S0,
