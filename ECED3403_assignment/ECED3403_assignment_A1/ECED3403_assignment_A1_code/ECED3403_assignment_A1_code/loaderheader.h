@@ -55,9 +55,13 @@ int read_record_len(const char* srecord, int* reclength, int reccount, unsigned 
 
 int read_address(const char* srecord, int* address, int reccount, unsigned int* checksumcount);
 
+void memory_save(const char* srecord, int* reccount, int* address, memory array[], unsigned int* checksumcount);
+
+void memory_save_zero_nine(const char* srecord, int* reccount, int* tempbytes, int* checksumcount);
+
 int compare_checksum(const char* srecord, int reccount, unsigned int checksumcount);
 
-int load_file(FILE* file);
+int load_file(FILE* file, int* startaddress);
 
 void file_found_print(int startaddress);
 
