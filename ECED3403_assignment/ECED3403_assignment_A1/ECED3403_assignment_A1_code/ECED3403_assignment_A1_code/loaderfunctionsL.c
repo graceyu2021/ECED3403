@@ -30,7 +30,7 @@ char print_menu() {
 	return option;
 }
 
-enum srecordtype str_to_int(char* stype) {
+enum srecordtype str_to_int(char* stype) { // enum of s record types
 	if (strcmp(stype, "S0") == 0) {
 		return S0;
 	}
@@ -54,30 +54,50 @@ int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 	return reccount;
 }
 
-int read_record_len(const char* srecord, int* reclength, int reccount, int* checksumcount) {
+int read_record_len(const char* srecord, int* reclength, int reccount, unsigned int* checksumcount) {
 	sscanf(srecord + reccount, "%2x", reclength); // + reccount to offset the previous bytes
 	reccount += BYTE;
-	printf("checksum: %x\n", *checksumcount);
+	*checksumcount += *reclength;
 	return reccount;
 }
 
-int read_address(const char* srecord, int* address, int reccount, int* checksumcount) {
+int read_address(const char* srecord, int* address, int reccount, unsigned int* checksumcount) {
 	int addresshi = 0, addresslow = 0;
 
 	sscanf(srecord + reccount, "%2x", &addresshi); // scan address high
 	reccount += BYTE; // += BYTE *2 (4) because address is from 2 bytes
 	*checksumcount += addresshi; // add address high bytes to checksumcount
-	printf("added addresshi %x to checksum: %x\n", addresshi, *checksumcount);
 
 	sscanf(srecord + reccount, "%2x", &addresslow); //scan address low
 	reccount += BYTE;
 	*checksumcount += addresslow; // add address high bytes to checksumcount
-	printf("added addresslow %x to checksum: %x\n", addresslow, *checksumcount);
 	*address = addresslow;
 
 	*address = addresshi << 8 | addresslow; // combine high and low bytes of address
 
 	return reccount;
+}
+
+void memory_save(const char* srecord, int* reccount, int* address, memory array[], unsigned int* checksumcount) {
+	int tempbytes;
+
+	sscanf(srecord + *reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
+	array->byte_mem[*address] = tempbytes; // save byte to array
+	*reccount += BYTE;
+	*checksumcount += tempbytes; // add tempbytes bytes to checksumcount
+	(*address)++;
+}
+
+//id memory_save_zero_nine
+
+int compare_checksum(const char* srecord, int reccount, unsigned int checksumcount) {
+	unsigned int checksum = 0;
+	sscanf(srecord + reccount, "%2x", &checksum);
+
+	checksumcount = (~checksumcount) & 0xFF;
+
+	return (checksumcount == checksum);
+
 }
 
 int load_file(FILE* file) {
@@ -86,10 +106,9 @@ int load_file(FILE* file) {
 	srecordtype srectype;
 
 	while (fgets(srecord, SREC_MAX + 1, file) != NULL) {// obtain complete record from file. SREC_MAX + 1 because of '/0'
-		int reccount = 0, checksumcount = 0;
+		int reccount = 0, checksum = 0;
 		int len = strlen(srecord);
-
-		printf("record: %s", srecord);
+		unsigned int checksumcount = 0;
 
 		// read first two chars of line to obtain type of s-record and increment record count
 		reccount = read_s_record(srecord, &srectype, reccount);
@@ -111,37 +130,38 @@ int load_file(FILE* file) {
 				recname[recnamecount] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
 
 				recnamecount++;
 				break;
 
 			case S1:
-				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
-				imem.byte_mem[address] = tempbytes; // save byte to array
-				reccount += BYTE;
-				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
-				address++;
+				memory_save(&srecord, &reccount, &address, imem.byte_mem, &checksumcount);
 				break;
 
 			case S2:
-				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
-				dmem.byte_mem[address] = tempbytes; // save byte to array
-				reccount += BYTE;
-				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
-				address++;
+				memory_save(&srecord, &reccount, &address, dmem.byte_mem, &checksumcount);
 				break;
 
 			case S9:
 				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-				printf("added tempbytes %x to checksum: %x\n", tempbytes, checksumcount);
 				break;
 			}
 		}
+
+		if (compare_checksum(srecord, reccount, checksumcount) != TRUE) {
+			printf("Source filename : ");
+			int i = 0;
+
+			for (i = 0; i < recnamecount; i++) {
+				printf("%c", (char)recname[i]);
+			}
+
+			printf("Invalid checksum: > %s", srecord);
+		}
+		printf("checksum:!!!!! %x", checksum);
+
 	}
 	return startaddress;
 }
