@@ -127,11 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="pipelinefunctions.c" />
     <ClCompile Include="loaderfunctionsL.c" />
     <ClCompile Include="loaderfunctionsM.c" />
     <ClCompile Include="loadermain.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mainheader.h" />
+    <ClInclude Include="pipelineheader.h" />
     <ClInclude Include="loaderheader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

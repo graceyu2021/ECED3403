@@ -8,21 +8,30 @@ professor: Dr. Larry Hughes
 assignment: A1
 submission date: May 23rd, 2024
 
-This is the main file of my program.
+This is the loader functions MS file of my program.
 */
 
-#include "LOADERHEADER.H"
+#include "MAINHEADER.H"
 #include <stdio.h>
 
-void idmem_print(memory array[], int lowbound) {
-	char idnumtemp;
+void idmem_print(memory array[], int* lowbound, int* lowboundtemp) {
+	int upboundtemp = *lowbound + HEXRANGE;
 
-	idnumtemp = (char)array->byte_mem[lowbound];
-	if ((idnumtemp >= ' ') && (idnumtemp <= '~')) {
-		printf("%c", idnumtemp);
+	// print hexadecimal at memory addresses
+	for (*lowboundtemp; *lowboundtemp < upboundtemp; (*lowboundtemp)++) {
+		printf("%02x ", array->byte_mem[*lowboundtemp]);
 	}
-	else {
-		printf(".");
+
+	// print ascii at memory addresses
+	for (*lowbound; *lowbound < upboundtemp; (*lowbound)++) {
+		char idnumtemp = (char)array->byte_mem[*lowbound]; // convert hexadecimal to ascii
+
+		if ((idnumtemp >= ' ') && (idnumtemp <= '~')) { // range of printable characters
+			printf("%c", idnumtemp);
+		}
+		else { // print '.' if unprintable ASCII character
+			printf(".");
+		}
 	}
 }
 
@@ -36,55 +45,30 @@ void display_mem() {
 
 	printf("Enter lower and upper bound\n");
 	scanf(" %x %x", &lowbound, &upbound);
-	lowboundtemp = lowbound;
+	lowboundtemp = lowbound; // duplicate lowbound, one for each for loop
 
-	printf("%x %x\n %x\n", lowbound, upbound, upbound - lowbound);
 	while (lowbound < upbound) {
-		upboundtemp = lowbound + HEXRANGE;
 
 		// print memory location label
 		printf("%04x: ", lowbound);
 
-		for (lowboundtemp; lowboundtemp < upboundtemp; lowboundtemp++) {
-			switch (memtype) {
-			case('I'):
-			case('i'):
-				printf("%02x ", imem.byte_mem[lowboundtemp]);
-				break;
+		switch (memtype) { 
+		case('I'): // instruction memory
+		case('i'):
+			idmem_print(imem.byte_mem, &lowbound,&lowboundtemp);
+			break;
 
-			case('D'):
-			case('d'):
-				printf("%02x ", dmem.byte_mem[lowboundtemp]);
-				break;
-
-			default:
-				return;
-			}
-		}
-
-		for (lowbound; lowbound < upboundtemp; lowbound++) {
-
-			switch (memtype) {
-			case('I'):
-			case('i'):
-				idmem_print(imem.byte_mem, lowbound);
-				break;
-
-			case('D'):
-			case('d'):
-				idmem_print(dmem.byte_mem, lowbound);
-				break;
-
-			default:
-				return;
-			}
+		case('D'): // data memory
+		case('d'):
+			idmem_print(dmem.byte_mem, &lowbound, &lowboundtemp);
+			break;
 		}
 
 		printf("\n");
 
-		if ((upbound - lowbound) <= HEXRANGE) {
-			return;
+		// check if enough remaining bytes to print a full row
+		if ((upbound - lowbound) <= HEXRANGE) { 
+			return; //exit if not enough
 		}
 	}
-
 }

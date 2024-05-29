@@ -17,7 +17,6 @@ This is the header file of my program.
 
 #define FILE_NAME_MAX 100 // defined macros for file
 
-#define SREC_MAX 67 // defined macros for records
 #define BYTE 2
 #define LABEL_MAX 64
 
@@ -35,8 +34,8 @@ typedef union memory {
 }memory;
 
 // global arrays for imem and dmem
-extern memory imem;
-extern memory dmem;
+//extern memory imem;
+//extern memory dmem;
 
 typedef enum srecord { // enumerator of s-record types
 	S0,
@@ -57,15 +56,13 @@ int read_address(const char* srecord, int* address, int reccount, unsigned int* 
 
 int compare_checksum(const char* srecord, int reccount, unsigned int checksumcount);
 
-int load_file(FILE* file, int* startaddress);
+int load_file(FILE* file);
 
-void file_found_print(int startaddress);
+void file_origin_print();
 
 void prompt_file();
 
-void print_char(int lowbound, memory idmem[]);
-
-void idmem_print(memory array[], int lowbound);
+void idmem_print(memory array[], int* lowbound, int* lowboundtemp);
 
 void display_mem();
 

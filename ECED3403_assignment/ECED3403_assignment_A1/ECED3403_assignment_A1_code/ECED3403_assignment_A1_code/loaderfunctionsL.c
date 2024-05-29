@@ -7,17 +7,12 @@ professor: Dr. Larry Hughes
 assignment: A1
 submission date: May 23rd, 2024
 
-This is the main file of my program
+This is the loader functions L file of my program
 */
 
-#include "LOADERHEADER.H"
-#include <stdio.h>
+#include "MAINHEADER.H"
 
-// declared array for file name, imem, and dmem global
-union memory imem; // instruction memory
-union memory dmem; // data memory
-int recname[SREC_MAX]; // asm file name
-int recnamecount; // size of recname
+#include <stdio.h>
 
 // print menu to screen
 char print_menu() {
@@ -45,8 +40,9 @@ enum srecordtype str_to_int(char* stype) { // enum of s record types
 	}
 }
 
+// read what type of s-record it is
 int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
-	char stype[BYTE + 1]; // + 1 for '\0'
+	char stype[BYTE + 1] = { 0 }; // + 1 for '\0'
 
 	sscanf(srecord, "%2s", stype);
 	*srectype = str_to_int(stype);
@@ -54,6 +50,7 @@ int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 	return reccount;
 }
 
+// read record length
 int read_record_len(const char* srecord, int* reclength, int reccount, unsigned int* checksumcount) {
 	sscanf(srecord + reccount, "%2x", reclength); // + reccount to offset the previous bytes
 	reccount += BYTE;
@@ -78,6 +75,7 @@ int read_address(const char* srecord, int* address, int reccount, unsigned int* 
 	return reccount;
 }
 
+// save new byte to corresponding memory
 void memory_save(const char* srecord, int* reccount, int* address, memory array[], unsigned int* checksumcount) {
 	int tempbytes;
 
@@ -99,10 +97,12 @@ int compare_checksum(const char* srecord, int reccount, unsigned int checksumcou
 
 }
 
-int load_file(FILE* file, int* startaddress) {
+// handle newly loaded file
+int load_file(FILE* file) {
 	char srecord[SREC_MAX + 1];
 	int reclength = 0, address = 0, tempbytes = 0;
 	srecordtype srectype;
+	recnamecount = 0; // new file = new name ! reset record name count
 
 	while (fgets(srecord, SREC_MAX + 1, file) != NULL) {// obtain complete record from file. SREC_MAX + 1 because of '/0'
 		int reccount = 0, checksum = 0;
@@ -119,7 +119,7 @@ int load_file(FILE* file, int* startaddress) {
 		reccount = read_address(srecord, &address, reccount, &checksumcount);
 
 		if (srectype == S9) { // S9 address records the starting address
-			*startaddress = address;
+			startaddress = address;
 		}
 
 		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
@@ -129,7 +129,6 @@ int load_file(FILE* file, int* startaddress) {
 				recname[recnamecount] = tempbytes; // save byte to array
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
-
 				recnamecount++;
 				break;
 
@@ -149,24 +148,20 @@ int load_file(FILE* file, int* startaddress) {
 			}
 		}
 
-		if (compare_checksum(srecord, reccount, checksumcount) != TRUE) {
-			printf("Source filename : ");
-			int i = 0;
-
-			for (i = 0; i < recnamecount; i++) {
-				printf("%c", (char)recname[i]);
-			}
-
-			printf("Invalid checksum: > %s", srecord);
-
-			return FALSE;
+		// is the current record valid?
+		if (compare_checksum(srecord, reccount, checksumcount) == FALSE) { // compare checksum at end of record
+			file_origin_print();
+			int length = strlen(srecord);
+			srecord[length - 1] = '\0'; // Replace the last character with the null terminator
+			printf("Invalid checksum: >%s<\n", srecord);
+			return FALSE; // current record is invalid
 		}
-
 	}
-	return TRUE;
+	return TRUE; // all records are valid !
 }
 
-void file_found_print(int startaddress) {
+// function to print .asm origin file based on s0 record
+void file_origin_print() {
 	int i = 0;
 
 	printf("Source filename: ");
@@ -174,15 +169,13 @@ void file_found_print(int startaddress) {
 	for (i = 0; i < recnamecount; i++) {
 		printf("%c", (char)recname[i]);
 	}
-
-	printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);
 }
 
 // locate file based on user inputted file name
 void prompt_file() {
 	FILE* file = NULL;
 	char filename[FILE_NAME_MAX];
-	int filelength = 0, startaddress = 0;
+	int filelength = 0;
 
 	// prompt user for filename and scan
 	printf("Enter .XME file to load\n");
@@ -194,10 +187,15 @@ void prompt_file() {
 		return;
 	}
 	
-	if (load_file(file, &startaddress)) {
-		file_found_print(startaddress);
+	// load in file
+	if (load_file(file)) { // ran through whole file successfully, print success
+		file_origin_print();
+		printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);	
+
+		// pipeline
+		pipeline();
 	}
-		
-		
-	
+	else { // file interrupted by invalid checksum, fail already printed
+		return;
+	}
 }

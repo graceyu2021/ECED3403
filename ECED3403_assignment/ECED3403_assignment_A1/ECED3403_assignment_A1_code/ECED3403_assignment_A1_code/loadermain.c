@@ -10,7 +10,7 @@ submission date: May 23rd, 2024
 This is the main file of my program.
 */
 
-#include "LOADERHEADER.H"
+#include "MAINHEADER.H"
 #include <stdio.h>
 
 int main() {	
@@ -38,7 +38,7 @@ int main() {
 			break;
 		}
 
-		if (option != '?') {
+		if (option != '?') { // input is not valid
 			printf("Option: ");
 			scanf(" %c", &option);
 		}
