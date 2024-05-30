@@ -28,23 +28,41 @@ This is the header file of my program.
 
 #define READ 1
 
+#define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
+#define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
+#define MOVLtoMOBH_BITS(a) ((a & 0x2000) == 0x2000)
+#define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
+#define MOVtoCLRCC_BITS(a) ((a & 0x0C00) == 0x0C00)
+#define SETPRItoCLRCC_BITS(a) ((a & 0x0180) == 0x0180)
+#define MOVtoSWAP_BITS(a) ((a & 0x0100) == 0)
+#define SRAtoRRC_BITS(a) ((a & 0x0030) == 0)
 
-#define SOURCECONSTANT_BITS 0x0038
-#define SOURCECONSTANT_SHIFT 3
-#define SOURCECONSTANTCHECK_BITS 0x0080
-#define SOURCECONSTANTCHECK_SHIFT 7
-#define WORDBYTE_BITS 0x0040
-#define WORDBYTE_SHIFT 6
-#define BYTEVALUE_BITS 0x07F8
-#define BYTEVALUE_SHIFT 3
-#define LDRtoSTR_BITS 0x8000
-#define BLtoBRA_BITS 0x4000
-#define MOVLtoMOVH_BITS 0x2000
-#define LDtoST_BITS 0x1000
-#define MOVtoCLRCC_BITS 0x0C00
-#define SETPRItoCLRCC_BITS 0x0180
-#define MOVtoSXT_BITS 0x0180
-#define MOVtoSWAP_BITS 0x0100
+#define MOVLtoMOVH_ARRAY(a) ((a & 0x1800) >> 11)
+#define MOVtoSWAP_ARRAY(a) ((a & 0x0080) >> 7)
+#define SRAtoRRC_ARRAY(a) ((a & 0x0038) >> 3)
+#define SWPBtoSXT_ARRAY(a) ((a & 0x0020) >> 5)
+#define ADDtoBIS_ARRAY(a) ((instructionbit & 0x0F00) >> 8)
+
+#define SOURCECONSTANT_BITS(a) ((a & 0x0038) >> 3)
+#define SOURCECONSTANTCHECK_BITS(a) ((a & 0x0080) >> 7)
+#define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)
+#define BYTEVALUE_BITS(a) ((a & 0x07F8) >> 3)
+
+#define SOURCECONSTANTCHECK_PRINT(a) (a >= ADD && instructionmnem <= BIS)
+#define WORDBYTE_PRINT(a) ((a >= ADD && a <= MOV) || (a >= SRA && a <= RRC))
+#define SOURCECONSTANT_PRINT(a) (a >= ADD && a <= SWAP)
+#define SOURCECONSTANT_SELECT(a, b) ((a == 0) || b == MOV || b == SWAP)
+#define BYTEVALUE_PRINT(a) (a >= MOVL && a <= MOVH)
+
+#define DESTINATION_BITS 0x0007
+#define MNEMARRAY_MAX 40
+#define MNEMARRAY_WORDMAX 6
+
+
+typedef union r{
+	unsigned char byte_mem[BYTEMEMSIZE];
+	unsigned short word_mem[WORDMEMSIZE];
+}ggg;
 
 typedef enum instructiontype { // enumerator of s-record types
 	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 
