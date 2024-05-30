@@ -37,12 +37,13 @@ This is the header file of my program.
 #define WORDBYTE_SHIFT 6
 #define BYTEVALUE_BITS 0x07F8
 #define BYTEVALUE_SHIFT 3
-
 #define LDRtoSTR_BITS 0x8000
 #define BLtoBRA_BITS 0x4000
 #define MOVLtoMOVH_BITS 0x2000
 #define LDtoST_BITS 0x1000
 #define MOVtoCLRCC_BITS 0x0C00
+#define SETPRItoCLRCC_BITS 0x0180
+#define MOVtoSXT_BITS 0x0180
 #define MOVtoSWAP_BITS 0x0100
 
 typedef enum instructiontype { // enumerator of s-record types

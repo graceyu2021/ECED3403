@@ -60,7 +60,7 @@ int savewordbyte (int instructionbit) {
 int savebytevalue(int instructionbit) {
 	int bytevalue;
 
-	bytevalue = (instructionbit & BYTEVALUE_BITS) >> BYTEVALUE_SHIFT;
+	bytevalue = (instructionbit & BYTEVALUE_BITS) >> BYTEVALUE_SHIFT; //07f8 0b0000 0111 1111 1000
 	return bytevalue;
 }
 
@@ -89,7 +89,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 		}
 	}
 	if (instructionmnem >= MOVL && instructionmnem <= MOVH) {
-		printf("BYTE: %02x ", *bytevalue);
+		printf("BYTE: %04x ", *bytevalue);
 	}
 
 	*destination = instructionbit & 0x0007;
@@ -137,8 +137,14 @@ void decode(int instructionaddress, int instructionbit, int instructionmnem, int
 				*sourceconstant = savesourceconstant(instructionbit);
 			}
 			else { // SRA to SXT
-				arrayplace = (instructionbit & 0x0038) >> 3;
-				instructionmnem = SRA + arrayplace;
+				if ((instructionbit & 0x0030) == 0) {// SRA to RRC
+					arrayplace = (instructionbit & 0x0038) >> 3;
+					instructionmnem = SRA + arrayplace;
+				}
+				else { // SWPB to SXT
+					arrayplace = (instructionbit & 0x002) >> 5;
+					instructionmnem = SWPB + arrayplace;
+				}
 			}
 			*wordbyte = savewordbyte(instructionbit);
 		}
@@ -179,4 +185,5 @@ void pipeline() {
 
 		clock++; // increment clock
 	}
+	printf("\n%04x: 0000\n\n", (instructionaddress - BYTE));
 }
