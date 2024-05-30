@@ -18,16 +18,16 @@ This is the header file of my program.
 #define REGISTER 0
 #define CONSTANT 1
 
-#define WORD 0
-
 #define ZERO 0
 
-#define INSTRUCTIONPRINTMAX 5
+#define INSTRUCTIONPRINTMAX 
 
 #define NOP 0x4C44 // NOP mov r0, r0
 
 #define READ 1
+#define DONEREAD 0
 
+// macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
 #define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
 #define MOVLtoMOBH_BITS(a) ((a & 0x2000) == 0x2000)
@@ -37,12 +37,14 @@ This is the header file of my program.
 #define MOVtoSWAP_BITS(a) ((a & 0x0100) == 0)
 #define SRAtoRRC_BITS(a) ((a & 0x0030) == 0)
 
+// macros to mask and shift instructionbit to identify instructionmnem
 #define MOVLtoMOVH_ARRAY(a) ((a & 0x1800) >> 11)
 #define MOVtoSWAP_ARRAY(a) ((a & 0x0080) >> 7)
 #define SRAtoRRC_ARRAY(a) ((a & 0x0038) >> 3)
 #define SWPBtoSXT_ARRAY(a) ((a & 0x0020) >> 5)
 #define ADDtoBIS_ARRAY(a) ((instructionbit & 0x0F00) >> 8)
 
+// macros to mask and shift instructionbit to identify operand parameters
 #define SOURCECONSTANT_BITS(a) ((a & 0x0038) >> 3)
 #define SOURCECONSTANTCHECK_BITS(a) ((a & 0x0080) >> 7)
 #define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)
@@ -72,8 +74,6 @@ typedef struct movx {
 
 movx movx_operands; // movx global struct
 
-
-
 typedef enum instructiontype { // enumerator of s-record types
 	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 
 	ADD, ADDC, SUB, SUBC, DADD, CMP, XOR, AND, OR, BIT,
@@ -81,22 +81,14 @@ typedef enum instructiontype { // enumerator of s-record types
 	SETCC, CLRCC, CEX, LD, ST, MOVL, MOVLZ, MOVLS, MOVH, LDR, STR
 } instructiontype;
 
-
 int fetch0(int* programcounter, int* ictrl);
 
 int fetch1(int instructionaddress, int* instructionbit);
 
-int savesourceconstant(int instructionbit);
+void printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
 
-int savesourceconstantcheck(int instructionbit);
-
-int savewordbyte(int instructionbit);
-
-int savebytevalue(int instructionbit);
-
-void decode(int instructionaddress, int instructionbit, int instructionmnem, int* sourceconstantcheck, int* wordbyte, int* sourceconstant, int* bytevalue, int* destination);
+void decode(int instructionaddress, int instructionbit, int instructionmnem);
 
 void pipeline();
-
 
 #endif //PIPELINEHEADER_H

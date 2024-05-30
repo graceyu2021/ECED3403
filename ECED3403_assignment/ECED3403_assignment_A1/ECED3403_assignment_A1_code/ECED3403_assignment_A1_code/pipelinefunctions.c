@@ -13,14 +13,6 @@ This is the decode functions file of my program.
 #include "MAINHEADER.H"
 //#include "LOADERFUNCTIONSL.C"
 
-/*typedef struct reg_const {
-	unsigned int sourceconstantcheck, wordbyte, sourceconstant, destination;
-}reg_const;
-
-typedef struct movx {
-	unsigned int bytevalue, destination;
-}movx;*/
-
 int fetch0(int* programcounter, int* ictrl) {
 	int instructionaddress = *programcounter;
 
@@ -30,11 +22,21 @@ int fetch0(int* programcounter, int* ictrl) {
 	return instructionaddress;
 }
 
-int fetch1(int instructionaddress, int* instructionbit) {
+int imcontroller(int instructionaddress, int ictrl, int imbr) {
+	if (ictrl = READ) {
+		imbr = (imem.byte_mem[instructionaddress + 1] << 8);
+		imbr += imem.byte_mem[instructionaddress];
+		ictrl = DONEREAD;
+	}
+	return imbr;
+}
 
+int fetch1(int instructionaddress, int* ictrl) {
+	int imbr = 0, instructionbit = 0;
 
-	*instructionbit = (imem.byte_mem[instructionaddress + 1] << 8);
-	*instructionbit += imem.byte_mem[instructionaddress];
+	instructionbit = imcontroller(instructionaddress, *ictrl, imbr);
+
+	return instructionbit;
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
@@ -143,7 +145,7 @@ void pipeline() {
 
 	programcounter = startaddress;
 	
-	while (instructionbit != ZERO) { // 0000
+	while (instructionbit != ZERO) { // 0x0000
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
@@ -151,7 +153,7 @@ void pipeline() {
 
 		}
 		else { // odd number
-			fetch1(instructionaddress, &instructionbit);
+			instructionbit = fetch1(instructionaddress, &ictrl);
 			// execute function
 		}
 
