@@ -28,6 +28,23 @@ This is the header file of my program.
 
 #define READ 1
 
+
+#define SOURCECONSTANT_BITS 0x0038
+#define SOURCECONSTANT_SHIFT 3
+#define SOURCECONSTANTCHECK_BITS 0x0080
+#define SOURCECONSTANTCHECK_SHIFT 7
+#define WORDBYTE_BITS 0x0040
+#define WORDBYTE_SHIFT 6
+#define BYTEVALUE_BITS 0x07F8
+#define BYTEVALUE_SHIFT 3
+
+#define LDRtoSTR_BITS 0x8000
+#define BLtoBRA_BITS 0x4000
+#define MOVLtoMOVH_BITS 0x2000
+#define LDtoST_BITS 0x1000
+#define MOVtoCLRCC_BITS 0x0C00
+#define MOVtoSWAP_BITS 0x0100
+
 typedef enum instructiontype { // enumerator of s-record types
 	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 
 	ADD, ADDC, SUB, SUBC, DADD, CMP, XOR, AND, OR, BIT,
@@ -40,7 +57,15 @@ int fetch0(int* programcounter, int* ictrl);
 
 int fetch1(int instructionaddress, int* instructionbit);
 
-void decode(int instructionaddress, int instructionbit, int instructionmnem, int* sourceconstant, int* wordbyte, int* source, int* destination);
+int savesourceconstant(int instructionbit);
+
+int savesourceconstantcheck(int instructionbit);
+
+int savewordbyte(int instructionbit);
+
+int savebytevalue(int instructionbit);
+
+void decode(int instructionaddress, int instructionbit, int instructionmnem, int* sourceconstantcheck, int* wordbyte, int* sourceconstant, int* bytevalue, int* destination);
 
 void pipeline();
 
