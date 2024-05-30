@@ -58,11 +58,21 @@ This is the header file of my program.
 #define MNEMARRAY_MAX 40
 #define MNEMARRAY_WORDMAX 6
 
+// structure of operands for ADD to SXT
+typedef struct reg_const {
+	unsigned int sourceconstantcheck, wordbyte, sourceconstant, destination;
+}reg_const;
 
-typedef union r{
-	unsigned char byte_mem[BYTEMEMSIZE];
-	unsigned short word_mem[WORDMEMSIZE];
-}ggg;
+reg_const reg_const_operands; // reg_const global struct
+
+// structure of operands for MOVL to MOVH
+typedef struct movx {
+	unsigned int bytevalue, destination;
+}movx;
+
+movx movx_operands; // movx global struct
+
+
 
 typedef enum instructiontype { // enumerator of s-record types
 	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 

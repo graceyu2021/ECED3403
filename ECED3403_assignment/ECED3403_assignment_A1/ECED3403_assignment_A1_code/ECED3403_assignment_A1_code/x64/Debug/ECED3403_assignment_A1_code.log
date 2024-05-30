@@ -1,4 +1,21 @@
-﻿  pipelinefunctions.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(163,7): warning C4101: 'instructionprint': unreferenced local variable
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(30): warning C4716: 'fetch1': must return a value
+﻿  loaderfunctionsL.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(29,6): warning C4013: 'strcmp' undefined; assuming extern returning int
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(109,13): warning C4013: 'strlen' undefined; assuming extern returning int
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(136,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(136,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(136,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+  loaderfunctionsM.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(58,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(63,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(39,26): warning C4101: 'dnumtemp': unreferenced local variable
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(39,16): warning C4101: 'inumtemp': unreferenced local variable
+  loadermain.c
+  pipelinefunctions.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(72,78): warning C4029: declared formal parameter list different from definition
+  Generating Code...
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(38): warning C4716: 'fetch1': must return a value
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(41): warning C4715: 'str_to_int': not all control paths return a value
   ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe

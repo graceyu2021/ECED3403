@@ -13,6 +13,14 @@ This is the decode functions file of my program.
 #include "MAINHEADER.H"
 //#include "LOADERFUNCTIONSL.C"
 
+/*typedef struct reg_const {
+	unsigned int sourceconstantcheck, wordbyte, sourceconstant, destination;
+}reg_const;
+
+typedef struct movx {
+	unsigned int bytevalue, destination;
+}movx;*/
+
 int fetch0(int* programcounter, int* ictrl) {
 	int instructionaddress = *programcounter;
 
@@ -29,36 +37,8 @@ int fetch1(int instructionaddress, int* instructionbit) {
 	*instructionbit += imem.byte_mem[instructionaddress];
 }
 
-int savesourceconstant(int instructionbit) {
-	int sourceconstant;
-	unsigned int constantarray[8] = { 0, 1, 2, 4, 8, 16, 32, -1 };
+void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
 
-	instructionbit = SOURCECONSTANT_BITS(instructionbit);
-	sourceconstant = constantarray[instructionbit];
-
-	return sourceconstant;
-}
-
-int savesourceconstantcheck(int instructionbit) {
-	int sourceconstantcheck;
-	sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
-	return sourceconstantcheck;
-}
-
-int savewordbyte (int instructionbit) {
-	int wordbyte;
-	wordbyte = WORDBYTE_BITS(instructionbit);
-	return wordbyte;
-}
-
-int savebytevalue(int instructionbit) {
-	int bytevalue;
-	bytevalue = BYTEVALUE_BITS(instructionbit);
-	return bytevalue;
-}
-
-void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit, int* sourceconstantcheck,
-	 int* wordbyte, int* sourceconstant, int* bytevalue, int* destination) {
 	if (nota2 == FALSE) {
 		printf("\n%04x: %-5s ", (instructionaddress - BYTE), mnemarray[instructionmnem]);
 	}
@@ -68,34 +48,36 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 	}
 
 	if (SOURCECONSTANTCHECK_PRINT(instructionmnem)) {
-		printf("RC: %d ", *sourceconstantcheck);
+		printf("RC: %d ", reg_const_operands.sourceconstantcheck);
 	}
 	if (WORDBYTE_PRINT(instructionmnem)) {
-		printf("WB: %d ", *wordbyte);
+		printf("WB: %d ", reg_const_operands.wordbyte);
 	}
 	if (SOURCECONSTANT_PRINT(instructionmnem)){
-		if (SOURCECONSTANT_SELECT(*sourceconstantcheck, instructionmnem)) { // print source
-			printf("SRC: R%d ", *sourceconstant);
+		if (SOURCECONSTANT_SELECT(reg_const_operands.sourceconstantcheck, instructionmnem)) { // print source
+			printf("SRC: R%d ", reg_const_operands.sourceconstant);
 		}
 		else { // print constant
-			printf("CON: %d ", *sourceconstant);
+			printf("CON: %d ", reg_const_operands.sourceconstant);
 		}
 	}
 	if (BYTEVALUE_PRINT(instructionmnem)) {
-		printf("BYTE: %04x ", *bytevalue);
+		printf("BYTE: %04x ", movx_operands.bytevalue);
 	}
 
-	*destination = instructionbit & DESTINATION_BITS;
-	printf("DST: R%d\n", *destination);
+	movx_operands.destination = instructionbit & DESTINATION_BITS;
+	printf("DST: R%d\n", movx_operands.destination);
 }
 
-void decode(int instructionaddress, int instructionbit, int instructionmnem, int* sourceconstantcheck, int* wordbyte, int* sourceconstant, int* bytevalue, int* destination) {
+void decode(int instructionaddress, int instructionbit, int instructionmnem) {
 
 	int arrayplace = 0, nota2 = FALSE;
 	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = {"BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
 	"ADD", "ADDC", "SUB", "SUBC", "DADD", "CMP", "XOR", "AND", "OR", "BIT",
 	"BIC", "BIS", "MOV", "SWAP", "SRA", "RRC", "SWPB", "SXT", "SETPRI", "SVC",
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
+
+	unsigned int constantarray[8] = { 0, 1, 2, 4, 8, 16, 32, -1 };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
 		//arrayplace = (instructionbit & 0x4000) >> 14;
@@ -110,7 +92,7 @@ void decode(int instructionaddress, int instructionbit, int instructionmnem, int
 	else if (MOVLtoMOBH_BITS(instructionbit)){ // MOVL to MOVH
 		arrayplace = MOVLtoMOVH_ARRAY(instructionbit);
 		instructionmnem = MOVL + arrayplace;
-		*bytevalue = savebytevalue(instructionbit);
+		movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
 	}
 	else if (LDtoST_BITS(instructionbit)) { // LD to ST
 		//arrayplace = (instructionbit & 0x0400) >> 10;
@@ -127,7 +109,7 @@ void decode(int instructionaddress, int instructionbit, int instructionmnem, int
 				arrayplace = MOVtoSWAP_ARRAY(instructionbit);
 				instructionmnem = MOV + arrayplace; // adjust enum to place of first command to appear, move
 
-				*sourceconstant = savesourceconstant(instructionbit);
+				reg_const_operands.sourceconstant = constantarray[SOURCECONSTANT_BITS(instructionbit)];
 			}
 			else { // SRA to SXT
 				if (SRAtoRRC_BITS(instructionbit)) { // SRA to RRC
@@ -139,28 +121,25 @@ void decode(int instructionaddress, int instructionbit, int instructionmnem, int
 					instructionmnem = SWPB + arrayplace;
 				}
 			}
-			*wordbyte = savewordbyte(instructionbit);
+			reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
 		}
 	}
 	else { // ADD to BIS
 		arrayplace = ADDtoBIS_ARRAY(instructionbit);
 		instructionmnem = ADD + arrayplace;
 
-		*wordbyte = savewordbyte(instructionbit);
-		*sourceconstantcheck = savesourceconstantcheck(instructionbit);
-		*sourceconstant = savesourceconstant(instructionbit);
+		reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
+		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
+		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
 	}
 
-	printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit, sourceconstantcheck,
-		wordbyte, sourceconstant, bytevalue, destination);
+	printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
 }
 
 void pipeline() {
 	int programcounter = 0, clock = 0;
 	int instructionbit = NOP, // NOP mov r0, r0
-		instructionaddress = 0, instructionmnem = 0, sourceconstantcheck = 0, wordbyte = 0, 
-		sourceconstant = 0, bytevalue = 0,destination = 0, ictrl = 0;
-	char instructionprint[INSTRUCTIONPRINTMAX];
+		instructionaddress = 0, instructionmnem = 0, ictrl = 0;
 
 	programcounter = startaddress;
 	
@@ -168,7 +147,7 @@ void pipeline() {
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
-			decode(instructionaddress, instructionbit, instructionmnem, &sourceconstantcheck, &wordbyte, &sourceconstant, &bytevalue, &destination);
+			decode(instructionaddress, instructionbit, instructionmnem);
 
 		}
 		else { // odd number
