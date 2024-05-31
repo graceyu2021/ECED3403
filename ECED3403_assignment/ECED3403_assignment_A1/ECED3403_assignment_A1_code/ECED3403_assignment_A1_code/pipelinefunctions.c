@@ -36,8 +36,6 @@ int fetch1(int instructionaddress, int* ictrl) {
 
 	instructionbit = imcontroller(instructionaddress, *ictrl, imbr);
 
-	printf("instructionbit: %04x", instructionbit);
-
 	return instructionbit;
 }
 
@@ -150,7 +148,6 @@ void pipeline() {
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
-			printf("\n\ninstructionbit: %04x  movx_operands.destination: %04x", instructionbit, movx_operands.destination);
 			instructionmnem = decode(instructionaddress, instructionbit);
 
 		}
