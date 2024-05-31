@@ -36,11 +36,12 @@ int fetch1(int instructionaddress, int* ictrl) {
 
 	instructionbit = imcontroller(instructionaddress, *ictrl, imbr);
 
+	printf("instructionbit: %04x", instructionbit);
+
 	return instructionbit;
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
-
 	if (nota2 == FALSE) {
 		printf("\n%04x: %-5s ", (instructionaddress - BYTE), mnemarray[instructionmnem]);
 	}
@@ -71,9 +72,9 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 	printf("DST: R%d\n", movx_operands.destination);
 }
 
-void decode(int instructionaddress, int instructionbit, int instructionmnem) {
+int decode(int instructionaddress, int instructionbit) {
 
-	int arrayplace = 0, nota2 = FALSE;
+	int arrayplace = 0, nota2 = FALSE, instructionmnem = 0;
 	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = {"BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
 	"ADD", "ADDC", "SUB", "SUBC", "DADD", "CMP", "XOR", "AND", "OR", "BIT",
 	"BIC", "BIS", "MOV", "SWAP", "SRA", "RRC", "SWPB", "SXT", "SETPRI", "SVC",
@@ -141,15 +142,16 @@ void decode(int instructionaddress, int instructionbit, int instructionmnem) {
 void pipeline() {
 	int programcounter = 0, clock = 0;
 	int instructionbit = NOP, // NOP mov r0, r0
-		instructionaddress = 0, instructionmnem = 0, ictrl = 0;
+		instructionaddress = 0x4C40, instructionmnem = 0, ictrl = 0;
 
 	programcounter = startaddress;
-	
+
 	while (instructionbit != ZERO) { // 0x0000
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
-			decode(instructionaddress, instructionbit, instructionmnem);
+			printf("\n\ninstructionbit: %04x  movx_operands.destination: %04x", instructionbit, movx_operands.destination);
+			instructionmnem = decode(instructionaddress, instructionbit);
 
 		}
 		else { // odd number

@@ -22,7 +22,7 @@ This is the header file of my program.
 
 #define INSTRUCTIONPRINTMAX 
 
-#define NOP 0x4C44 // NOP mov r0, r0
+#define NOP 0x4C40 // NOP mov r0, r0
 
 #define READ 1
 #define DONEREAD 0
@@ -87,7 +87,7 @@ int fetch1(int instructionaddress, int* instructionbit);
 
 void printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
 
-void decode(int instructionaddress, int instructionbit, int instructionmnem);
+int decode(int instructionaddress, int instructionbit);
 
 void pipeline();
 
