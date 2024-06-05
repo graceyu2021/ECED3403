@@ -17,4 +17,8 @@ This is the debug header file of my program.
 
 void breakpoint_set();
 
+void reg_display();
+
+void reg_set();
+
 #endif //DEBUGHEADER_H

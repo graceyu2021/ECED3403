@@ -22,7 +22,7 @@ char print_menu() {
 	printf("? - lists the option (below)\nC - change a memory location (word)\nB - breakpoint\n");
 	printf("L - load\nR - display regs\nS - set register values(word)\n");
 	printf("M - display mem\n");
-	printf("X - exit\nOption: ");
+	printf("G - go (continuous or single step [toggle with 'I']\nX - exit\nOption: ");
 	scanf("%c", &option);
 
 	return option;
@@ -194,9 +194,6 @@ void prompt_file() {
 	if (load_file(file)) { // ran through whole file successfully, print success
 		file_origin_print();
 		printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);	
-
-		// pipeline
-		pipeline();
 	}
 	else { // file interrupted by invalid checksum, fail already printed
 		return;

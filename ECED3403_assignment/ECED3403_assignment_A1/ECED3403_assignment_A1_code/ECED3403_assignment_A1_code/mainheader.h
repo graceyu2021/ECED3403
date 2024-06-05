@@ -21,16 +21,16 @@ This is the header file of my program.
 
 #define SREC_MAX 100//67 // defined macros for records
 
-typedef union wordbyte {
+/*typedef union wordbyte {
 	unsigned short word;
 	unsigned char byte[BYTE];
 }wordbyte;
-
+*/
 
 // declared array for file name, imem, and dmem global
 memory imem; // instruction memory
 memory dmem; // data memory
-wordbyte srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
+unsigned short srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
 int recname[SREC_MAX]; // asm file name
 int recnamecount; // size of recname
 int startaddress; // start address

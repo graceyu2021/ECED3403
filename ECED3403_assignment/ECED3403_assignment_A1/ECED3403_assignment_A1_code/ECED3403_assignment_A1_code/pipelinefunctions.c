@@ -13,14 +13,14 @@ This is the decode functions file of my program.
 #include "MAINHEADER.H"
 
 void set_srcconarray(){
-	srcconarray[CONSTANT][0].word = 0;
-	srcconarray[CONSTANT][1].word = 1;
-	srcconarray[CONSTANT][2].word = 2;
-	srcconarray[CONSTANT][3].word = 4;
-	srcconarray[CONSTANT][4].word = 8;
-	srcconarray[CONSTANT][5].word = 16;
-	srcconarray[CONSTANT][6].word = 32;
-	srcconarray[CONSTANT][7].word = -1;
+	srcconarray[CONSTANT][0] = 0;
+	srcconarray[CONSTANT][1] = 1;
+	srcconarray[CONSTANT][2] = 2;
+	srcconarray[CONSTANT][3] = 4;
+	srcconarray[CONSTANT][4] = 8;
+	srcconarray[CONSTANT][5] = 16;
+	srcconarray[CONSTANT][6] = 32;
+	srcconarray[CONSTANT][7] = -1;
 
 	return;
 }
@@ -72,7 +72,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 			printf("SRC: R%d ", reg_const_operands.sourceconstant);
 		}
 		else { // print constant
-			printf("CON: %d ", srcconarray[CONSTANT][reg_const_operands.sourceconstant].word);
+			printf("CON: %d ", srcconarray[CONSTANT][reg_const_operands.sourceconstant]);
 		}
 	}
 	if (BYTEVALUE_PRINT(instructionmnem)) {

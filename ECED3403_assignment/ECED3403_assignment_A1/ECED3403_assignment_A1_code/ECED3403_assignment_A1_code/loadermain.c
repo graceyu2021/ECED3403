@@ -45,21 +45,27 @@ int main() {
 
 		case 'R': // display registers
 		case 'r':
-			//reg_display();
+			reg_display();
 			break;
 
 		case 'S': // set register values
 		case 's':
-			//reg_set();
+			reg_set();
 			break;
 
 		case 'M': // display memory
 		case 'm':
 			display_mem();
 			break;
+		
+		case 'G':
+		case 'g':
+			// pipeline
+			pipeline();
+			break;
 		}
 
-		if (option != '?') { // input is not valid
+		if (option != '?') { // input is not ?, reset
 			printf("Option: ");
 			scanf(" %c", &option);
 		}
