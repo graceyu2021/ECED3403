@@ -19,6 +19,7 @@ int main() {
 	// print user and send user input to variable option
 	option = print_menu();
 
+
 	while (option != 'X' && option != 'x') {
 		
 		switch (option) {
@@ -28,16 +29,28 @@ int main() {
 
 		case 'C':
 		case 'c':
-			// change memory location
+			mem_change();
 			break;
+
 		case 'B':
 		case 'b':
 			breakpoint_set();
 			break;
+
 		case 'L': // load an .xme file
 		case 'l':
 			// ask user for name of file to load
 			prompt_file();
+			break;
+
+		case 'R': // display registers
+		case 'r':
+			//reg_display();
+			break;
+
+		case 'S': // set register values
+		case 's':
+			//reg_set();
 			break;
 
 		case 'M': // display memory
