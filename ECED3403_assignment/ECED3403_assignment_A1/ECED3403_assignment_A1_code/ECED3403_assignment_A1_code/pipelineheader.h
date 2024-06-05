@@ -27,6 +27,9 @@ This is the header file of my program.
 #define READ 1
 #define DONEREAD 0
 
+#define SRCCON 2
+#define SRCCONOPTIONS 8
+
 // macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
 #define BLtoBRA_BITS(a) ((a & 0x4000) == 0)

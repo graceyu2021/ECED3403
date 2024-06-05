@@ -11,7 +11,19 @@ This is the decode functions file of my program.
 */
 
 #include "MAINHEADER.H"
-//#include "LOADERFUNCTIONSL.C"
+
+void set_srcconarray(){
+	srcconarray[CONSTANT][0].word = 0;
+	srcconarray[CONSTANT][1].word = 1;
+	srcconarray[CONSTANT][2].word = 2;
+	srcconarray[CONSTANT][3].word = 4;
+	srcconarray[CONSTANT][4].word = 8;
+	srcconarray[CONSTANT][5].word = 16;
+	srcconarray[CONSTANT][6].word = 32;
+	srcconarray[CONSTANT][7].word = -1;
+
+	return;
+}
 
 int fetch0(int* programcounter, int* ictrl) {
 	int instructionaddress = *programcounter;
@@ -40,7 +52,6 @@ int fetch1(int instructionaddress, int* ictrl) {
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
-	int constantarray[8] = { 0, 1, 2, 4, 8, 16, 32, -1 };
 
 	if (nota2 == FALSE) {
 		printf("\n%04x: %-5s ", (instructionaddress - BYTE), mnemarray[instructionmnem]);
@@ -61,7 +72,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 			printf("SRC: R%d ", reg_const_operands.sourceconstant);
 		}
 		else { // print constant
-			printf("CON: %d ", constantarray[reg_const_operands.sourceconstant]);
+			printf("CON: %d ", srcconarray[CONSTANT][reg_const_operands.sourceconstant].word);
 		}
 	}
 	if (BYTEVALUE_PRINT(instructionmnem)) {
@@ -141,6 +152,8 @@ void pipeline() {
 	int programcounter = 0, clock = 0;
 	int instructionbit = NOP, // NOP mov r0, r0
 		instructionaddress = 0x4C40, instructionmnem = 0, ictrl = 0;
+
+	set_srcconarray();
 
 	programcounter = startaddress;
 
