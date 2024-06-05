@@ -1,6 +1,6 @@
 X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
-Input file name: ECED3403_lab1_1.asm
-Time of assembly: Tue 4 Jun 2024 13:50:11 
+Input file name: LDRtoSTR.asm
+Time of assembly: Fri 31 May 2024 20:47:57 
   1	    	     	; 
   2	    	     	;lab 1, question 1: sum an array of 16-bit numbers, stopping when a program-specified liit is reached
   3	    	     	;name: Grace Yu
@@ -8,16 +8,19 @@ Time of assembly: Tue 4 Jun 2024 13:50:11
   5	    	     	;class: ECED3403
   6	    	     	;instructor: Dr. Larry Hughes
   7	    	     	;
-  8	    	     			org #1000
-  9	    	     	MAIN
- 10	1000	61A1			MOVL #1234,R1
- 11	1002	69A1			MOVLZ #1234,R1
- 12	1004	71A1			MOVLS #1234,R1
- 13	1006	7891			MOVH #1234,R1
- 14	    	     	DONE
- 15	1008	3FFF			bra		DONE			; loop
- 16	    	     	end MAIN
-Successful completion of assembly - 1P
+  8	    	     		CODE
+  9	    	     		org #1000
+ 10	    	     	MAIN
+ 11	1000	67F9		MOVL #FF,R1
+ 12	1002	7801		MOVH #FF,R1
+ 13	    	     		ldr R1,R2
+			**** Invalid register: Not supplied
+ 14	    	     		str R1,R2
+			**** Bad numeric value or invalid label: Not supplied
+ 15	    	     	DONE
+ 16	1004	3FFF		bra		DONE
+ 17	    	     	end MAIN
+First pass errors - assembly terminated
 
 ** Symbol table **
 
@@ -26,7 +29,7 @@ Name                               	Type	Value	Decimal
 
 Labels (Code)
 Name                               	Type	Value	Decimal
-DONE                               	REL	1008	4104	PRI
+DONE                               	REL	1004	4100	PRI
 MAIN                               	REL	1000	4096	PRI
 
 Labels (Data)
@@ -42,6 +45,3 @@ R3                                 	REG	0003	3	PRI
 R2                                 	REG	0002	2	PRI
 R1                                 	REG	0001	1	PRI
 R0                                 	REG	0000	0	PRI
-
-.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_lab1_1.xme
-

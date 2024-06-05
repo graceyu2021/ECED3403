@@ -40,6 +40,8 @@ int fetch1(int instructionaddress, int* ictrl) {
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
+	int constantarray[8] = { 0, 1, 2, 4, 8, 16, 32, -1 };
+
 	if (nota2 == FALSE) {
 		printf("\n%04x: %-5s ", (instructionaddress - BYTE), mnemarray[instructionmnem]);
 	}
@@ -59,7 +61,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 			printf("SRC: R%d ", reg_const_operands.sourceconstant);
 		}
 		else { // print constant
-			printf("CON: %d ", reg_const_operands.sourceconstant);
+			printf("CON: %d ", constantarray[reg_const_operands.sourceconstant]);
 		}
 	}
 	if (BYTEVALUE_PRINT(instructionmnem)) {
@@ -78,8 +80,6 @@ int decode(int instructionaddress, int instructionbit) {
 	"BIC", "BIS", "MOV", "SWAP", "SRA", "RRC", "SWPB", "SXT", "SETPRI", "SVC",
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
-	unsigned int constantarray[8] = { 0, 1, 2, 4, 8, 16, 32, -1 };
-
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
 		//arrayplace = (instructionbit & 0x4000) >> 14;
 		//instructionmnem = LDR + arrayplace; // adjust enum to place of first command to appear, move
@@ -90,7 +90,7 @@ int decode(int instructionaddress, int instructionbit) {
 		//instructionmnem = BL + arrayplace; // adjust enum to place of first command to appear, move
 		nota2 = TRUE;
 	}
-	else if (MOVLtoMOBH_BITS(instructionbit)){ // MOVL to MOVH
+	else if (MOVLtoMOVH_BITS(instructionbit)){ // MOVL to MOVH
 		arrayplace = MOVLtoMOVH_ARRAY(instructionbit);
 		instructionmnem = MOVL + arrayplace;
 		movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
@@ -110,7 +110,7 @@ int decode(int instructionaddress, int instructionbit) {
 				arrayplace = MOVtoSWAP_ARRAY(instructionbit);
 				instructionmnem = MOV + arrayplace; // adjust enum to place of first command to appear, move
 
-				reg_const_operands.sourceconstant = constantarray[SOURCECONSTANT_BITS(instructionbit)];
+				reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
 			}
 			else { // SRA to SXT
 				if (SRAtoRRC_BITS(instructionbit)) { // SRA to RRC

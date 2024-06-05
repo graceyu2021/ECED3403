@@ -5,12 +5,13 @@
 ;class: ECED3403
 ;instructor: Dr. Larry Hughes
 ;
-		org #1000
+	CODE
+	org #1000
 MAIN
-		MOVL #1234,R1
-		MOVLZ #1234,R1
-		MOVLS #1234,R1
-		MOVH #1234,R1
+	MOVL #FF,R1
+	MOVH #FF,R1
+	ldr R1,R2
+	str R1,R2
 DONE
-		bra		DONE			; loop
+	bra		DONE
 end MAIN

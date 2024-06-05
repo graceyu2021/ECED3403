@@ -19,7 +19,7 @@ char print_menu() {
 	char option = ' ';
 
 	// print menu
-	printf("? - lists the option (below)\nL - load\nM - display mem\nX - exit\nOption: ");
+	printf("? - lists the option (below)\nC - change a memory location (word)\nB - breakpoint\nL - load\nR - display regs\nS - set register values (word)\nM - display mem\nX - exit\nOption: ");
 	scanf("%c", &option);
 
 	return option;

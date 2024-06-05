@@ -30,7 +30,7 @@ This is the header file of my program.
 // macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
 #define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
-#define MOVLtoMOBH_BITS(a) ((a & 0x2000) == 0x2000)
+#define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
 #define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
 #define MOVtoCLRCC_BITS(a) ((a & 0x0C00) == 0x0C00)
 #define SETPRItoCLRCC_BITS(a) ((a & 0x0180) == 0x0180)
