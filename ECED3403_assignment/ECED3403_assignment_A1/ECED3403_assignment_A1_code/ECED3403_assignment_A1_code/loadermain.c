@@ -26,6 +26,14 @@ int main() {
 			option = print_menu();
 			break;
 
+		case 'C':
+		case 'c':
+			// change memory location
+			break;
+		case 'B':
+		case 'b':
+			breakpoint_set();
+			break;
 		case 'L': // load an .xme file
 		case 'l':
 			// ask user for name of file to load

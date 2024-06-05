@@ -34,5 +34,6 @@ wordbyte srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
 int recname[SREC_MAX]; // asm file name
 int recnamecount; // size of recname
 int startaddress; // start address
+int breakpoint;
 
 #endif //MAINHEADER_H

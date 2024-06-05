@@ -157,7 +157,7 @@ void pipeline() {
 
 	programcounter = startaddress;
 
-	while (instructionbit != ZERO) { // 0x0000
+	while ((instructionbit != ZERO) && (programcounter != breakpoint + BYTE)) { // 0x0000
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
