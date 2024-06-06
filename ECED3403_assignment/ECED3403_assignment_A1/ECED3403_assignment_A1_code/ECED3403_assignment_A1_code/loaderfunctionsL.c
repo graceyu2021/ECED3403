@@ -23,7 +23,7 @@ char print_menu() {
 	printf("L - load\nR - display regs\nS - set register values(word)\n");
 	printf("M - display mem\n");
 	printf("G - go (continuous or single step [toggle with 'I']\nX - exit\nOption: ");
-	scanf("%c", &option);
+	scanf(" %c", &option);
 
 	return option;
 }

@@ -65,7 +65,7 @@ int main() {
 			break;
 		}
 
-		if (option != '?') { // input is not ?, reset
+		if (option != ' ?') { // input is not ?, reset
 			printf("Option: ");
 			scanf(" %c", &option);
 		}
