@@ -26,7 +26,7 @@ void set_srcconarray(){
 }
 
 int fetch0(int* programcounter, int* ictrl) {
-	int instructionaddress = *programcounter;
+	int instructionaddress = *programcounter - BYTE;
 
 	*programcounter += BYTE; // increment by 2 because of byte memory
 	*ictrl = READ;
@@ -36,8 +36,7 @@ int fetch0(int* programcounter, int* ictrl) {
 
 int imcontroller(int instructionaddress, int ictrl, int imbr) {
 	if (ictrl = READ) {
-		imbr = (imem.byte_mem[instructionaddress + 1] << 8);
-		imbr += imem.byte_mem[instructionaddress];
+		imbr = imem.word_mem[(instructionaddress + BYTE) / BYTE];
 		ictrl = DONEREAD;
 	}
 	return imbr;
@@ -54,10 +53,10 @@ int fetch1(int instructionaddress, int* ictrl) {
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
 
 	if (nota2 == FALSE) {
-		printf("\n%04x: %-5s ", (instructionaddress - BYTE), mnemarray[instructionmnem]);
+		printf("\n%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	}
 	else {
-		printf("\n%04x: %04x  \n", (instructionaddress - BYTE), instructionbit);
+		printf("\n%04x: %04x  \n", instructionaddress, instructionbit);
 		return;
 	}
 
@@ -144,7 +143,6 @@ int decode(int instructionaddress, int instructionbit) {
 		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
 		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
 	}
-
 	printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
 }
 
@@ -171,5 +169,5 @@ void pipeline() {
 
 		clock++; // increment clock
 	}
-	printf("\n%04x: 0000\n\n", instructionaddress);
+	printf("\n%04x: %04x\n\n", instructionaddress + BYTE, imem.word_mem[(instructionaddress + BYTE) / BYTE]);
 }

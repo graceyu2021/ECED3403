@@ -20,6 +20,7 @@ This is the header file of my program.
 #include <stdio.h>
 
 #define SREC_MAX 100//67 // defined macros for records
+#define WORD 4
 
 /*typedef union wordbyte {
 	unsigned short word;
