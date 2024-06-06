@@ -15,6 +15,10 @@ This is the debug header file of my program.
 
 #include <stdio.h>
 
+#define REG_NO 8
+#define REG_NAME_MAX 10
+
+
 void breakpoint_set();
 
 void reg_display();

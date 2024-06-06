@@ -15,7 +15,7 @@ This is the header file of my program.
 
 #include "LOADERHEADER.H"
 #include "PIPELINEHEADER.H"
-
+#include "DEBUGHEADER.H"
 
 #include <stdio.h>
 
