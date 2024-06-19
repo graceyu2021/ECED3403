@@ -12,7 +12,7 @@ This is the decode functions file of my program.
 
 #include "MAINHEADER.H"
 
-void set_srcconarray(){
+void set_srcconarray(){ // set constant values
 	srcconarray[CONSTANT][0] = 0;
 	srcconarray[CONSTANT][1] = 1;
 	srcconarray[CONSTANT][2] = 2;
@@ -52,31 +52,27 @@ int fetch1(int instructionaddress, int* ictrl) {
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
 
-	if (nota2 == FALSE) {
+	if (nota2 == FALSE)
 		printf("\n%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
-	}
 	else {
 		printf("\n%04x: %04x  \n", instructionaddress, instructionbit);
 		return;
 	}
 
-	if (SOURCECONSTANTCHECK_PRINT(instructionmnem)) {
+	if (SOURCECONSTANTCHECK_PRINT(instructionmnem)) // print register/constant check bit?
 		printf("RC: %d ", reg_const_operands.sourceconstantcheck);
-	}
-	if (WORDBYTE_PRINT(instructionmnem)) {
+
+	if (WORDBYTE_PRINT(instructionmnem)) // print word/byte?
 		printf("WB: %d ", reg_const_operands.wordbyte);
-	}
-	if (SOURCECONSTANT_PRINT(instructionmnem)){
-		if (SOURCECONSTANT_SELECT(reg_const_operands.sourceconstantcheck, instructionmnem)) { // print source
+
+	if (SOURCECONSTANT_PRINT(instructionmnem)){ // print source/constant
+		if (SOURCECONSTANT_SELECT(reg_const_operands.sourceconstantcheck, instructionmnem)) // print source
 			printf("SRC: R%d ", reg_const_operands.sourceconstant);
-		}
-		else { // print constant
+		else // print constant
 			printf("CON: %d ", srcconarray[CONSTANT][reg_const_operands.sourceconstant]);
-		}
 	}
-	if (BYTEVALUE_PRINT(instructionmnem)) {
+	if (BYTEVALUE_PRINT(instructionmnem)) // print bytes
 		printf("BYTE: %04x ", movx_operands.bytevalue);
-	}
 
 	movx_operands.destination = instructionbit & DESTINATION_BITS;
 	printf("DST: R%d\n", movx_operands.destination);
@@ -111,10 +107,9 @@ int decode(int instructionaddress, int instructionbit) {
 		nota2 = TRUE;
 	}
 	else if (MOVtoCLRCC_BITS(instructionbit)) { // MOV to CLRCC
-		if (SETPRItoCLRCC_BITS(instructionbit)) { //SETPRI to CLRCC
-
+		if (SETPRItoCLRCC_BITS(instructionbit)) //SETPRI to CLRCC
 			nota2 = TRUE;
-		}
+	
 		else { // MOV to SXT
 			if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
 				arrayplace = MOVtoSWAP_ARRAY(instructionbit);
@@ -153,14 +148,13 @@ void pipeline() {
 
 	set_srcconarray();
 
-	programcounter = startaddress;
+	srcconarray[REGISTER][R7] = startaddress;
 
 	while ((instructionbit != ZERO) && (programcounter != breakpoint + BYTE)) { // 0x0000
 		// check clock tick
 		if (clock % 2 == 0) { // even number
 			instructionaddress = fetch0(&programcounter, &ictrl);
 			instructionmnem = decode(instructionaddress, instructionbit);
-
 		}
 		else { // odd number
 			instructionbit = fetch1(instructionaddress, &ictrl);

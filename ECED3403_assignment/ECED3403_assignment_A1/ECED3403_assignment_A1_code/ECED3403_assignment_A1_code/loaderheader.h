@@ -27,6 +27,8 @@ This is the header file of my program.
 #define BYTEMEMSIZE (1 << 16) // 65,546 //defined macros for byte/word memory size
 #define WORDMEMSIZE (1 << 15) // 32,768
 
+#define RECORD_BOUND(a, b) ((a) >= (BYTE * 4) && (a) < (2 * b + BYTE))
+
 // union for byte/word memory size
 typedef union memory {
 	unsigned char byte_mem[BYTEMEMSIZE];

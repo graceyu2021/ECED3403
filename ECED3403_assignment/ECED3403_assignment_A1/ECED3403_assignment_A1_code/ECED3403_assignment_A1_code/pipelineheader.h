@@ -84,6 +84,10 @@ typedef enum instructiontype { // enumerator of s-record types
 	SETCC, CLRCC, CEX, LD, ST, MOVL, MOVLZ, MOVLS, MOVH, LDR, STR
 } instructiontype;
 
+typedef enum registers { // register enum values
+	R0, R1, R2, R3, R4, R5, R6, R7
+} registers;
+
 int fetch0(int* programcounter, int* ictrl);
 
 int fetch1(int instructionaddress, int* instructionbit);

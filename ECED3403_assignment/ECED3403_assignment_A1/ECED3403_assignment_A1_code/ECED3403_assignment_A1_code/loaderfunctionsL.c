@@ -126,7 +126,7 @@ int load_file(FILE* file) {
 			startaddress = address;
 		}
 
-		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
+		while (RECORD_BOUND(reccount, reclength) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
 			switch (srectype) {
 			case S0:
 				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
