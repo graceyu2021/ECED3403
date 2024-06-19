@@ -25,10 +25,10 @@ void set_srcconarray(){ // set constant values
 	return;
 }
 
-int fetch0(int* programcounter, int* ictrl) {
-	int instructionaddress = *programcounter - BYTE;
+int fetch0(int* ictrl) {
+	int instructionaddress = srcconarray[REGISTER][R7] - BYTE;
 
-	*programcounter += BYTE; // increment by 2 because of byte memory
+	srcconarray[REGISTER][R7] += BYTE; // increment by 2 because of byte memory
 	*ictrl = READ;
 
 	return instructionaddress;
@@ -142,18 +142,18 @@ int decode(int instructionaddress, int instructionbit) {
 }
 
 void pipeline() {
-	int programcounter = 0, clock = 0;
+	int clock = 0;
 	int instructionbit = NOP, // NOP mov r0, r0
 		instructionaddress = 0x4C40, instructionmnem = 0, ictrl = 0;
 
 	set_srcconarray();
 
-	srcconarray[REGISTER][R7] = startaddress;
+	printf("Start: PC: %04x PSW: ---- Brkpt: %04x Clk: %d", srcconarray[REGISTER][R7], breakpoint, clock);
 
-	while ((instructionbit != ZERO) && (programcounter != breakpoint + BYTE)) { // 0x0000
+	while ((instructionbit != ZERO) && (srcconarray[REGISTER][R7] != breakpoint + BYTE)) { // 0x0000
 		// check clock tick
-		if (clock % 2 == 0) { // even number
-			instructionaddress = fetch0(&programcounter, &ictrl);
+		if (clock % 2 == ZERO) { // even number
+			instructionaddress = fetch0(&ictrl);
 			instructionmnem = decode(instructionaddress, instructionbit);
 		}
 		else { // odd number
@@ -162,6 +162,10 @@ void pipeline() {
 		}
 
 		clock++; // increment clock
+
+		if (increment == TRUE && clock % 2 != ZERO)
+			break;
 	}
-	printf("\n%04x: %04x\n\n", instructionaddress + BYTE, imem.word_mem[(instructionaddress + BYTE) / BYTE]);
+	printf("End: PC: %04x Clk: %d\n\n", srcconarray[REGISTER][R7] - PC_OFFSET, clock);
+	//printf("\n%04x: %04x\n\n", instructionaddress + BYTE, imem.word_mem[(instructionaddress + BYTE) / BYTE]);
 }

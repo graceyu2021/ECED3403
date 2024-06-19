@@ -30,6 +30,8 @@ This is the header file of my program.
 #define SRCCON 2
 #define SRCCONOPTIONS 8
 
+#define PC_OFFSET 4
+
 // macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
 #define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
@@ -88,7 +90,7 @@ typedef enum registers { // register enum values
 	R0, R1, R2, R3, R4, R5, R6, R7
 } registers;
 
-int fetch0(int* programcounter, int* ictrl);
+int fetch0(int* ictrl);
 
 int fetch1(int instructionaddress, int* instructionbit);
 

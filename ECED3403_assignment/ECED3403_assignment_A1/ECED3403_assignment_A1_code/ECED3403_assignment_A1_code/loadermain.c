@@ -15,6 +15,7 @@ This is the main file of my program.
 
 int main() {	
 	char option = ' ';
+	increment = FALSE;
 
 	// print user and send user input to variable option
 	option = print_menu();
@@ -57,12 +58,16 @@ int main() {
 		case 'm':
 			display_mem();
 			break;
-		
+
 		case 'G':
 		case 'g':
 			// pipeline
 			pipeline();
 			break;
+
+		case 'I':
+		case 'i':
+			single_step();
 		}
 
 		if (option != ' ?') { // input is not ?, reset

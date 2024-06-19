@@ -69,4 +69,6 @@ void idmem_print(memory array[], int* lowbound, int* lowboundtemp);
 
 void display_mem();
 
+void single_step();
+
 #endif //LOADERHEADER_H

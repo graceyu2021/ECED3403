@@ -22,7 +22,8 @@ char print_menu() {
 	printf("? - lists the option (below)\nC - change a memory location (word)\nB - breakpoint\n");
 	printf("L - load\nR - display regs\nS - set register values(word)\n");
 	printf("M - display mem\n");
-	printf("G - go (continuous or single step [toggle with 'I']\nX - exit\nOption: ");
+	printf("G - go (continuous or single step [toggle with 'I']\n");
+	printf("I - increment PC(toggle continuous or run of single step)\nX - exit\nOption: ");
 	scanf(" %c", &option);
 
 	return option;
@@ -123,7 +124,7 @@ int load_file(FILE* file) {
 		reccount = read_address(srecord, &address, reccount, &checksumcount);
 
 		if (srectype == S9) { // S9 address records the starting address
-			startaddress = address;
+			srcconarray[REGISTER][R7] = address;
 		}
 
 		while (RECORD_BOUND(reccount, reclength) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
@@ -165,7 +166,7 @@ int load_file(FILE* file) {
 	file_origin_print(recname, recnamecount);
 
 	if (recvalidity == TRUE) {; // all records are valid !
-		printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);
+		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray[REGISTER][R7]);
 	}
 	else { // invalid record(s) encountered
 		int length = strlen(srecord);
@@ -200,4 +201,16 @@ void prompt_file() {
 	
 	// load in file
 	load_file(file);
+}
+
+void single_step() {
+	switch (increment) { // change increment based on its current value
+	case (TRUE):
+		increment = FALSE;
+		printf("Single step is disabled\n");
+		break;
+	case (FALSE):
+		increment = TRUE;
+		printf("Single step is enabled\n");
+	}
 }
