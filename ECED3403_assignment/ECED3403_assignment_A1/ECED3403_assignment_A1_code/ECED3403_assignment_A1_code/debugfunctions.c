@@ -26,25 +26,19 @@ void mem_change() {
 
 	address = address / BYTE;
 
-	if (content < 0x0000 || content > 0xFFFF) {
+	if (INVALID_HEX(address) || INVALID_HEX(content)) {
 		return;
 	}
 
 	switch (memtype) {
 	case('I'): // instruction memory
 	case('i'):
-		printf("before: %04x", imem.word_mem[address]);
 		imem.word_mem[address] = (unsigned short)content;
-		printf("before: %04x", imem.word_mem[address]);
 		break;
 
 	case('D'): // data memory
 	case('d'):
-		printf("before: %04x", dmem.word_mem[address]);
 		dmem.word_mem[address] = (unsigned short)content;
-		printf("before: %04x", dmem.word_mem[address]);
-		break;
-	default:
 		break;
 	}
 }
@@ -53,8 +47,6 @@ void breakpoint_set() {
 	printf("Current breakpoint: %04x\n", breakpoint);
 	printf("Set breakpoint address\n");
 	scanf("%x", &breakpoint);
-
-	return;
 }
 
 void reg_display() {
@@ -64,8 +56,6 @@ void reg_display() {
 	for (i; i < REG_NO; i++) {
 		printf("%s %04x\n", regprintarray[i], srcconarray[REGISTER][i]);
 	}
-
-	return;
 }
 
 void reg_set() {
@@ -75,6 +65,4 @@ void reg_set() {
 	scanf(" %d %x", &regno, &value);
 
 	srcconarray[REGISTER][regno] = (unsigned short) value;
-
-	return;
 }

@@ -28,27 +28,29 @@ char print_menu() {
 	return option;
 }
 
-enum srecordtype str_to_int(char* stype) { // enum of s record types
-	if (strcmp(stype, "S0") == 0) {
+enum srecordtype str_to_int(char snum) { // enum of s record types
+	switch (snum) {
+	case '0':
 		return S0;
-	}
-	else if (strcmp(stype, "S1") == 0) {
+	case '1':
 		return S1;
-	}
-	else if (strcmp(stype, "S2") == 0) {
+	case '2':
 		return S2;
-	}
-	else if (strcmp(stype, "S9") == 0) {
+	case '9':
 		return S9;
+	default:
+		return INVALID_S;
 	}
 }
 
 // read what type of s-record it is
 int read_s_record(const char* srecord, srecordtype* srectype, int reccount) {
 	char stype[BYTE + 1] = { 0 }; // + 1 for '\0'
+	int snum;
 
-	sscanf(srecord, "%2s", stype);
-	*srectype = str_to_int(stype);
+	//sscanf(srecord, "%2s", stype);
+	snum = srecord[1];
+	*srectype = str_to_int(snum);
 	reccount += BYTE; // += BYTE (2) because record indicator is from 1 byte
 	return reccount;
 }
@@ -97,15 +99,14 @@ int compare_checksum(const char* srecord, int reccount, unsigned int checksumcou
 	checksumcount = (~checksumcount) & 0xFF;
 
 	return (checksumcount == checksum);
-
 }
 
 // handle newly loaded file
 int load_file(FILE* file) {
 	char srecord[SREC_MAX + 1];
-	int reclength = 0, address = 0, tempbytes = 0;
+	char recname[SREC_MAX]; // asm file name
+	int recnamecount = 0, reclength, address, tempbytes, recvalidity = TRUE;
 	srecordtype srectype;
-	recnamecount = 0; // new file = new name ! reset record name count
 
 	while (fgets(srecord, SREC_MAX + 1, file) != NULL) {// obtain complete record from file. SREC_MAX + 1 because of '/0'
 		int reccount = 0, checksum = 0;
@@ -125,7 +126,7 @@ int load_file(FILE* file) {
 			startaddress = address;
 		}
 
-		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE)) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
+		while (reccount >= (BYTE * 4) && reccount < (2 * (reclength + BYTE) - BYTE) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
 			switch (srectype) {
 			case S0:
 				sscanf(srecord + reccount, "%2x", &tempbytes); // + reccount to offset the previous bytes
@@ -148,28 +149,35 @@ int load_file(FILE* file) {
 				reccount += BYTE;
 				checksumcount += tempbytes; // add tempbytes bytes to checksumcount
 				break;
+			case INVALID_S:
+				printf("Invalid S-record encountered.\n");
+				recvalidity == FALSE;
+				break;
 			}
 		}
 
-		// is the current record valid?
-		if (compare_checksum(srecord, reccount, checksumcount) == FALSE) { // compare checksum at end of record
-			file_origin_print();
-			int length = strlen(srecord);
-			srecord[length - 1] = '\0'; // Replace the last character with the null terminator
-			printf("Invalid checksum: >%s<\n", srecord);
-			return FALSE; // current record is invalid
+		if (compare_checksum(srecord, reccount, checksumcount) == FALSE) { // if invalid checksum encountered
+			recvalidity = FALSE;
+			break;
 		}
 	}
-	return TRUE; // all records are valid !
+
+	file_origin_print(recname, recnamecount);
+
+	if (recvalidity == TRUE) {; // all records are valid !
+		printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);
+	}
+	else { // invalid record(s) encountered
+		int length = strlen(srecord);
+		srecord[length - 1] = '\0'; // Replace the last character with the null terminator
+		printf("Invalid checksum: >%s<\n", srecord);
+	}
 }
 
 // function to print .asm origin file based on s0 record
-void file_origin_print() {
-	int i = 0;
-
+void file_origin_print(char* recname, int recnamecount) {
 	printf("Source filename: ");
-
-	for (i = 0; i < recnamecount; i++) {
+	for (int i = 0; i < recnamecount; i++) {
 		printf("%c", (char)recname[i]);
 	}
 }
@@ -191,11 +199,5 @@ void prompt_file() {
 	}
 	
 	// load in file
-	if (load_file(file)) { // ran through whole file successfully, print success
-		file_origin_print();
-		printf("\nFile read - no errors detected. Starting address: %.4x\n", startaddress);	
-	}
-	else { // file interrupted by invalid checksum, fail already printed
-		return;
-	}
+	load_file(file);
 }

@@ -17,6 +17,7 @@ This is the debug header file of my program.
 
 #define REG_NO 8
 #define REG_NAME_MAX 10
+#define INVALID_HEX(a) (a < 0x0000 || a > 0xFFFF)
 
 
 void breakpoint_set();

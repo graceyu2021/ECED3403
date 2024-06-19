@@ -41,12 +41,13 @@ typedef enum srecord { // enumerator of s-record types
 	S0,
 	S1,
 	S2,
-	S9
+	S9,
+	INVALID_S
 } srecordtype;
 
 char print_menu();
 
-enum srecordtype str_to_int(char* stype);
+enum srecordtype str_to_int(char snum);
 
 int read_s_record(const char* srecord, srecordtype* srectype, int reccount);
 

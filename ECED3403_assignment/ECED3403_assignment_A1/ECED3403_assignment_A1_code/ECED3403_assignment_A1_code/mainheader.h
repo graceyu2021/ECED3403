@@ -32,8 +32,6 @@ This is the header file of my program.
 memory imem; // instruction memory
 memory dmem; // data memory
 unsigned short srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
-int recname[SREC_MAX]; // asm file name
-int recnamecount; // size of recname
 int startaddress; // start address
 int breakpoint;
 
