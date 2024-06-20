@@ -167,10 +167,12 @@ int load_file(FILE* file) {
 
 	if (recvalidity == TRUE) {; // all records are valid !
 		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray[REGISTER][R7]);
+		instructionbit = NOP; // initialize NOP mov r0, r0
+		clock = CLOCK_INITIALIZE; // initialize clock
 	}
 	else { // invalid record(s) encountered
 		int length = strlen(srecord);
-		srecord[length - 1] = '\0'; // Replace the last character with the null terminator
+		srecord[length - NULLCHAR] = '\0'; // Replace the last character with the null terminator
 		printf("Invalid checksum: >%s<\n", srecord);
 	}
 }

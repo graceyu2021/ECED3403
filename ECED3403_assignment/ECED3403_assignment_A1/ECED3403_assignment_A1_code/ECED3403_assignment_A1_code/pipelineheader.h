@@ -92,11 +92,11 @@ typedef enum registers { // register enum values
 
 int fetch0(int* ictrl);
 
-int fetch1(int instructionaddress, int* instructionbit);
+void fetch1(int instructionaddress, int* ictrl);
 
-void printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
+void printdecode(int nota2, int instructionaddress, char mnemarray, int instructionmnem);
 
-int decode(int instructionaddress, int instructionbit);
+int decode(int instructionaddress);
 
 void pipeline();
 

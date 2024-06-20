@@ -33,6 +33,8 @@ memory imem; // instruction memory
 memory dmem; // data memory
 unsigned short srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
 //int startaddress; // start address
+int clock;
+int instructionbit;
 int breakpoint;
 int increment;
 

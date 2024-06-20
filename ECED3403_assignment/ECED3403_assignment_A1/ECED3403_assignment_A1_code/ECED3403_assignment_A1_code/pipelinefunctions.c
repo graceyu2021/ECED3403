@@ -42,15 +42,13 @@ int imcontroller(int instructionaddress, int ictrl, int imbr) {
 	return imbr;
 }
 
-int fetch1(int instructionaddress, int* ictrl) {
-	int imbr = 0, instructionbit = 0;
+void fetch1(int instructionaddress, int* ictrl) {
+	int imbr = 0;
 
 	instructionbit = imcontroller(instructionaddress, *ictrl, imbr);
-
-	return instructionbit;
 }
 
-void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem, int instructionbit) {
+void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
 
 	if (nota2 == FALSE)
 		printf("\n%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
@@ -78,7 +76,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 	printf("DST: R%d\n", movx_operands.destination);
 }
 
-int decode(int instructionaddress, int instructionbit) {
+int decode(int instructionaddress) {
 
 	int arrayplace = 0, nota2 = FALSE, instructionmnem = 0;
 	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = {"BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
@@ -138,34 +136,36 @@ int decode(int instructionaddress, int instructionbit) {
 		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
 		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
 	}
-	printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
+	if (clock != CLOCK_INITIALIZE)
+		printdecode(nota2, instructionaddress, mnemarray, instructionmnem, instructionbit);
 }
 
 void pipeline() {
-	int clock = 0;
-	int instructionbit = NOP, // NOP mov r0, r0
-		instructionaddress = 0x4C40, instructionmnem = 0, ictrl = 0;
+	int instructionaddress = 0, instructionmnem = 0, ictrl = 0;
 
 	set_srcconarray();
 
-	printf("Start: PC: %04x PSW: ---- Brkpt: %04x Clk: %d", srcconarray[REGISTER][R7], breakpoint, clock);
+	if (clock != CLOCK_INITIALIZE)
+		printf("Start: PC: %04x PSW: ---- Brkpt: %04x Clk: %d", srcconarray[REGISTER][R7], breakpoint, clock);
 
-	while ((instructionbit != ZERO) && (srcconarray[REGISTER][R7] != breakpoint + BYTE)) { // 0x0000
+	while (srcconarray[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick
 		if (clock % 2 == ZERO) { // even number
 			instructionaddress = fetch0(&ictrl);
 			instructionmnem = decode(instructionaddress, instructionbit);
 		}
 		else { // odd number
-			instructionbit = fetch1(instructionaddress, &ictrl);
+			fetch1(instructionaddress, &ictrl);;
 			// execute function
 		}
 
 		clock++; // increment clock
 
-		if (increment == TRUE && clock % 2 != ZERO)
+		// breaks if increment is set AND if clock is not equal to zero
+		if (increment == TRUE && clock % 2 == ZERO && clock != ZERO)
 			break;
 	}
-	printf("End: PC: %04x Clk: %d\n\n", srcconarray[REGISTER][R7] - PC_OFFSET, clock);
-	//printf("\n%04x: %04x\n\n", instructionaddress + BYTE, imem.word_mem[(instructionaddress + BYTE) / BYTE]);
+
+	if (clock != ZERO)
+		printf("End: PC: %04x Clk: %d\n\n", srcconarray[REGISTER][R7] - PC_OFFSET, clock);
 }
