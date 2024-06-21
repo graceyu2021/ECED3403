@@ -145,11 +145,10 @@ void pipeline() {
 
 	set_srcconarray();
 
-	printf("Start: PC: %04x PSW: ---- Brkpt: %04x ", srcconarray[REGISTER][R7], breakpoint);
 	if (clock != CLOCK_INITIALIZE)
-		printf("Clk: %d\n", clock);
+		printf("Start: PC: %04x PSW: --- Brkpt: %04x Clk: %d\n", srcconarray[REGISTER][R7], breakpoint, clock);
 	else
-		printf("Clk: 0\n");
+		printf("Start: PC: %04x PSW: --- Brkpt: %04x Clk: %d\n", srcconarray[REGISTER][R7] + NOP_PC_OFFSET, breakpoint, clock);
 
 	while (srcconarray[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick

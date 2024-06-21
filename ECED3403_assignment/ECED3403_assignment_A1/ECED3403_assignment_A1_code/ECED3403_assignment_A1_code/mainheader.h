@@ -22,17 +22,10 @@ This is the header file of my program.
 #define SREC_MAX 100//67 // defined macros for records
 #define WORD 4
 
-/*typedef union wordbyte {
-	unsigned short word;
-	unsigned char byte[BYTE];
-}wordbyte;
-*/
-
 // declared array for file name, imem, and dmem global
 memory imem; // instruction memory
 memory dmem; // data memory
 unsigned short srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
-//int startaddress; // start address
 int clock;
 int instructionbit;
 int breakpoint;
