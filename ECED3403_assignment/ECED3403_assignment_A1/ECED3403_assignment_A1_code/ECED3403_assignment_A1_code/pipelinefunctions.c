@@ -26,7 +26,7 @@ void set_srcconarray(){ // set constant values
 }
 
 int fetch0(int* ictrl) {
-	int instructionaddress = srcconarray[REGISTER][R7] - BYTE;
+	int instructionaddress = srcconarray[REGISTER][R7];
 
 	srcconarray[REGISTER][R7] += BYTE; // increment by 2 because of byte memory
 	*ictrl = READ;
@@ -51,9 +51,9 @@ void fetch1(int instructionaddress, int* ictrl) {
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
 
 	if (nota2 == FALSE)
-		printf("\n%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
+		printf("%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	else {
-		printf("\n%04x: %04x  \n", instructionaddress, instructionbit);
+		printf("%04x: %04x  \n", instructionaddress, instructionbit);
 		return;
 	}
 
@@ -145,8 +145,11 @@ void pipeline() {
 
 	set_srcconarray();
 
+	printf("Start: PC: %04x PSW: ---- Brkpt: %04x ", srcconarray[REGISTER][R7], breakpoint);
 	if (clock != CLOCK_INITIALIZE)
-		printf("Start: PC: %04x PSW: ---- Brkpt: %04x Clk: %d", srcconarray[REGISTER][R7], breakpoint, clock);
+		printf("Clk: %d\n", clock);
+	else
+		printf("Clk: 0\n");
 
 	while (srcconarray[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick
@@ -167,5 +170,5 @@ void pipeline() {
 	}
 
 	if (clock != ZERO)
-		printf("End: PC: %04x Clk: %d\n\n", srcconarray[REGISTER][R7] - PC_OFFSET, clock);
+		printf("End: PC: %04x Clk: %d\n\n", srcconarray[REGISTER][R7], clock);
 }

@@ -75,7 +75,6 @@ int read_address(const char* srecord, int* address, int reccount, unsigned int* 
 	reccount += BYTE;
 	*checksumcount += addresslow; // add address high bytes to checksumcount
 	*address = addresslow;
-
 	*address = addresshi << 8 | addresslow; // combine high and low bytes of address
 
 	return reccount;
@@ -167,6 +166,7 @@ int load_file(FILE* file) {
 
 	if (recvalidity == TRUE) {; // all records are valid !
 		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray[REGISTER][R7]);
+		srcconarray[REGISTER][R7] -= BYTE; // set PC to be one byte less to accomadate for NOP
 		instructionbit = NOP; // initialize NOP mov r0, r0
 		clock = CLOCK_INITIALIZE; // initialize clock
 	}

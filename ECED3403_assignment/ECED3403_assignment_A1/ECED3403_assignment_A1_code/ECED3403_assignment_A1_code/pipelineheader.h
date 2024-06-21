@@ -30,7 +30,7 @@ This is the header file of my program.
 #define SRCCON 2
 #define SRCCONOPTIONS 8
 
-#define PC_OFFSET 4
+#define PC_OFFSET 2
 
 // macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
