@@ -54,7 +54,7 @@ void reg_display() {
 	char regprintarray[REG_NO][REG_NAME_MAX] = { "R0: ", "R1: ", "R2: ", "R3: ", "R4 (BP): ", "R5 (LR): ", "R6 (SP): ", "R7 (PC): " };
 
 	for (i; i < REG_NO; i++) {
-		printf("%s %04x\n", regprintarray[i], srcconarray[REGISTER][i]);
+		printf("%s %04x\n", regprintarray[i], srcconarray.word[REGISTER][i]);
 	}
 }
 
@@ -64,5 +64,5 @@ void reg_set() {
 	printf("Enter regno (0..7) and value (0000..FFFFF)\n");
 	scanf(" %d %x", &regno, &value);
 
-	srcconarray[REGISTER][regno] = (unsigned short) value;
+	srcconarray.word[REGISTER][regno] = (unsigned short) value;
 }

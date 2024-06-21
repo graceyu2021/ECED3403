@@ -20,12 +20,18 @@ This is the header file of my program.
 #include <stdio.h>
 
 #define SREC_MAX 100//67 // defined macros for records
-#define WORD 4
 
 // declared array for file name, imem, and dmem global
 memory imem; // instruction memory
 memory dmem; // data memory
-unsigned short srcconarray[SRCCON][SRCCONOPTIONS]; // source and constant array
+
+typedef union srcconarray {
+	unsigned char byte[SRCCON][SRCCONOPTIONS][BYTE];
+	unsigned short word[SRCCON][SRCCONOPTIONS];
+}srcconarray_union;
+
+srcconarray_union srcconarray;
+
 int clock;
 int instructionbit;
 int breakpoint;

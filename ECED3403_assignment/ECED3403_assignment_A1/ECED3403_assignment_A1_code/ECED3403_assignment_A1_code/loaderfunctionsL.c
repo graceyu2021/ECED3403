@@ -123,7 +123,7 @@ int load_file(FILE* file) {
 		reccount = read_address(srecord, &address, reccount, &checksumcount);
 
 		if (srectype == S9) { // S9 address records the starting address
-			srcconarray[REGISTER][R7] = address;
+			srcconarray.word[REGISTER][R7] = address;
 		}
 
 		while (RECORD_BOUND(reccount, reclength) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
@@ -165,8 +165,8 @@ int load_file(FILE* file) {
 	file_origin_print(recname, recnamecount);
 
 	if (recvalidity == TRUE) {; // all records are valid !
-		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray[REGISTER][R7]);
-		srcconarray[REGISTER][R7] -= BYTE; // set PC to be one byte less to accomadate for NOP
+		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray.word[REGISTER][R7]);
+		srcconarray.word[REGISTER][R7] -= BYTE; // set PC to be one byte less to accomadate for NOP
 		instructionbit = NOP; // initialize NOP mov r0, r0
 		clock = CLOCK_INITIALIZE; // initialize clock
 	}

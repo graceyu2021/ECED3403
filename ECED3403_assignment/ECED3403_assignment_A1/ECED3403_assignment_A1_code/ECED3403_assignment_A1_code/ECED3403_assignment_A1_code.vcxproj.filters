@@ -30,6 +30,9 @@
     <ClCompile Include="debugfunctions.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pipelineexecute.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="loaderheader.h">

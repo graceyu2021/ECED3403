@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="debugfunctions.c" />
+    <ClCompile Include="pipelineexecute.c" />
     <ClCompile Include="pipelinefunctions.c" />
     <ClCompile Include="loaderfunctionsL.c" />
     <ClCompile Include="loaderfunctionsM.c" />
