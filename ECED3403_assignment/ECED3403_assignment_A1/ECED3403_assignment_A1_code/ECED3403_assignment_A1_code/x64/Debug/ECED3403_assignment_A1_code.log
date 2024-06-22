@@ -1,28 +1,3 @@
-﻿  debugfunctions.c
-  loaderfunctionsL.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(113,13): warning C4013: 'strlen' undefined; assuming extern returning int
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(154,17): warning C4553: '==': result of expression not used; did you intend '='?
-  loaderfunctionsM.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(58,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(63,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(39,26): warning C4101: 'dnumtemp': unreferenced local variable
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(39,16): warning C4101: 'inumtemp': unreferenced local variable
-  loadermain.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loadermain.c(33,4): warning C4013: 'mem_change' undefined; assuming extern returning int
-  pipelineexecute.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(247,61): warning C4020: 'mov_execute': too many actual parameters
-  pipelinefunctions.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(51,58): warning C4028: formal parameter 3 different from declaration
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(156,119): warning C4474: 'printf' : too many arguments passed for format string
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(156,119): message : placeholders and their parameters expect 2 variadic arguments, but 3 were provided
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(162,49): warning C4020: 'decode': too many actual parameters
-  Generating Code...
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(146): warning C4716: 'decode': must return a value
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(178): warning C4715: 'load_file': not all control paths return a value
-  ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe
+﻿  pipelineexecute.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(256,61): warning C4020: 'mov_execute': too many actual parameters
+LINK : fatal error LNK1168: cannot open C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe for writing

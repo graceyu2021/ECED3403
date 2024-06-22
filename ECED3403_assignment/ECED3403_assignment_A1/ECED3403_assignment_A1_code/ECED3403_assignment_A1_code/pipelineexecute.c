@@ -14,8 +14,12 @@ This is the pipeline execute function file of my program.
 
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
 	*wordbyte = reg_const_operands.wordbyte;
-	*dest_value = (wordbyte == WORD_CHECK) ? // adding word or byte?
+	*dest_value = (&wordbyte == WORD_CHECK) ? // adding word or byte?
 		srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
+	printf("word: %04x hibyte %04x lobyte %04x",
+		srcconarray.word[REGISTER][dest_num], srcconarray.byte[REGISTER][dest_num][HIGH], srcconarray.byte[REGISTER][dest_num][LOW]);
+	printf("dest_value %04x", *dest_value);
+	printf("wordbyte %d\n", *wordbyte);
 
 	*srccon_value = (wordbyte == WORD_CHECK) ?
 		srcconarray.word[srcconcheck][srccon_num] : srcconarray.byte[srcconcheck][srccon_num][LOW];
@@ -23,10 +27,10 @@ void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int*
 
 void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
 	*wordbyte = reg_const_operands.wordbyte;
-	*dest_value = (wordbyte == WORD_CHECK) ? // adding word or byte?
+	*dest_value = (*wordbyte == WORD_CHECK) ? // adding word or byte?
 		srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
 
-	*srccon_value = (wordbyte == WORD_CHECK) ?
+	*srccon_value = (*wordbyte == WORD_CHECK) ?
 		srcconarray.word[REGISTER][srccon_num] : srcconarray.byte[REGISTER][srccon_num][LOW];
 }
 
@@ -72,6 +76,9 @@ void add_to_subc_execute(unsigned int dest_value, unsigned int srccon_value, int
 		srccon_value *= NEGATIVE; // set source/constant to negative
 
 	temp = dest_value + srccon_value + psw.c; // temp = destination + source/constant + carry
+
+	printf("wordbyte: %d dest_value: %04x srccon_value %04x psw.c: %d dest register: %d\n",
+		wordbyte, dest_value, srccon_value, psw.c, dest_num);
 
 	if (wordbyte == WORD_CHECK) // result is word
 		srcconarray.word[REGISTER][dest_num] = temp;
@@ -202,6 +209,8 @@ void movh_execute(unsigned int bytevalue) {
 }
 
 void execute() {
+	//if (opcode )
+
 	unsigned int dest_value, srccon_value, wordbyte, bytevalue;
 	if (opcode >= ADD && opcode <= BIS)
 		add_to_bis_ops(reg_const_operands.destination, reg_const_operands.sourceconstant, reg_const_operands.sourceconstantcheck, &dest_value, &srccon_value, &wordbyte);
@@ -259,7 +268,7 @@ void execute() {
 		swpb_execute(reg_const_operands.destination);
 		break;
 	case(SXT):
-
+		sxt_execute(dest_value, reg_const_operands.destination);
 		break;
 	case(MOVL):
 		movl_execute(bytevalue);
@@ -276,7 +285,4 @@ void execute() {
 	default:
 		break;
 	}
-
-
-
 }
