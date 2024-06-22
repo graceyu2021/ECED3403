@@ -61,7 +61,7 @@ This is the header file of my program.
 #define BYTEVALUE_BITS(a) ((a & 0x07F8) >> 3)
 #define DESTINATION_BITS(a) (a & 0x0007)
 
-#define SOURCECONSTANTCHECK_PRINT(a) (a >= ADD && instructionmnem <= BIS)
+#define SOURCECONSTANTCHECK_PRINT(a) (a >= ADD && a <= BIS)
 #define WORDBYTE_PRINT(a) ((a >= ADD && a <= MOV) || (a >= SRA && a <= RRC))
 #define SOURCECONSTANT_PRINT(a) (a >= ADD && a <= SWAP)
 #define SOURCECONSTANT_SELECT(a, b) ((a == 0) || b == MOV || b == SWAP)
