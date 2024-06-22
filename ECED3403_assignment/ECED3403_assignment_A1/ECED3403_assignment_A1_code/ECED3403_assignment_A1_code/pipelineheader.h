@@ -67,8 +67,12 @@ This is the header file of my program.
 #define SOURCECONSTANT_SELECT(a, b) ((a == 0) || b == MOV || b == SWAP)
 #define BYTEVALUE_PRINT(a) (a >= MOVL && a <= MOVH)
 
-#define MASK_MSB_WORD(a) ((a & 0x8000) >> 15)
-#define MASK_MSB_BYTE(a) ((a & 0x0080) >> 7)
+#define MASK_SHIFT_MSB_WORD(a) ((a & 0x8000) >> 15)
+#define MASK_SHIFT_MSB_BYTE(a) ((a & 0x0080) >> 7)
+
+#define MASK_MSB_WORD(a) (a & 0x8000)
+#define MASK_MSB_BYTE(a) (a & 0x0080)
+#define MASK_LSB(a) (a & 0x0001)
 
 #define MNEMARRAY_MAX 40
 #define MNEMARRAY_WORDMAX 6
@@ -80,6 +84,16 @@ This is the header file of my program.
 #define CLEAR 0
 
 #define NEGATIVE -1;
+
+#define SHIFT_RIGHT 1
+
+#define CARRY_TO_MSB_WORD(a) (a << 15)
+#define CARRY_TO_MSB_BYTE(a) (a << 7)
+
+#define BIT_SHIFT(a) (1 << a);
+
+#define MSBYTE_SET 0xFF
+#define MSBYTE_CLEAR 0x00
 
 // structure of operands for ADD to SXT
 typedef struct reg_const {
