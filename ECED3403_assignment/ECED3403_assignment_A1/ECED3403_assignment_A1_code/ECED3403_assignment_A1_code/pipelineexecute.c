@@ -16,10 +16,10 @@ void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int*
 	*wordbyte = reg_const_operands.wordbyte;
 	*dest_value = (&wordbyte == WORD_CHECK) ? // adding word or byte?
 		srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
-	printf("word: %04x hibyte %04x lobyte %04x",
-		srcconarray.word[REGISTER][dest_num], srcconarray.byte[REGISTER][dest_num][HIGH], srcconarray.byte[REGISTER][dest_num][LOW]);
-	printf("dest_value %04x", *dest_value);
-	printf("wordbyte %d\n", *wordbyte);
+	//printf("word: %04x hibyte %04x lobyte %04x",
+		//srcconarray.word[REGISTER][dest_num], srcconarray.byte[REGISTER][dest_num][HIGH], srcconarray.byte[REGISTER][dest_num][LOW]);
+	//printf("dest_value %04x", *dest_value);
+	//printf("wordbyte %d\n", *wordbyte);
 
 	*srccon_value = (wordbyte == WORD_CHECK) ?
 		srcconarray.word[srcconcheck][srccon_num] : srcconarray.byte[srcconcheck][srccon_num][LOW];
@@ -77,8 +77,8 @@ void add_to_subc_execute(unsigned int dest_value, unsigned int srccon_value, int
 
 	temp = dest_value + srccon_value + psw.c; // temp = destination + source/constant + carry
 
-	printf("wordbyte: %d dest_value: %04x srccon_value %04x psw.c: %d dest register: %d\n",
-		wordbyte, dest_value, srccon_value, psw.c, dest_num);
+	//printf("wordbyte: %d dest_value: %04x srccon_value %04x psw.c: %d dest register: %d\n",
+		//wordbyte, dest_value, srccon_value, psw.c, dest_num);
 
 	if (wordbyte == WORD_CHECK) // result is word
 		srcconarray.word[REGISTER][dest_num] = temp;

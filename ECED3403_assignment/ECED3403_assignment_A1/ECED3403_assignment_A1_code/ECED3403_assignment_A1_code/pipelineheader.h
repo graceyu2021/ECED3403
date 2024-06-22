@@ -43,16 +43,22 @@ This is the header file of my program.
 #define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
 #define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
 #define MOVtoCLRCC_BITS(a) ((a & 0x0C00) == 0x0C00)
-#define SETPRItoCLRCC_BITS(a) ((a & 0x0180) == 0x0180)
-#define MOVtoSWAP_BITS(a) ((a & 0x0100) == 0)
-#define SRAtoRRC_BITS(a) ((a & 0x0030) == 0)
+#define SETPRItoCLRCC_BITS(a) ((a & 0x0D80) == 0x0D80)
+#define MOVtoSWAP_BITS(a) ((a & 0x0D00) == 0x0C00)
+#define SRAtoRRC_BITS(a) ((a & 0x0C30) == 0x0C00)
+#define ADDtoSXT_BITS(a) ((a & 0x1000) == 0)
+#define SWPBtoSXT(a) ((a & 0x0C00) == 0x0C00)
+
 
 // macros to mask and shift instructionbit to identify instructionmnem
+#define LDRtoSTR_ARRAY(a) ((a & 0x4000) >> 14)
+#define BLtoBRA_ARRAY(a) ((a & 0x1C00) >> 10)
 #define MOVLtoMOVH_ARRAY(a) ((a & 0x1800) >> 11)
+#define LDtoST_ARRAY(a) ((a & 0x0400) >> 10)
 #define MOVtoSWAP_ARRAY(a) ((a & 0x0080) >> 7)
-#define SRAtoRRC_ARRAY(a) ((a & 0x0038) >> 3)
+#define SRAtoRRC_ARRAY(a) ((a & 0x0008) >> 3)
 #define SWPBtoSXT_ARRAY(a) ((a & 0x0020) >> 5)
-#define ADDtoBIS_ARRAY(a) ((instructionbit & 0x0F00) >> 8)
+#define ADDtoBIS_ARRAY(a) ((a & 0x0F00) >> 8)
 
 // macros to mask and shift instructionbit to identify operand parameters
 #define SOURCECONSTANT_BITS(a) ((a & 0x0038) >> 3)

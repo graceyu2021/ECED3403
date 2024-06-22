@@ -50,7 +50,7 @@ void fetch1(int instructionaddress, int* ictrl) {
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
 
-	if (nota2 == FALSE)
+	if ((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH))
 		printf("%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	else {
 		printf("%04x: %04x  \n", instructionaddress, instructionbit);
@@ -78,6 +78,10 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 		printf("DST: R%d\n", reg_const_operands.destination);
 }
 
+void opcode_set(int enum_initial, int enum_offset) {
+	opcode = enum_initial + enum_offset;
+}
+
 int decode(int instructionaddress) {
 
 	int arrayplace = 0, nota2 = FALSE;
@@ -87,30 +91,59 @@ int decode(int instructionaddress) {
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
-		//arrayplace = (instructionbit & 0x4000) >> 14;
-		//instructionmnem = LDR + arrayplace; // adjust enum to place of first command to appear, move
-		nota2 = TRUE;
+		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
-		//arrayplace = (instructionbit & 0x4C00) >> 10;
-		//instructionmnem = BL + arrayplace; // adjust enum to place of first command to appear, move
-		nota2 = TRUE;
+		opcode_set(BL, BLtoBRA_BITS(instructionbit));
 	}
 	else if (MOVLtoMOVH_BITS(instructionbit)){ // MOVL to MOVH
-		arrayplace = MOVLtoMOVH_ARRAY(instructionbit);
-		opcode = MOVL + arrayplace;
 		movx_operands.destination = DESTINATION_BITS(instructionbit);
 		movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
+		opcode_set(MOVL, MOVLtoMOVH_ARRAY(instructionbit));
 	}
 	else if (LDtoST_BITS(instructionbit)) { // LD to ST
-		//arrayplace = (instructionbit & 0x0400) >> 10;
-		//instructionmnem = LD + arrayplace;
-		nota2 = TRUE;
+		opcode_set(LD, LDtoST_ARRAY(instructionbit));
 	}
-	else if (MOVtoCLRCC_BITS(instructionbit)) { // MOV to CLRCC
-		if (SETPRItoCLRCC_BITS(instructionbit)) //SETPRI to CLRCC
-			nota2 = TRUE;
+	else if (SETPRItoCLRCC_BITS(instructionbit)) { // SETPRI to CLRCC
+		opcode_set(SETPRI, ZERO); // will elaborate in when these opcodes are to be implemented
+	}
+	else if (ADDtoSXT_BITS(instructionbit)) { // ADD to SXR
+		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
+		reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
+		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
+		reg_const_operands.destination = DESTINATION_BITS(instructionbit);
+
+		if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
+			opcode_set(MOV, MOVtoSWAP_ARRAY(instructionbit));
+		}
+		else if (SRAtoRRC_BITS(instructionbit)) { // SRA to RRC
+			opcode_set(SRA, SRAtoRRC_ARRAY(instructionbit));
+		}
+		else if (SWPBtoSXT(instructionbit)) { // SWPB to SXT
+			opcode_set(SWPB, SWPBtoSXT_ARRAY(instructionbit));
+		}
+		else {// ADD to BIS
+			opcode_set(ADD, ADDtoBIS_ARRAY(instructionbit));
+		}
+	}
+	else { // CEX
+		opcode = CEX;
+	}
+
+
 	
+
+
+
+	/*
+	else if (MOVtoCLRCC_BITS(instructionbit)) { // MOV to CLRCC
+		if (SETPRItoCLRCC_BITS(instructionbit)) { //SETPRI to CLRCC
+			arrayplace = SETPRItoCLRCC_BITS(instructionbit);
+			opcode = SRA + arrayplace;
+			//arrayplace = LDRtoST_ARRAY(instructionbit);
+			//opcode = LD + arrayplace;
+			nota2 = TRUE;
+		}
 		else { // MOV to SXT
 			if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
 				arrayplace = MOVtoSWAP_ARRAY(instructionbit);
@@ -139,7 +172,7 @@ int decode(int instructionaddress) {
 		reg_const_operands.destination = DESTINATION_BITS(instructionbit);
 		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
 		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
-	}
+	}*/
 
 	if (clock != CLOCK_INITIALIZE)
 		printdecode(nota2, instructionaddress, mnemarray, opcode);
