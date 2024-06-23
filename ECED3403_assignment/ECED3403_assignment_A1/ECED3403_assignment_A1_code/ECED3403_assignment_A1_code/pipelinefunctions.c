@@ -49,7 +49,6 @@ void fetch1(int instructionaddress, int* ictrl) {
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
-
 	if ((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH))
 		printf("%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	else {
@@ -82,6 +81,18 @@ void opcode_set(int enum_initial, int enum_offset) {
 	opcode = enum_initial + enum_offset;
 }
 
+void movx_operands_set(int instructionbit) {
+	movx_operands.destination = DESTINATION_BITS(instructionbit);
+	movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
+}
+
+void reg_const_operands_set(int instructionbit) {
+	reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
+	reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
+	reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
+	reg_const_operands.destination = DESTINATION_BITS(instructionbit);
+}
+
 int decode(int instructionaddress) {
 
 	int arrayplace = 0, nota2 = FALSE;
@@ -94,11 +105,10 @@ int decode(int instructionaddress) {
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
-		opcode_set(BL, BLtoBRA_BITS(instructionbit));
+		opcode_set(BL, BLtoBRA_ARRAY(instructionbit));
 	}
 	else if (MOVLtoMOVH_BITS(instructionbit)){ // MOVL to MOVH
-		movx_operands.destination = DESTINATION_BITS(instructionbit);
-		movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
+		movx_operands_set(instructionbit);
 		opcode_set(MOVL, MOVLtoMOVH_ARRAY(instructionbit));
 	}
 	else if (LDtoST_BITS(instructionbit)) { // LD to ST
@@ -107,11 +117,8 @@ int decode(int instructionaddress) {
 	else if (SETPRItoCLRCC_BITS(instructionbit)) { // SETPRI to CLRCC
 		opcode_set(SETPRI, ZERO); // will elaborate in when these opcodes are to be implemented
 	}
-	else if (ADDtoSXT_BITS(instructionbit)) { // ADD to SXR
-		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
-		reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
-		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
-		reg_const_operands.destination = DESTINATION_BITS(instructionbit);
+	else if (ADDtoSXT_BITS(instructionbit)) { // ADD to SXT
+		reg_const_operands_set(instructionbit); // set operand values for ADD to SXT
 
 		if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
 			opcode_set(MOV, MOVtoSWAP_ARRAY(instructionbit));
@@ -129,50 +136,6 @@ int decode(int instructionaddress) {
 	else { // CEX
 		opcode = CEX;
 	}
-
-
-	
-
-
-
-	/*
-	else if (MOVtoCLRCC_BITS(instructionbit)) { // MOV to CLRCC
-		if (SETPRItoCLRCC_BITS(instructionbit)) { //SETPRI to CLRCC
-			arrayplace = SETPRItoCLRCC_BITS(instructionbit);
-			opcode = SRA + arrayplace;
-			//arrayplace = LDRtoST_ARRAY(instructionbit);
-			//opcode = LD + arrayplace;
-			nota2 = TRUE;
-		}
-		else { // MOV to SXT
-			if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
-				arrayplace = MOVtoSWAP_ARRAY(instructionbit);
-				opcode = MOV + arrayplace; // adjust enum to place of first command to appear, move
-
-				reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
-			}
-			else { // SRA to SXT
-				if (SRAtoRRC_BITS(instructionbit)) { // SRA to RRC
-					arrayplace = SRAtoRRC_ARRAY(instructionbit);
-					opcode = SRA + arrayplace;
-				}
-				else { // SWPB to SXT
-					arrayplace = SWPBtoSXT_ARRAY(instructionbit);
-					opcode = SWPB + arrayplace;
-				}
-			}
-			reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
-		}
-	}
-	else { // ADD to BIS
-		arrayplace = ADDtoBIS_ARRAY(instructionbit);
-		opcode = ADD + arrayplace;
-
-		reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
-		reg_const_operands.destination = DESTINATION_BITS(instructionbit);
-		reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
-		reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
-	}*/
 
 	if (clock != CLOCK_INITIALIZE)
 		printdecode(nota2, instructionaddress, mnemarray, opcode);
@@ -206,6 +169,5 @@ void pipeline() {
 			break;
 	}
 
-	if (clock != ZERO)
-		printf("End: PC: %04x Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
+	printf("End: PC: %04x Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
 }

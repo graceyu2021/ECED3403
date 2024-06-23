@@ -42,13 +42,11 @@ This is the header file of my program.
 #define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
 #define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
 #define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
-#define MOVtoCLRCC_BITS(a) ((a & 0x0C00) == 0x0C00)
 #define SETPRItoCLRCC_BITS(a) ((a & 0x0D80) == 0x0D80)
+#define ADDtoSXT_BITS(a) ((a & 0x1000) == 0)
 #define MOVtoSWAP_BITS(a) ((a & 0x0D00) == 0x0C00)
 #define SRAtoRRC_BITS(a) ((a & 0x0C30) == 0x0C00)
-#define ADDtoSXT_BITS(a) ((a & 0x1000) == 0)
 #define SWPBtoSXT(a) ((a & 0x0C00) == 0x0C00)
-
 
 // macros to mask and shift instructionbit to identify instructionmnem
 #define LDRtoSTR_ARRAY(a) ((a & 0x4000) >> 14)
@@ -89,7 +87,7 @@ This is the header file of my program.
 #define SET 1
 #define CLEAR 0
 
-#define NEGATIVE -1;
+#define ONE 1;
 
 #define SHIFT_RIGHT 1
 
@@ -100,6 +98,9 @@ This is the header file of my program.
 
 #define MSBYTE_SET 0xFF
 #define MSBYTE_CLEAR 0x00
+
+#define NUMERICAL_NIB 9
+#define NIBtoNUMERICAL 10
 
 // structure of operands for ADD to SXT
 typedef struct reg_const {
@@ -116,10 +117,20 @@ typedef struct movx {
 movx movx_operands; // movx global struct
 
 typedef struct psw_struct {
-	int v, n, z, c; // arithmetic overflow, negative, zero, carry
+	int prev, flt, curr, v, slp, n, z, c; // arithmetic overflow, negative, zero, carry
 }psw_struct;
 
 psw_struct psw;
+
+typedef struct nibble_struct {
+	unsigned short n0, n1, n2, n3; // 4 nibbles in a word
+}nibble_struct;
+
+typedef union nibble_word_union {
+	unsigned short word;
+	unsigned char byte[BYTE];
+	nibble_struct nibble;
+}nibble_word;
 
 int opcode;
 
