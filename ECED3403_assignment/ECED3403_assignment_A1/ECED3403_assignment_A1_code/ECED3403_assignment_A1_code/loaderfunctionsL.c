@@ -21,7 +21,7 @@ char print_menu() {
 	// print menu
 	printf("? - lists the option (below)\nC - change a memory location (word)\nB - breakpoint\n");
 	printf("L - load\nR - display regs\nS - set register values(word)\n");
-	printf("M - display mem\n");
+	printf("M - display mem\nP - display PSW bits\n");
 	printf("G - go (continuous or single step [toggle with 'I']\n");
 	printf("I - increment PC(toggle continuous or run of single step)\nX - exit\nOption: ");
 	scanf(" %c", &option);

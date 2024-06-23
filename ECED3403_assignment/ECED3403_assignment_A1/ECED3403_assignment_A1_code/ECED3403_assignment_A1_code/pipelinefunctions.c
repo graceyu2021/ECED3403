@@ -12,18 +12,14 @@ This is the decode functions file of my program.
 
 #include "MAINHEADER.H"
 
-void set_srcconarray(){ // set constant values
-	srcconarray.word[CONSTANT][0] = 0;
-	srcconarray.word[CONSTANT][1] = 1;
-	srcconarray.word[CONSTANT][2] = 2;
-	srcconarray.word[CONSTANT][3] = 4;
-	srcconarray.word[CONSTANT][4] = 8;
-	srcconarray.word[CONSTANT][5] = 16;
-	srcconarray.word[CONSTANT][6] = 32;
-	srcconarray.word[CONSTANT][7] = -1;
+srcconarray_union srcconarray = {
+	.word = {{0}, {0, 1, 2, 4, 8, 16, 32, -1}}
+};
 
-	return;
-}
+psw_struct psw = {
+	.prev = PREV_INITIAL,
+	.curr = CURR_INITIAL
+};
 
 int fetch0(int* ictrl) {
 	int instructionaddress = srcconarray.word[REGISTER][R7];
@@ -141,15 +137,31 @@ int decode(int instructionaddress) {
 		printdecode(nota2, instructionaddress, mnemarray, opcode);
 }
 
+// convert psw bits to a hexadecimal
+unsigned short psw_bit_to_word(unsigned short psw_word) {
+
+	psw_word |= psw.prev << PREV_SHIFT;
+	psw_word |= psw.flt << FLT_SHIFT;
+	psw_word |= psw.curr << CURR_SHIFT;
+	psw_word |= psw.v << V_SHIFT;
+	psw_word |= psw.slp << SLP_SHIFT;
+	psw_word |= psw.n << N_SHIFT;
+	psw_word |= psw.z << Z_SHIFT;
+	psw_word |= psw.c;
+
+	return psw_word;
+}
+
 void pipeline() {
 	int instructionaddress = 0, instructionmnem = 0, ictrl = 0;
+	unsigned short psw_word = 0;
 
-	set_srcconarray();
+	psw_word = psw_bit_to_word(psw_word);
 
 	if (clock != CLOCK_INITIALIZE)
-		printf("Start: PC: %04x PSW: --- Brkpt: %04x Clk: %d\n", srcconarray.word[REGISTER][R7], breakpoint, clock);
+		printf("Start: PC: %04x PSW: %04x Brkpt: %04x Clk: %d\n", srcconarray.word[REGISTER][R7], psw_word, breakpoint, clock);
 	else
-		printf("Start: PC: %04x PSW: --- Brkpt: %04x Clk: 0\n", srcconarray.word[REGISTER][R7] + NOP_PC_OFFSET, breakpoint, clock);
+		printf("Start: PC: %04x PSW: %04x Brkpt: %04x Clk: 0\n", srcconarray.word[REGISTER][R7] + NOP_PC_OFFSET, psw_word, breakpoint, clock);
 
 	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick

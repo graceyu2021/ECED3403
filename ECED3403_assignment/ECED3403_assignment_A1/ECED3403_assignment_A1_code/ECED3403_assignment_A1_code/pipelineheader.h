@@ -87,7 +87,7 @@ This is the header file of my program.
 #define SET 1
 #define CLEAR 0
 
-#define ONE 1;
+#define ONE 1
 
 #define SHIFT_RIGHT 1
 
@@ -101,6 +101,16 @@ This is the header file of my program.
 
 #define NUMERICAL_NIB 9
 #define NIBtoNUMERICAL 10
+#define PREV_INITIAL 3
+#define CURR_INITIAL 7
+
+#define PREV_SHIFT 13
+#define FLT_SHIFT 8
+#define CURR_SHIFT 5
+#define V_SHIFT 4
+#define SLP_SHIFT 3
+#define N_SHIFT 2
+#define Z_SHIFT 1
 
 // structure of operands for ADD to SXT
 typedef struct reg_const {
@@ -117,10 +127,10 @@ typedef struct movx {
 movx movx_operands; // movx global struct
 
 typedef struct psw_struct {
-	int prev, flt, curr, v, slp, n, z, c; // arithmetic overflow, negative, zero, carry
+	unsigned short prev, flt, curr, v, slp, n, z, c; // arithmetic overflow, negative, zero, carry
 }psw_struct;
 
-psw_struct psw;
+extern psw_struct psw;
 
 typedef struct nibble_struct {
 	unsigned short n0, n1, n2, n3; // 4 nibbles in a word

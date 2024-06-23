@@ -30,7 +30,7 @@ typedef union srcconarray {
 	unsigned short word[SRCCON][SRCCONOPTIONS];
 }srcconarray_union;
 
-srcconarray_union srcconarray;
+extern srcconarray_union srcconarray;
 
 int clock;
 int instructionbit;

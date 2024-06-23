@@ -58,7 +58,10 @@ int main() {
 		case 'm':
 			display_mem();
 			break;
-
+		case 'P': // display psw bits
+		case 'p':
+			display_psw();
+			break;
 		case 'G':
 		case 'g':
 			// pipeline

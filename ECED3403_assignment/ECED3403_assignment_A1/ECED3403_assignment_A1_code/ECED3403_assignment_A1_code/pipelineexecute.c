@@ -16,11 +16,6 @@ void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int*
 	*wordbyte = reg_const_operands.wordbyte;
 	*dest_value = (&wordbyte == WORD_CHECK) ? // adding word or byte?
 		srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
-	//printf("word: %04x hibyte %04x lobyte %04x",
-		//srcconarray.word[REGISTER][dest_num], srcconarray.byte[REGISTER][dest_num][HIGH], srcconarray.byte[REGISTER][dest_num][LOW]);
-	//printf("dest_value %04x", *dest_value);
-	//printf("wordbyte %d\n", *wordbyte);
-
 	*srccon_value = (wordbyte == WORD_CHECK) ?
 		srcconarray.word[srcconcheck][srccon_num] : srcconarray.byte[srcconcheck][srccon_num][LOW];
 }

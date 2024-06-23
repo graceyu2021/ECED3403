@@ -43,26 +43,37 @@ void mem_change() {
 	}
 }
 
+// set breakpoint
 void breakpoint_set() {
 	printf("Current breakpoint: %04x\n", breakpoint);
 	printf("Set breakpoint address\n");
 	scanf("%x", &breakpoint);
 }
 
+// display registers
 void reg_display() {
 	int i = 0;
-	char regprintarray[REG_NO][REG_NAME_MAX] = { "R0: ", "R1: ", "R2: ", "R3: ", "R4 (BP): ", "R5 (LR): ", "R6 (SP): ", "R7 (PC): " };
+	char regprintarray[REG_NO][REG_NAME_MAX] = // register name array to allow for fast printing
+		{ "R0: ", "R1: ", "R2: ", "R3: ", "R4 (BP): ", "R5 (LR): ", "R6 (SP): ", "R7 (PC): " };
 
-	for (i; i < REG_NO; i++) {
+	for (i; i < REG_NO; i++) { // print all the registers
 		printf("%s %04x\n", regprintarray[i], srcconarray.word[REGISTER][i]);
 	}
 }
 
+// set register values
 void reg_set() {
 	int regno, value;
 
+	// prompt user to input specified register number and value
 	printf("Enter regno (0..7) and value (0000..FFFFF)\n");
 	scanf(" %d %x", &regno, &value);
 
+	// set specified register to new value
 	srcconarray.word[REGISTER][regno] = (unsigned short) value;
+}
+
+// display psw bit values
+void display_psw() {
+	printf("prev: %d flt: %d curr: %d v: %d n: %d z: %d c: %d\n", psw.prev, psw.curr, psw.v, psw.n, psw.z, psw.c);
 }

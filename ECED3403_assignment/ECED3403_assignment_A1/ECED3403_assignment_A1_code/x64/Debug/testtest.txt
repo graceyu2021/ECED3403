@@ -1,0 +1,16 @@
+; 
+;lab 1, question 1: sum an array of 16-bit numbers, stopping when a program-specified liit is reached
+;name: Grace Yu
+;B00: 902046
+;class: ECED3403
+;instructor: Dr. Larry Hughes
+;
+		org #1000
+MAIN
+		movl	#90,R0
+		movl	#90,R1
+		add	$32,R0
+		swpb	R0,R1
+DONE
+		bra		DONE			; loop
+end MAIN
