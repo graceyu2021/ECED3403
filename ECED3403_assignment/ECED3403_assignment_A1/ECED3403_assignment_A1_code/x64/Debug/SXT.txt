@@ -1,0 +1,10 @@
+		org #1000
+MAIN
+	sxt	R0
+	movl	#FA,R0
+	sxt	R0
+	movl	#0A,R1
+	sxt 	R1
+DONE
+	bra	DONE		; loop
+end MAIN

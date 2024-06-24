@@ -1,0 +1,42 @@
+X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
+Input file name: BIS.txt
+Time of assembly: Mon 24 Jun 2024 04:05:54 
+  1	    	     			org #1000
+  2	    	     	MAIN
+  3	1000	67FA		movl	#FF,R2
+  4	1002	4B51		bis.b 	R2,R1		;produce result of 0 with byte and register source, set zero flag
+  5	1004	6041		movl	#08,R1
+  6	1006	4BA1		bis	$8,R1		;produce result of 0x0108 with word and constant source
+  7	1008	603A		movl	#07,R2
+  8	100A	4B53		bis.b	R2,R3		;produce negative result, negative flag
+  9	    	     	DONE
+ 10	100C	3FFF		bra	DONE		; loop
+ 11	    	     	end MAIN
+Successful completion of assembly - 1P
+
+** Symbol table **
+
+Constants (Equates)
+Name                               	Type	Value	Decimal
+
+Labels (Code)
+Name                               	Type	Value	Decimal
+DONE                               	REL	100C	4108	PRI
+MAIN                               	REL	1000	4096	PRI
+
+Labels (Data)
+Name                               	Type	Value	Decimal
+
+Registers
+Name                               	Type	Value	Decimal
+R7                                 	REG	0007	7	PRI
+R6                                 	REG	0006	6	PRI
+R5                                 	REG	0005	5	PRI
+R4                                 	REG	0004	4	PRI
+R3                                 	REG	0003	3	PRI
+R2                                 	REG	0002	2	PRI
+R1                                 	REG	0001	1	PRI
+R0                                 	REG	0000	0	PRI
+
+.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\BIS.xme
+

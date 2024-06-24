@@ -1,0 +1,11 @@
+		org #1000
+MAIN
+	movl	#FF,R2
+	bis.b 	R2,R1		;produce result of 0 with byte and register source, set zero flag
+	movl	#08,R1
+	bis	$8,R1		;produce result of 0x0100 with word and constant source
+	movl	#07,R2
+	bis.b	R2,R3		;produce negative result, negative flag
+DONE
+	bra	DONE		; loop
+end MAIN

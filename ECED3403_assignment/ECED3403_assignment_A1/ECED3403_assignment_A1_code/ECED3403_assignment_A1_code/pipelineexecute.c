@@ -65,6 +65,20 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 	psw_update(overflow_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO), carry_update[src_msb][dest_msb][result_msb]);
 }
 
+// determine which bit to mask
+unsigned short mask_shift_msb(unsigned short dest_value, int wordbyte) {
+	return (wordbyte == WORD_CHECK) ? // is it a word?
+		MASK_SHIFT_MSB_WORD(dest_value) : MASK_SHIFT_MSB_BYTE(dest_value); // mask either bit or word
+}
+
+// determine whether new dest is a word or byte
+void set_srcconarray(unsigned short dest_value, int dest_num, int wordbyte) {
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+}
+
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	unsigned short temp, 
 		temp_srccon_value = srccon_value;
@@ -110,14 +124,6 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 		res.word = NIB_3_SET(res.word, (bcd(NIB_3(dest_value), NIB_3(srccon_value))));
 	}
 
-	/*
-	res.nibble.n0 = bcd(dest.nibble.n0, src.nibble.n0);
-	res.nibble.n1 = bcd(dest.nibble.n1, src.nibble.n1);
-	if (wordbyte == WORD_CHECK) { // if WORD, need to bcd the high byte
-		res.nibble.n2 = bcd(dest.nibble.n2, src.nibble.n2);
-		res.nibble.n3 = bcd(dest.nibble.n3, src.nibble.n3);
-	}*/
-
 	if (wordbyte == WORD_CHECK) // result is word
 		srcconarray.word[REGISTER][dest_num] = res.word;
 	else // result is byte
@@ -130,49 +136,71 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 // COMPARE: dst - src/con
 void cmp_execute(unsigned short dest_value, unsigned short srccon_value) {
 	int temp = dest_value - srccon_value;
-	psw_update(CLEAR, (temp < ZERO), (temp == ZERO), CLEAR);
+	psw_update(psw.v, (temp < ZERO), (temp == ZERO), (temp >= ZERO));
 }
 
 // EXCLUSIVE: dst <- dst ^ src/con
-void xor_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
+void xor_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value ^= srccon_value;
-	psw_update(CLEAR, (dest_value < ZERO), (dest_value == ZERO), CLEAR);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
+	
+	set_srcconarray(dest_value, dest_num, wordbyte); // set srcconarray with new destination value
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
 }
 
 // AND: dst <- dst & src/con
-void and_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
+void and_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value &= srccon_value;
-	psw_update(CLEAR, (dest_value < ZERO), (dest_value == ZERO), CLEAR);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
+
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
 }
 
 // OR: dst <- dst | src/con
-void or_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
+void or_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value |= srccon_value;
-	psw_update(CLEAR, (dest_value < ZERO), (dest_value == ZERO), CLEAR);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
+
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
 }
 
 // BIT TEST: dst <- dst & (1 << src/co)
 void bit_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
 	dest_value &= BIT_SHIFT(srccon_value);
-	psw_update(CLEAR, CLEAR, (dest_value == ZERO), CLEAR);
 	srcconarray.word[REGISTER][dest_num] = dest_value;
+	psw_update(CLEAR, CLEAR, (dest_value == ZERO), CLEAR);
 }
 
 // BIT CLEAR: dst << dst & ~(1 << src/con) 
-void bic_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
+void bic_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value &= ~BIT_SHIFT(srccon_value);
-	psw_update(CLEAR, (dest_value < ZERO), (dest_value == ZERO), CLEAR);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
+
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
 }
 
 // BIT SET: dst <- dst | (1 << src/con)
-void bis_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num) {
+void bis_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value |= BIT_SHIFT(srccon_value);
-	psw_update(CLEAR, (dest_value < ZERO), (dest_value == ZERO), CLEAR);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
+
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
 }
 
 // MOVE: dst <- src
@@ -181,32 +209,40 @@ void mov_execute(unsigned short srccon_value, int dest_num) {
 }
 
 // SWAP src and dest
-void swap_execute(unsigned short dest_value, unsigned short srccon_value) {
-	unsigned int temp = dest_value;
-	dest_value = srccon_value;
-	srccon_value = temp;
+void swap_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int srccon_num) {
+	srcconarray.word[REGISTER][dest_num] = srccon_value;
+	srcconarray.word[REGISTER][srccon_num] = dest_value;
 }
 
 // SHIFT DST: dst >> 1
 void sra_execute(unsigned short dest_value, int dest_num, int wordbyte) {
-	int dest_msb = (wordbyte == WORD_CHECK) ?
-		MASK_MSB_WORD(dest_value) : MASK_MSB_BYTE(dest_value);
-	int dest_lsb = MASK_LSB(dest_value);
+	unsigned short dest_msb, dest_lsb = MASK_LSB(dest_value);
+	dest_msb = mask_shift_msb(dest_value, wordbyte);
+	dest_value = (dest_value >> SHIFT_RIGHT) | dest_msb;
 
-	dest_value = (dest_value >> SHIFT_RIGHT) | dest_msb; // shift dest right through carry with sign extension
-	psw_update(CLEAR, CLEAR, (dest_value == ZERO), dest_lsb);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	if (wordbyte == WORD_CHECK)
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	else
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	dest_msb = (wordbyte == WORD_CHECK) ? MASK_SHIFT_MSB_WORD(dest_msb) : MASK_SHIFT_MSB_BYTE(dest_msb);
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), dest_lsb);
 }
 
 // ROTATE DST WITH CARRY: dst >> 1, dst(msb) == 1 
 void rrc_execute(unsigned short dest_value, int dest_num, int wordbyte) {
-	int carry = (wordbyte == WORD_CHECK) ?
-		CARRY_TO_MSB_WORD(dest_value) : CARRY_TO_MSB_BYTE(dest_value);
-	int dest_lsb = MASK_LSB(dest_value);
+	unsigned short dest_lsb = MASK_LSB(dest_value), dest_msb = (wordbyte == WORD_CHECK) ? MASK_SHIFT_MSB_WORD(dest_value) : MASK_SHIFT_MSB_BYTE(dest_value);
 
-	dest_value = (dest_value >> SHIFT_RIGHT) | carry; // shift dest right through carry
-	psw_update(CLEAR, CLEAR, (dest_value == ZERO), dest_lsb);
-	srcconarray.word[REGISTER][dest_num] = dest_value;
+	if (wordbyte == WORD_CHECK) {
+		dest_value = (dest_value >> SHIFT_RIGHT) | CARRY_TO_MSB_WORD(psw.c); // shift dest right through carry
+		srcconarray.word[REGISTER][dest_num] = dest_value;
+	}
+	else {
+		dest_value = (dest_value >> SHIFT_RIGHT) | CARRY_TO_MSB_BYTE(psw.c);
+		srcconarray.byte[REGISTER][dest_num][LOW] = dest_value;
+	}
+
+	psw.c = dest_lsb;
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // SWAP DST BYTES
@@ -214,35 +250,44 @@ void swpb_execute(int dest_num) {
 	unsigned int temp = srcconarray.byte[REGISTER][dest_num][HIGH];
 	srcconarray.byte[REGISTER][dest_num][HIGH] = srcconarray.byte[REGISTER][dest_num][LOW];
 	srcconarray.byte[REGISTER][dest_num][LOW] = temp;
+	temp = srcconarray.word[REGISTER][dest_num];
+	psw_update(CLEAR, MASK_SHIFT_MSB_WORD(temp), (temp == ZERO), CLEAR);
 }
 
+// SIGN EXTEND BYTES TO WORD
  void sxt_execute(unsigned short dest_value, int dest_num) {
 	 int dest_msb = MASK_SHIFT_MSB_BYTE(dest_value);
 	 if (dest_msb == SET) // dest_msb = 1, negative
 		 srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_SET; // sign extend low byte to be negative, 0xFF
 	 else // dest_msb = 0, positive
 		 srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_CLEAR; // sign extend high byte to be positive, 0x00
-}
+	 unsigned char temp = srcconarray.word[REGISTER][dest_num];
+	 psw_update(CLEAR, dest_msb, (temp == ZERO), CLEAR);
+ }
 
 // MOV LOW BYTES INTO DST
 void movl_execute(unsigned short bytevalue) {
 	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
 }
 
+// MOV LOW BYTES INTO DST AND SET HIGH BYTES T0 0X00
 void movlz_execute(unsigned short bytevalue) {
 	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = UNSET_HIGH_BYTE;
 	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
 }
 
+// MOV LOW BYTES INTO DST AND SET HIGH BYTES T0 0XFF
 void movls_execute(unsigned short bytevalue) {
 	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = SET_HIGH_BYTE;
 	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
 }
 
+// MOV HIGH BYTES INTO DST
 void movh_execute(unsigned short bytevalue) {
 	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = bytevalue;
 }
 
+// execute function
 void execute() {
 	// temporary return just until full instruciton set is implemented
 	if (((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH)) != TRUE) { // not an instruction to implement in a2
@@ -252,15 +297,17 @@ void execute() {
 	unsigned int dest_value = 0, srccon_value;
 	int wordbyte, bytevalue;
 
-	if (opcode >= ADD && opcode <= BIS)
+	// initilalize variables to struct contents for readability
+	if (opcode >= ADD && opcode <= BIS) // if opcode is from add to bis
 		add_to_bis_ops(reg_const_operands.destination, reg_const_operands.sourceconstant, reg_const_operands.sourceconstantcheck, &dest_value, &srccon_value, &wordbyte);
 
-	else if (opcode >= MOV && opcode <= SXT)
+	else if (opcode >= MOV && opcode <= SXT) // if opcode is from mov to sxt
 		mov_to_sxt_ops(reg_const_operands.destination, reg_const_operands.sourceconstant, &dest_value, &srccon_value, &wordbyte);
 	
-	else if (opcode >= MOVL && opcode <= MOVH)
+	else if (opcode >= MOVL && opcode <= MOVH) // if opcode is from movl to movh
 		bytevalue = movl_to_movh_ops(movx_operands.bytevalue, &wordbyte);
 
+	// switch case to identify what execute process to go through
 	switch (opcode) {
 	case(ADD):
 	case(SUB):
@@ -275,28 +322,28 @@ void execute() {
 		cmp_execute(dest_value, srccon_value);
 		break;
 	case(XOR):
-		xor_execute(dest_value, srccon_value, reg_const_operands.destination);
+		xor_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(AND):
-		and_execute(dest_value, srccon_value, reg_const_operands.destination);
+		and_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(OR):
-		or_execute(dest_value, srccon_value, reg_const_operands.destination);
+		or_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(BIT):
 		bit_execute(dest_value, srccon_value, reg_const_operands.destination);
 		break;
 	case(BIC):
-		bic_execute(dest_value, srccon_value, reg_const_operands.destination);
+		bic_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(BIS):
-		bis_execute(dest_value, srccon_value, reg_const_operands.destination);
+		bis_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(MOV):
 		mov_execute(srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(SWAP):
-		swap_execute(dest_value, srccon_value);
+		swap_execute(dest_value, srccon_value, reg_const_operands.destination, reg_const_operands.sourceconstant);
 		break;
 	case(SRA):
 		sra_execute(dest_value, reg_const_operands.destination, wordbyte);
@@ -326,6 +373,7 @@ void execute() {
 		break;
 	}
 
+	// called debugging functions for ease of marker
 	if (clock == 0)
 		return;
 	reg_display();
