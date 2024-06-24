@@ -35,7 +35,7 @@ void idmem_print(memory array[], int* lowbound, int* lowboundtemp) {
 	}
 }
 
-void display_mem() {
+void mem_display() {
 	char memtype, inumtemp, dnumtemp;
 	int lowbound = 0, upbound = 0, lowboundtemp = 0, upboundtemp = 0;
 
@@ -50,7 +50,7 @@ void display_mem() {
 	while (lowbound < upbound) {
 
 		// print memory location label
-		printf("%04x: ", lowbound);
+		printf("%04X: ", lowbound);
 
 		switch (memtype) { 
 		case('I'): // instruction memory

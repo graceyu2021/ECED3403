@@ -14,9 +14,9 @@ This is the pipeline execute function file of my program.
 
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
 	*wordbyte = reg_const_operands.wordbyte;
-	*dest_value = (&wordbyte == WORD_CHECK) ? // adding word or byte?
+	*dest_value = (*wordbyte == WORD_CHECK) ? // adding word or byte?
 		srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
-	*srccon_value = (wordbyte == WORD_CHECK) ?
+	*srccon_value = (*wordbyte == WORD_CHECK) ?
 		srcconarray.word[srcconcheck][srccon_num] : srcconarray.byte[srcconcheck][srccon_num][LOW];
 }
 
@@ -34,7 +34,7 @@ int movl_to_movh_ops(unsigned int bytevalue, int* wordbyte) {
 	return movx_operands.bytevalue;
 }
 
-void psw_update(unsigned int v, unsigned int n, unsigned int z, unsigned int c) {
+void psw_update(unsigned short v, unsigned short n, unsigned short z, unsigned short c) {
 	psw.v = v;
 	psw.n = n;
 	psw.z = z,
@@ -42,30 +42,40 @@ void psw_update(unsigned int v, unsigned int n, unsigned int z, unsigned int c) 
 }
 
 void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value, unsigned short srccon_value, int wordbyte) {
-	int carry_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 0}, {1, 0}}, {{1, 0}, {1, 1}} };
-	int overflow_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 1}, {0, 0}}, {{0, 0}, {1, 0}} };
+	short carry_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 0}, {1, 0}}, {{1, 0}, {1, 1}} };
+	short overflow_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 1}, {0, 0}}, {{0, 0}, {1, 0}} };
 
-	int dest_msb = (wordbyte == WORD_CHECK) ?
+	unsigned short dest_msb = (wordbyte == WORD_CHECK) ?
 		MASK_SHIFT_MSB_WORD(dest_value) : MASK_SHIFT_MSB_BYTE(dest_value);
 
-	int src_msb = (wordbyte == WORD_CHECK) ?
+	unsigned short src_msb = (wordbyte == WORD_CHECK) ?
 		MASK_SHIFT_MSB_WORD(srccon_value) : MASK_SHIFT_MSB_BYTE(srccon_value);
 		
-	int result_msb = (wordbyte == WORD_CHECK) ?
+	unsigned short result_msb = (wordbyte == WORD_CHECK) ?
 		MASK_SHIFT_MSB_WORD(temp_result) : MASK_SHIFT_MSB_BYTE(temp_result);
 
-	psw_update(overflow_update[src_msb][dest_msb][result_msb], carry_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO));
+	if (wordbyte != WORD_CHECK) // if result is a byte, need to remove extra 1 in bit 8
+		temp_result = MASK_BYTE(temp_result);
+
+	//printf("src %04x dest %04x res %04x", src_msb^ONE, dest_msb, result_msb);
+
+	if (opcode == SUB || opcode == SUBC) // if a subtraction was performed, ~the msb of source 
+		src_msb = src_msb^ ONE; // invert src_msb
+
+	psw_update(overflow_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO), carry_update[src_msb][dest_msb][result_msb]);
 }
 
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
-	unsigned int temp, 
+	unsigned short temp, 
 		temp_srccon_value = srccon_value;
 	
 	if (opcode == ADD || opcode == SUB)
 		psw.c = CLEAR; // set carry to 0 so following arithmetic is not affected by previous carry
 
-	if (opcode == SUB || opcode == SUBC) // is this subtraction?
-		temp_srccon_value = ~(temp_srccon_value) + ONE; // set source/constant to negative
+	if (opcode == SUB) // is this sub?
+		temp_srccon_value = ~(temp_srccon_value)+ONE; // set source/constant to negative
+	else if (opcode == SUBC) // is this subc?
+		temp_srccon_value = ~(temp_srccon_value);
 
 	temp = dest_value + (temp_srccon_value + psw.c); // temp = destination + source/constant + carry
 
@@ -78,31 +88,35 @@ void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value,
 }
 
 unsigned short bcd(unsigned short dest_nib, unsigned short src_nib) {
-	int carry_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 0}, {1, 0}}, {{1, 0}, {1, 1}} };
-	int overflow_update[BIT_ON_OFF][BIT_ON_OFF][BIT_ON_OFF] = { {{0, 1}, {0, 0}}, {{0, 0}, {1, 0}} };
-
 	unsigned short res_nib = dest_nib + src_nib + psw.c;
-	if (res_nib > NUMERICAL_NIB) // if res_nib is A to F
-		res_nib -= NIBtoNUMERICAL; // res_nib -= 10 to make res_nib numerical
+	psw.c = (res_nib > NUMERICAL_NIB) ? SET : CLEAR; // set psw if greater than 10, clear otherwise
 
-	// update overflow and carry based on these bits
-	psw.c = carry_update[src_nib][dest_nib][res_nib]; 
-	psw.v = overflow_update[src_nib][dest_nib][res_nib];
+	if (res_nib > NUMERICAL_NIB)  // if res_nib is A to F
+		res_nib -= NIBtoNUMERICAL; // res_nib -= 10 to make res_nib numerical
 
 	return res_nib;
 }
 
 void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	psw.c = CLEAR; // clear carry for first nib
-	nibble_word res = { .word = CLEAR }, dest = { .word = dest_value }, src = { .word = srccon_value }; // initialize three unions for nibbles
+	//nibble_word res = { .word = CLEAR }, dest = { .word = dest_value }, src = { .word = srccon_value }; // initialize three unions for nibbles
+	nibble_word res = {.word = CLEAR };
 
 	// decimal add the nibbles
+	res.word = NIB_0_SET(res.word, (bcd(NIB_0(dest_value), NIB_0(srccon_value))));
+	res.word = NIB_1_SET(res.word, (bcd(NIB_1(dest_value), NIB_1(srccon_value))));
+	if (wordbyte == WORD_CHECK) { // if WORD, need to bcd the high byte
+		res.word = NIB_2_SET(res.word, (bcd(NIB_2(dest_value), NIB_2(srccon_value))));
+		res.word = NIB_3_SET(res.word, (bcd(NIB_3(dest_value), NIB_3(srccon_value))));
+	}
+
+	/*
 	res.nibble.n0 = bcd(dest.nibble.n0, src.nibble.n0);
 	res.nibble.n1 = bcd(dest.nibble.n1, src.nibble.n1);
 	if (wordbyte == WORD_CHECK) { // if WORD, need to bcd the high byte
 		res.nibble.n2 = bcd(dest.nibble.n2, src.nibble.n2);
 		res.nibble.n3 = bcd(dest.nibble.n3, src.nibble.n3);
-	}
+	}*/
 
 	if (wordbyte == WORD_CHECK) // result is word
 		srcconarray.word[REGISTER][dest_num] = res.word;
@@ -111,8 +125,6 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 
 	// set temporary variables to destination msb and destination value
 	int res_msb = (wordbyte == WORD_CHECK) ? res.nibble.n3: res.nibble.n1;
-
-	psw_update(psw.v, psw.c, res_msb, (res.word == ZERO)); // pdate psw
 }
 
 // COMPARE: dst - src/con
@@ -218,12 +230,12 @@ void movl_execute(unsigned short bytevalue) {
 }
 
 void movlz_execute(unsigned short bytevalue) {
-	srcconarray.word[REGISTER][movx_operands.destination] &= UNSET_HIGH_BYTE;
+	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = UNSET_HIGH_BYTE;
 	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
 }
 
 void movls_execute(unsigned short bytevalue) {
-	srcconarray.word[REGISTER][movx_operands.destination] |= SET_HIGH_BYTE;
+	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = SET_HIGH_BYTE;
 	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
 }
 
@@ -313,4 +325,10 @@ void execute() {
 	default:
 		break;
 	}
+
+	if (clock == 0)
+		return;
+	reg_display();
+	psw_display();
+	printf("\n");
 }

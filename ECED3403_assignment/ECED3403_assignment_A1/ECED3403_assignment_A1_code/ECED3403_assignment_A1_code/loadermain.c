@@ -56,11 +56,11 @@ int main() {
 
 		case 'M': // display memory
 		case 'm':
-			display_mem();
+			mem_display();
 			break;
 		case 'P': // display psw bits
 		case 'p':
-			display_psw();
+			psw_display();
 			break;
 		case 'G':
 		case 'g':

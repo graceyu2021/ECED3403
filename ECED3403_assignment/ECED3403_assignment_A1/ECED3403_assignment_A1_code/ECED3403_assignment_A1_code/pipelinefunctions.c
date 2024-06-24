@@ -46,9 +46,9 @@ void fetch1(int instructionaddress, int* ictrl) {
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
 	if ((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH))
-		printf("%04x: %-5s ", instructionaddress, mnemarray[instructionmnem]);
+		printf("%04X: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	else {
-		printf("%04x: %04x  \n", instructionaddress, instructionbit);
+		printf("%04X: %04X  \n", instructionaddress, instructionbit);
 		return;
 	}
 
@@ -65,7 +65,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int ins
 			printf("CON: %d ", srcconarray.word[CONSTANT][reg_const_operands.sourceconstant]);
 	}
 	if (BYTEVALUE_PRINT(instructionmnem)) // print bytes
-		printf("BYTE: %04x ", movx_operands.bytevalue);
+		printf("BYTE: %02X ", movx_operands.bytevalue);
 
 	if (opcode >= MOV && opcode <= MOVH)
 		printf("DST: R%d\n", movx_operands.destination);
@@ -138,8 +138,8 @@ int decode(int instructionaddress) {
 }
 
 // convert psw bits to a hexadecimal
-unsigned short psw_bit_to_word(unsigned short psw_word) {
-
+unsigned short psw_bit_to_word() {
+	unsigned short psw_word;
 	psw_word |= psw.prev << PREV_SHIFT;
 	psw_word |= psw.flt << FLT_SHIFT;
 	psw_word |= psw.curr << CURR_SHIFT;
@@ -154,14 +154,13 @@ unsigned short psw_bit_to_word(unsigned short psw_word) {
 
 void pipeline() {
 	int instructionaddress = 0, instructionmnem = 0, ictrl = 0;
-	unsigned short psw_word = 0;
 
-	psw_word = psw_bit_to_word(psw_word);
+	unsigned short psw_word = psw_bit_to_word();
 
 	if (clock != CLOCK_INITIALIZE)
-		printf("Start: PC: %04x PSW: %04x Brkpt: %04x Clk: %d\n", srcconarray.word[REGISTER][R7], psw_word, breakpoint, clock);
+		printf("Start: PC: %04X PSW: %04X Brkpt: %04X Clk: %d\n", srcconarray.word[REGISTER][R7], psw_word, breakpoint, clock);
 	else
-		printf("Start: PC: %04x PSW: %04x Brkpt: %04x Clk: 0\n", srcconarray.word[REGISTER][R7] + NOP_PC_OFFSET, psw_word, breakpoint, clock);
+		printf("Start: PC: %04X PSW: %04X Brkpt: %04X Clk: 0\n", srcconarray.word[REGISTER][R7] + NOP_PC_OFFSET, psw_word, breakpoint, clock);
 
 	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick
@@ -181,5 +180,5 @@ void pipeline() {
 			break;
 	}
 
-	printf("End: PC: %04x Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
+	printf("End: PC: %04X Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
 }

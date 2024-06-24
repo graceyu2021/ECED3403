@@ -77,17 +77,19 @@ This is the header file of my program.
 #define MASK_MSB_WORD(a) (a & 0x8000)
 #define MASK_MSB_BYTE(a) (a & 0x0080)
 #define MASK_LSB(a) (a & 0x0001)
+#define MASK_BYTE(a) (a & 0x0FF)
 
 #define MNEMARRAY_MAX 40
 #define MNEMARRAY_WORDMAX 6
 
-#define SET_HIGH_BYTE 0x11110000
-#define UNSET_HIGH_BYTE 0x00000000
+#define SET_HIGH_BYTE 0xFF
+#define UNSET_HIGH_BYTE 0x00
 
 #define SET 1
 #define CLEAR 0
 
 #define ONE 1
+#define SUB_ONE -1
 
 #define SHIFT_RIGHT 1
 
@@ -111,6 +113,18 @@ This is the header file of my program.
 #define SLP_SHIFT 3
 #define N_SHIFT 2
 #define Z_SHIFT 1
+
+#define NIB_0(a) (a & 0x000F)
+#define NIB_1(a) ((a & 0x00F0) >> 4)
+#define NIB_2(a) ((a & 0x0F00) >> 8)
+#define NIB_3(a) ((a & 0xF000) >> 12)
+
+#define NIB_0_SET(a, b) (a | b)
+#define NIB_1_SET(a, b) (a | (b << 4))
+#define NIB_2_SET(a, b) (a | (b << 8))
+#define NIB_3_SET(a, b) (a | (b << 12))
+
+
 
 // structure of operands for ADD to SXT
 typedef struct reg_const {

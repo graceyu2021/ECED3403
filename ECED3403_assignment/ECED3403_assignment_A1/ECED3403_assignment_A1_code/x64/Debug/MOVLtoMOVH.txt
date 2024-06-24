@@ -1,0 +1,10 @@
+		org #1000
+MAIN
+	movh	#EE00,R0
+	movl	#99,R0		;set low bytes
+	movh	#AA00,R0	;set high bytes
+	movlz	#88,R0		;set low bytes without changing high bytes
+	movls 	#77,R0		;set low bytes and clear high bytes
+DONE
+	bra		DONE			; loop
+end MAIN
