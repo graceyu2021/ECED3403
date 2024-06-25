@@ -164,7 +164,7 @@ void pipeline() {
 
 	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 		// check clock tick
-		if (clock % 2 == ZERO) { // even number
+		if (clock % DIV2REMAINDER == ZERO) { // even number
 			instructionaddress = fetch0(&ictrl);
 			instructionmnem = decode(instructionaddress, instructionbit);
 		}
@@ -176,7 +176,7 @@ void pipeline() {
 		clock++; // increment clock
 
 		// breaks if increment is set AND if clock is not equal to zero
-		if (increment == TRUE && clock % 2 == ZERO && clock != ZERO)
+		if (increment == TRUE && clock % DIV2REMAINDER == ZERO && clock != ZERO)
 			break;
 	}
 

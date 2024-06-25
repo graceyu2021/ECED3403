@@ -35,6 +35,8 @@ This is the header file of my program.
 #define SRCCON 2
 #define SRCCONOPTIONS 8
 
+#define DIV2REMAINDER 2
+
 #define NOP_PC_OFFSET 2
 
 // macros to mask instructionbit to identify instruction groups
@@ -123,8 +125,6 @@ This is the header file of my program.
 #define NIB_1_SET(a, b) (a | (b << 4))
 #define NIB_2_SET(a, b) (a | (b << 8))
 #define NIB_3_SET(a, b) (a | (b << 12))
-
-
 
 // structure of operands for ADD to SXT
 typedef struct reg_const {
