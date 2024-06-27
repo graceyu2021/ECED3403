@@ -1,0 +1,12 @@
+		org #1000
+MAIN
+	movh	#FF00,R0
+	movh	#FF00,R1
+	sub	R1,R0	;producing zero and carry flags using word subtraction
+	subc	$0,R0	;adding constant 0 to a register with carry of 1, producing a zero and carry flag	
+	movl	#30,R0
+	movl	#80,R1
+	sub.b	R1,R0	;producing an overflow and negative flag using byte subtraction
+DONE
+	bra		DONE			; loop
+end MAIN

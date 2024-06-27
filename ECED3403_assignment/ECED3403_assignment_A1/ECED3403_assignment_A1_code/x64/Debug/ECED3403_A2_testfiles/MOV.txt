@@ -1,0 +1,11 @@
+		org #1000
+MAIN
+	movh	#FFFF,R0
+	movl	#0F,R0
+	movl	#65,R1
+	mov	R0,R1
+	movl	#65,R1
+	mov.b	R1,R0
+DONE
+	bra	DONE		; loop
+end MAIN

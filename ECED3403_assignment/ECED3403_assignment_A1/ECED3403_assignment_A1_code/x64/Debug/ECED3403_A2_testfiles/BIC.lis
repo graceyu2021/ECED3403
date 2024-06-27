@@ -1,0 +1,43 @@
+X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
+Input file name: BIC.txt
+Time of assembly: Mon 24 Jun 2024 06:03:35 
+  1	    	     			org #1000
+  2	    	     	MAIN
+  3	1000	7FF8		movh	#FFFF,R0
+  4	1002	6078		movl	#0F,R0
+  5	1004	4AA0		bic	$8,R0		;produce negative flag with word and constant source
+  6	1006	4AD0		bic.b 	$2,R0		;produces no flags with word and register source
+  7	1008	6011		movl	#02,R1
+  8	100A	6008		movl	#01,R0
+  9	100C	4A41		bic.b	R0,R1		;produce zero flag with byte and register source
+ 10	    	     	DONE
+ 11	100E	3FFF		bra	DONE		; loop
+ 12	    	     	end MAIN
+Successful completion of assembly - 1P
+
+** Symbol table **
+
+Constants (Equates)
+Name                               	Type	Value	Decimal
+
+Labels (Code)
+Name                               	Type	Value	Decimal
+DONE                               	REL	100E	4110	PRI
+MAIN                               	REL	1000	4096	PRI
+
+Labels (Data)
+Name                               	Type	Value	Decimal
+
+Registers
+Name                               	Type	Value	Decimal
+R7                                 	REG	0007	7	PRI
+R6                                 	REG	0006	6	PRI
+R5                                 	REG	0005	5	PRI
+R4                                 	REG	0004	4	PRI
+R3                                 	REG	0003	3	PRI
+R2                                 	REG	0002	2	PRI
+R1                                 	REG	0001	1	PRI
+R0                                 	REG	0000	0	PRI
+
+.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\BIC.xme
+

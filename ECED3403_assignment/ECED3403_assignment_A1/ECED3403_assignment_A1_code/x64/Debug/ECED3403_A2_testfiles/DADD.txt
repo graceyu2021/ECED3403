@@ -1,0 +1,19 @@
+		org #1000
+MAIN
+	movh	#1200,R0
+	movl	#34,R0
+	movh	#8700,R1
+	movl	#66,R1		
+	DADD	R0,R1		;DADD with word using a register, producing a carry flag
+	movh	#9000,R0
+	movh	#9000,R1
+	add	R1,R0	;producing carry and overflow flag using word addition
+	addc	$0,R0	;adding 0 to a register with carry of 1, clearing flags
+	movl	$1,R0
+	movl	$-1,R1
+	add.b	R1,R0	;producing a zero flag using byte addition
+	movl	$4,R0
+	DADD.b	$4,R0		;DADD with byte using a constant
+DONE
+	bra	DONE		; loop
+end MAIN

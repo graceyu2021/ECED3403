@@ -168,7 +168,7 @@ int load_file(FILE* file) {
 		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray.word[REGISTER][R7]);
 		srcconarray.word[REGISTER][R7] -= BYTE; // set PC to be one byte less to accomadate for NOP
 		instructionbit = NOP; // initialize NOP mov r0, r0
-		clock = CLOCK_INITIALIZE; // initialize clock
+		clock = CLOCK_INITIALIZE; // initialize clock to -2, not 0, to print NOP
 	}
 	else { // invalid record(s) encountered
 		int length = strlen(srecord);

@@ -19,6 +19,8 @@ This is the header file of my program.
 
 #include <stdio.h>
 
+//#define DEBUG
+
 #define SREC_MAX 100//67 // defined macros for records
 
 // declared array for file name, imem, and dmem global

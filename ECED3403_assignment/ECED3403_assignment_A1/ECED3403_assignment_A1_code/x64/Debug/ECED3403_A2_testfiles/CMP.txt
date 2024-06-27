@@ -1,0 +1,14 @@
+		org #1000
+MAIN
+	MOVL	#08,R2
+	MOVL	#08,R1
+	CMP.b 	R1,R2		;0x08-0x08
+	MOVH	#0800,R1
+	MOVL	#00,R1
+	MOVH	#0700,R2	;0x0700-0x0800
+	CMP 	R1,R2
+	MOVL	#09,R3
+	CMP 	$1,R3		;0x0009-$1
+DONE
+	bra	DONE		; loop
+end MAIN

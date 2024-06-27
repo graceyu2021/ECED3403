@@ -33,6 +33,8 @@ void idmem_print(memory array[], int* lowbound, int* lowboundtemp) {
 			printf(".");
 		}
 	}
+
+	printf("\n");
 }
 
 void mem_display() {
@@ -63,8 +65,6 @@ void mem_display() {
 			idmem_print(dmem.byte_mem, &lowbound, &lowboundtemp);
 			break;
 		}
-
-		printf("\n");
 
 		// check if enough remaining bytes to print a full row
 		if ((upbound - lowbound) <= HEXRANGE) { 

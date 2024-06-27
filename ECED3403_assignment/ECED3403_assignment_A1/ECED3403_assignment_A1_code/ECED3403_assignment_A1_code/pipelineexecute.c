@@ -10,7 +10,6 @@ submission date: May 23rd, 2024
 This is the pipeline execute function file of my program.
 */
 
-//#define DEBUG
 #include "MAINHEADER.H"
 
 // shorten variable names from add to bid
@@ -123,8 +122,10 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 	else // result is byte
 		srcconarray.byte[REGISTER][dest_num][LOW] = res.byte[LOW]; 
 
-	// set temporary variables to destination msb and destination value
-	int res_msb = (wordbyte == WORD_CHECK) ? res.nibble.n3: res.nibble.n1;
+	// set temporary variable to resultt to use in psw update function
+	unsigned char res_temp = (wordbyte == WORD_CHECK) ? res.word : res.byte[LOW];
+
+	psw_update(CLEAR, CLEAR, (res_temp == ZERO), psw.c); // psw.c was updated in bcd function
 }
 
 // COMPARE: dst - src/con
@@ -139,7 +140,7 @@ void xor_execute(unsigned short dest_value, unsigned short srccon_value, int des
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
 	
 	set_srcconarray(dest_value, dest_num, wordbyte); // set srcconarray with new destination value
-	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
+	psw_update(CLEAR, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // AND: dst <- dst & src/con
@@ -148,7 +149,7 @@ void and_execute(unsigned short dest_value, unsigned short srccon_value, int des
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
 
 	set_srcconarray(dest_value, dest_num, wordbyte);
-	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
+	psw_update(psw.v, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // OR: dst <- dst | src/con
@@ -157,7 +158,7 @@ void or_execute(unsigned short dest_value, unsigned short srccon_value, int dest
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
 
 	set_srcconarray(dest_value, dest_num, wordbyte);
-	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
+	psw_update(psw.v, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // BIT TEST: dst <- dst & (1 << src/co)
@@ -165,7 +166,7 @@ void bit_execute(unsigned short dest_value, unsigned short srccon_value, int des
 	dest_value &= BIT_SHIFT(srccon_value);
 
 	srcconarray.word[REGISTER][dest_num] = dest_value;
-	psw_update(CLEAR, CLEAR, (dest_value == ZERO), CLEAR);
+	psw_update(psw.v, psw.n, (dest_value == ZERO), psw.c);
 }
 
 // BIT CLEAR: dst << dst & ~(1 << src/con) 
@@ -174,7 +175,7 @@ void bic_execute(unsigned short dest_value, unsigned short srccon_value, int des
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
 
 	set_srcconarray(dest_value, dest_num, wordbyte);
-	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
+	psw_update(psw.v, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // BIT SET: dst <- dst | (1 << src/con)
@@ -183,7 +184,7 @@ void bis_execute(unsigned short dest_value, unsigned short srccon_value, int des
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
 
 	set_srcconarray(dest_value, dest_num, wordbyte);
-	psw_update(CLEAR, dest_msb, (dest_value == ZERO), CLEAR);
+	psw_update(psw.v, dest_msb, (dest_value == ZERO), psw.c);
 }
 
 // MOVE: dst <- src
@@ -197,7 +198,7 @@ void swap_execute(unsigned short dest_value, unsigned short srccon_value, int de
 	srcconarray.word[REGISTER][srccon_num] = dest_value;
 }
 
-// SHIFT DST: dst >> 1
+// SHIFT DST: dst >> 1 while maintainig sign
 void sra_execute(unsigned short dest_value, int dest_num, int wordbyte) {
 	unsigned short dest_msb, dest_lsb = MASK_LSB(dest_value); // mask lsb of dest
 	dest_msb = (wordbyte == WORD_CHECK) ? MASK_MSB_WORD(dest_value) : MASK_MSB_BYTE(dest_value); // mask msb of dest
@@ -231,7 +232,7 @@ void swpb_execute(int dest_num) {
 	srcconarray.byte[REGISTER][dest_num][LOW] = temp;										// set low byte to high og value
 	temp = srcconarray.word[REGISTER][dest_num]; // temp variable reset to readability in psw_update function call
 
-	psw_update(CLEAR, MASK_SHIFT_MSB_WORD(temp), (temp == ZERO), CLEAR);
+	psw_update(psw.v, MASK_SHIFT_MSB_WORD(temp), (temp == ZERO), psw.c);
 }
 
 // SIGN EXTEND BYTES TO WORD
@@ -243,7 +244,7 @@ void swpb_execute(int dest_num) {
 		 srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_CLEAR; // sign extend high byte to be positive, 0x00
 	 unsigned char temp = srcconarray.word[REGISTER][dest_num];
 
-	 psw_update(CLEAR, dest_msb, (temp == ZERO), CLEAR);
+	 psw_update(psw.v, dest_msb, (temp == ZERO), psw.c);
  }
 
 // MOV LOW BYTES INTO DST
@@ -271,9 +272,12 @@ void movh_execute(unsigned short bytevalue) {
 // execute function
 void execute() {
 	// temporary return just until full instruciton set is implemented
-	if (((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH)) != TRUE) { // not an instruction to implement in a2
+	if (((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH)) != TRUE) // not an instruction to implement in a2
 		return;
-	}
+
+#ifndef DEBUG
+	printf("E0 at clock %d: \n", clock);
+#endif
 	
 	unsigned int dest_value = 0, srccon_value;
 	int wordbyte, bytevalue;
@@ -293,7 +297,7 @@ void execute() {
 	case(ADD):
 	case(SUB):
 	case(ADDC):
-	case(SUBC):
+	case(SUBC): // ADD to SUBC are all performed in one function
 		add_to_subc_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
 		break;
 	case(DADD):
@@ -356,8 +360,6 @@ void execute() {
 
 	// called debugging functions for ease of marker
 #ifndef DEBUG
-	if (clock == 0)
-		return;
 	reg_display();
 	psw_display();
 	printf("\n");

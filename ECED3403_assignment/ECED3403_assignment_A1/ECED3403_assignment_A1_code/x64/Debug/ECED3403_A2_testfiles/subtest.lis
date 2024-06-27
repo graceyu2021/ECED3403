@@ -1,0 +1,56 @@
+X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
+Input file name: subtest.asm
+Time of assembly: Wed 26 Jun 2024 20:26:25 
+  1	    	     	; 
+  2	    	     	;lab 1, question 1: sum an array of 16-bit numbers, stopping when a program-specified liit is reached
+  3	    	     	;name: Grace Yu
+  4	    	     	;B00: 902046
+  5	    	     	;class: ECED3403
+  6	    	     	;instructor: Dr. Larry Hughes
+  7	    	     	;
+  8	    	     	DATA
+  9	    	     			org #40
+ 10	0040	0005	ARRAY	word $5					; create array
+ 11	0042	0001			word $1
+ 12	0044	0001			word $1
+ 13	0046	0001			word $1
+ 14	0048	0001			word $1
+ 15	004A	0001			word $1
+ 16	    	     	CODE
+ 17	    	     			org #1000
+ 18	    	     	MAIN
+ 19	1000	6048			movl	#9,R0
+ 20	1002	6009			movl	#1,R1
+ 21	1004	4248			sub.b	R1,R0
+ 22	    	     	DONE
+ 23	1006	3FFF			bra		DONE			; loop
+ 24	    	     	end MAIN
+Successful completion of assembly - 1P
+
+** Symbol table **
+
+Constants (Equates)
+Name                               	Type	Value	Decimal
+
+Labels (Code)
+Name                               	Type	Value	Decimal
+DONE                               	REL	1006	4102	PRI
+MAIN                               	REL	1000	4096	PRI
+
+Labels (Data)
+Name                               	Type	Value	Decimal
+ARRAY                              	REL	0040	64	PRI
+
+Registers
+Name                               	Type	Value	Decimal
+R7                                 	REG	0007	7	PRI
+R6                                 	REG	0006	6	PRI
+R5                                 	REG	0005	5	PRI
+R4                                 	REG	0004	4	PRI
+R3                                 	REG	0003	3	PRI
+R2                                 	REG	0002	2	PRI
+R1                                 	REG	0001	1	PRI
+R0                                 	REG	0000	0	PRI
+
+.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\subtest.xme
+

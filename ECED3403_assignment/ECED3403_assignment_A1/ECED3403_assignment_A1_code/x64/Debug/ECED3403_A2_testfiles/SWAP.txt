@@ -1,0 +1,9 @@
+		org #1000
+MAIN
+	movh	#FFFF,R0
+	movl	#0F,R0
+	movl	#65,R1
+	swap	R0,R1
+DONE
+	bra	DONE		; loop
+end MAIN

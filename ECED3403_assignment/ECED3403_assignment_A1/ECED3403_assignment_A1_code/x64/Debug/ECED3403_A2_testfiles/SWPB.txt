@@ -1,0 +1,10 @@
+		org #1000
+MAIN
+	swpb	R0
+	movl	#FA,R0
+	swpb	R0
+	movl	#09,R0
+	swpb	R0
+DONE
+	bra	DONE		; loop
+end MAIN

@@ -1,6 +1,0 @@
-		org #1000
-MAIN
-	SETCC	v
-DONE
-	bra	DONE		; loop
-end MAIN

@@ -75,5 +75,6 @@ void reg_set() {
 
 // display psw bit values
 void psw_display() {
-	printf("prev: %d flt: %d curr: %d v: %d slp: %d n: %d z: %d c: %d\n", psw.prev, psw.flt, psw.curr, psw.v, psw.slp, psw.n, psw.z, psw.c);
+	printf("prev: %d flt: %d curr: %d v: %d slp: %d n: %d z: %d c: %d\n", 
+		psw.prev, psw.flt, psw.curr, psw.v, psw.slp, psw.n, psw.z, psw.c);
 }

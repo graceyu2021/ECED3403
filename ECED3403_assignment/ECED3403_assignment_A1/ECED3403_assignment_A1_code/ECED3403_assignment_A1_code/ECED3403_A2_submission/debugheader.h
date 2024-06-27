@@ -21,10 +21,14 @@ This is the debug header file of my program.
 #define HIGH 1
 #define LOW 0
 
+void mem_change();
+
 void breakpoint_set();
 
 void reg_display();
 
 void reg_set();
+
+void psw_display();
 
 #endif //DEBUGHEADER_H

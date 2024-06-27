@@ -1,0 +1,11 @@
+		org #1000
+MAIN
+	movh	#FFFF,R0
+	movl	#FF,R0
+	bit	$8,R0		;produce negative flag with word and constant source
+	movl	#02,R1
+	movh	#EE00,R1
+	bit.b	R1,R2		;produce zero flag with byte and register source
+DONE
+	bra	DONE		; loop
+end MAIN
