@@ -83,9 +83,9 @@ void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value,
 		psw.c = CLEAR; // set carry to 0 so following arithmetic is not affected by previous carry
 
 	if (opcode == SUB) // is this sub?
-		temp_srccon_value = ~(temp_srccon_value)+ONE; // set source/constant to negative
+		temp_srccon_value = ~(temp_srccon_value) + ONE; // set source/constant to negative
 	else if (opcode == SUBC) // is this subc?
-		temp_srccon_value = ~(temp_srccon_value);
+		temp_srccon_value = ~(temp_srccon_value); // in subc instruction, no + ONE
 
 	temp = dest_value + (temp_srccon_value + psw.c); // temp = destination + source/constant + carry
 
