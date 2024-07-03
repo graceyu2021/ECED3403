@@ -270,7 +270,7 @@ void movh_execute(unsigned short bytevalue) {
 }
 
 // execute function
-void execute() {
+void execute0() {
 	// temporary return just until full instruciton set is implemented
 	if (((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH)) != TRUE) // not an instruction to implement in a2
 		return;

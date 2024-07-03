@@ -29,9 +29,6 @@ This is the header file of my program.
 
 #define NOP 0x4C40 // NOP mov r0, r0
 
-#define READ 1
-#define DONEREAD 0
-
 #define SRCCON 2
 #define SRCCONOPTIONS 8
 
@@ -131,14 +128,25 @@ typedef struct reg_const {
 	unsigned int sourceconstantcheck, wordbyte, sourceconstant, destination;
 }reg_const;
 
-reg_const reg_const_operands; // reg_const global struct
-
 // structure of operands for MOVL to MOVH
 typedef struct movx {
 	unsigned int bytevalue, destination;
 }movx;
 
+// structure of operands for LD and ST
+typedef struct ldst {
+	unsigned int prpo, dec, inc, wordbyte, source, destination;
+}ldst;
+
+// structure of operands for LDR and STR
+typedef struct ldrstr {
+	unsigned int off, wordbyte, source, destination;
+}ldrstr;
+
+reg_const reg_const_operands; // reg_const global struct
 movx movx_operands; // movx global struct
+ldst ldst_operands; // ldst global struct
+ldrstr ldrstr_operands; // ldrstr global struct
 
 typedef struct psw_struct {
 	unsigned short prev, flt, curr, v, slp, n, z, c; // arithmetic overflow, negative, zero, carry
@@ -169,6 +177,10 @@ typedef enum registers { // register enum values
 	R0, R1, R2, R3, R4, R5, R6, R7
 } registers;
 
+typedef enum idmar { // imar and dmar enum values
+	DONE, READ, WRITE
+} dmar_enum;
+
 int fetch0(int* ictrl);
 
 void fetch1(int instructionaddress, int* ictrl);
@@ -177,7 +189,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray, int instruct
 
 int decode(int instructionaddress);
 
-void execute();
+void execute0();
 
 void pipeline();
 

@@ -1,5 +1,32 @@
-﻿  pipelinefunctions.c
+﻿  debugfunctions.c
+  loaderfunctionsL.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(113,13): warning C4013: 'strlen' undefined; assuming extern returning int
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(154,17): warning C4553: '==': result of expression not used; did you intend '='?
+  loaderfunctionsM.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(60,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(65,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(41,26): warning C4101: 'dnumtemp': unreferenced local variable
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(41,16): warning C4101: 'inumtemp': unreferenced local variable
+  loadermain.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loadermain.c(59,4): warning C4013: 'mem_display' undefined; assuming extern returning int
+  pipelineexecute.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(50,47): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(245,50): warning C4244: 'initializing': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(252,63): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(258,63): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(264,63): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(269,64): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(328,61): warning C4020: 'mov_execute': too many actual parameters
+  pipelinefunctions.c
 C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(55,58): warning C4028: formal parameter 3 different from declaration
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(180,49): warning C4020: 'decode': too many actual parameters
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(148): warning C4716: 'decode': must return a value
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(194,49): warning C4020: 'decode': too many actual parameters
+  Generating Code...
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(162): warning C4716: 'decode': must return a value
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(178): warning C4715: 'load_file': not all control paths return a value
   ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe

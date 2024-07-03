@@ -37,7 +37,7 @@ int fetch0(int* ictrl) {
 int imcontroller(int instructionaddress, int ictrl, int imbr) {
 	if (ictrl = READ) {
 		imbr = imem.word_mem[(instructionaddress + BYTE) / BYTE];
-		ictrl = DONEREAD;
+		ictrl = DONE;
 	}
 	return imbr;
 }
@@ -86,9 +86,21 @@ void opcode_set(int enum_initial, int enum_offset) {
 	opcode = enum_initial + enum_offset;
 }
 
+void ldststr_operands_set(int instructionbit) {
+	//ldrstr_operands;
+}
+
 void movx_operands_set(int instructionbit) {
 	movx_operands.destination = DESTINATION_BITS(instructionbit);
 	movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
+}
+
+void ldst_operands_set(int instructionbit) {
+	ldst_operands.prpo;
+	ldst_operands.dec;
+	ldst_operands.inc;
+	ldst_operands.source;
+	ldst_operands.destination;
 }
 
 void reg_const_operands_set(int instructionbit) {
@@ -107,6 +119,7 @@ int decode(int instructionaddress) {
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
+		ldststr_operands_set(instructionbit);
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
@@ -117,6 +130,7 @@ int decode(int instructionaddress) {
 		opcode_set(MOVL, MOVLtoMOVH_ARRAY(instructionbit));
 	}
 	else if (LDtoST_BITS(instructionbit)) { // LD to ST
+		ldst_operands_set(instructionbit);
 		opcode_set(LD, LDtoST_ARRAY(instructionbit));
 	}
 	else if (SETPRItoCLRCC_BITS(instructionbit)) { // SETPRI to CLRCC
@@ -149,7 +163,7 @@ int decode(int instructionaddress) {
 
 // convert psw bits to a hexadecimal
 unsigned short psw_bit_to_word() {
-	unsigned short psw_word;
+	unsigned short psw_word = 0;
 	psw_word |= psw.prev << PREV_SHIFT;
 	psw_word |= psw.flt << FLT_SHIFT;
 	psw_word |= psw.curr << CURR_SHIFT;
@@ -181,7 +195,7 @@ void pipeline() {
 		}
 		else { // odd number
 			fetch1(instructionaddress, &ictrl); // fet
-			execute();
+			execute0();
 		}
 
 		// breaks if increment is set AND if clock is not equal to zero
