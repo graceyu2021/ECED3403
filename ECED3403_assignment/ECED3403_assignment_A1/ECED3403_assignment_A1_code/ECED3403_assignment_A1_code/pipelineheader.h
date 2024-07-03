@@ -42,6 +42,7 @@ This is the header file of my program.
 #define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
 #define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
 #define SETPRItoCLRCC_BITS(a) ((a & 0x0D80) == 0x0D80)
+#define SETPRItoSVC_BITS(a) ((a & 0x0060) == 0)
 #define ADDtoSXT_BITS(a) ((a & 0x1000) == 0)
 #define MOVtoSWAP_BITS(a) ((a & 0x0D00) == 0x0C00)
 #define SRAtoRRC_BITS(a) ((a & 0x0C30) == 0x0C00)
@@ -52,23 +53,38 @@ This is the header file of my program.
 #define BLtoBRA_ARRAY(a) ((a & 0x1C00) >> 10)
 #define MOVLtoMOVH_ARRAY(a) ((a & 0x1800) >> 11)
 #define LDtoST_ARRAY(a) ((a & 0x0400) >> 10)
+#define SETPRItoSVC_ARRAY(a) ((a & 0x0010) >> 4)
+#define SETCCtoCLRCC_ARRAY(a) ((a & 0x0040) >> 6)
 #define MOVtoSWAP_ARRAY(a) ((a & 0x0080) >> 7)
 #define SRAtoRRC_ARRAY(a) ((a & 0x0008) >> 3)
 #define SWPBtoSXT_ARRAY(a) ((a & 0x0020) >> 5)
 #define ADDtoBIS_ARRAY(a) ((a & 0x0F00) >> 8)
 
 // macros to mask and shift instructionbit to identify operand parameters
-#define SOURCECONSTANT_BITS(a) ((a & 0x0038) >> 3)
-#define SOURCECONSTANTCHECK_BITS(a) ((a & 0x0080) >> 7)
+#define OFF_BITS(a) ((a & 0x3F80) >> 7)
+#define SRCCON_BITS(a) ((a & 0x0038) >> 3)
+#define SRCCONCHECK_BITS(a) ((a & 0x0080) >> 7)
 #define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)
 #define BYTEVALUE_BITS(a) ((a & 0x07F8) >> 3)
-#define DESTINATION_BITS(a) (a & 0x0007)
+#define DST_BITS(a) (a & 0x0007)
+#define PRPO_BITS(a) ((a & 0x0200) >> 9)
+#define DEC_BITS(a) ((a & 0x0100) >> 8)
+#define INC_BITS(a) ((a & 0x0080) >> 7)
+#define V_BITS(a) ((a & 0x0010) >> 4)
+#define SLP_BITS(a) ((a & 0x0008) >> 3)
+#define N_BITS(a) ((a & 0x0004) >> 2)
+#define Z_BITS(a) ((a & 0x0002) >> 1)
+#define C_BITS(a) (a & 0x0001)
 
-#define SOURCECONSTANTCHECK_PRINT(a) (a >= ADD && a <= BIS)
-#define WORDBYTE_PRINT(a) ((a >= ADD && a <= MOV) || (a >= SRA && a <= RRC))
-#define SOURCECONSTANT_PRINT(a) (a >= ADD && a <= SWAP)
-#define SOURCECONSTANT_SELECT(a, b) ((a == 0) || b == MOV || b == SWAP)
+#define OFF_PRINT(a) (a == LDR || a == STR)
+#define ADDRESSING_PRINT(a) (a == LD || a == ST)
 #define BYTEVALUE_PRINT(a) (a >= MOVL && a <= MOVH)
+#define SRCCONCHECK_PRINT(a) (a >= ADD && a <= BIS)
+#define WORDBYTE_PRINT(a) ((a >= ADD && a <= MOV) || a == SRA || a == RRC || a == LD || a == ST || a == LDR || a == STR)
+#define SRCCON_PRINT(a) ((a >= ADD && a <= SWAP) || a == LD || a == ST || a == LDR || a == ST)
+#define SRCCON_CHECK(a) (rec_const.srccon == CONSTANT && (a >= ADD && a <= BIS))
+#define DST_PRINT(a) ((a >= ADD && a <= SXT) || (a >= LD && a <= STR))
+#define FLAG_PRINT(a) (a == SETCC || a == CLRCC)
 
 #define MASK_SHIFT_MSB_WORD(a) ((a & 0x8000) >> 15)
 #define MASK_SHIFT_MSB_BYTE(a) ((a & 0x0080) >> 7)
@@ -123,30 +139,12 @@ This is the header file of my program.
 #define NIB_2_SET(a, b) (a | (b << 8))
 #define NIB_3_SET(a, b) (a | (b << 12))
 
-// structure of operands for ADD to SXT
-typedef struct reg_const {
-	unsigned int sourceconstantcheck, wordbyte, sourceconstant, destination;
-}reg_const;
+// structure of operands
+typedef struct operands_struct {
+	unsigned short off, bytevalue, prpo, dec, inc, wordbyte, srcconcheck, srccon, dst, v, slp, n, z, c;
+}operands_struct;
 
-// structure of operands for MOVL to MOVH
-typedef struct movx {
-	unsigned int bytevalue, destination;
-}movx;
-
-// structure of operands for LD and ST
-typedef struct ldst {
-	unsigned int prpo, dec, inc, wordbyte, source, destination;
-}ldst;
-
-// structure of operands for LDR and STR
-typedef struct ldrstr {
-	unsigned int off, wordbyte, source, destination;
-}ldrstr;
-
-reg_const reg_const_operands; // reg_const global struct
-movx movx_operands; // movx global struct
-ldst ldst_operands; // ldst global struct
-ldrstr ldrstr_operands; // ldrstr global struct
+operands_struct operand;
 
 typedef struct psw_struct {
 	unsigned short prev, flt, curr, v, slp, n, z, c; // arithmetic overflow, negative, zero, carry

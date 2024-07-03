@@ -14,7 +14,7 @@ This is the pipeline execute function file of my program.
 
 // shorten variable names from add to bid
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
-	*wordbyte = reg_const_operands.wordbyte;
+	*wordbyte = operand.wordbyte;
 
 	// adding word or byte?
 	*dest_value = (*wordbyte == WORD_CHECK) ? srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
@@ -23,7 +23,7 @@ void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int*
 
 // shorten variable names from mov to sxt
 void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
-	*wordbyte = reg_const_operands.wordbyte;
+	*wordbyte = operand.wordbyte;
 
 	// adding word or byte?
 	*dest_value = (*wordbyte == WORD_CHECK) ? srcconarray.word[REGISTER][dest_num] : srcconarray.byte[REGISTER][dest_num][LOW];
@@ -31,9 +31,8 @@ void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned int* dest_value, unsi
 }
 
 // shorten variable names from movl to movh
-int movl_to_movh_ops(unsigned int bytevalue, int* wordbyte) {
-	*wordbyte = reg_const_operands.wordbyte;
-	return movx_operands.bytevalue;
+void movl_to_movh_ops(int* bytevalue) {
+	*bytevalue = operand.bytevalue;
 }
 
 // determine which bit to mask
@@ -247,50 +246,62 @@ void swpb_execute(int dest_num) {
 	 psw_update(psw.v, dest_msb, (temp == ZERO), psw.c);
  }
 
+ void setcc_execute() {
+	 psw.v |= operand.v;
+	 psw.slp |= operand.slp;
+	 psw.n |= operand.n;
+	 psw.z |= operand.z;
+	 psw.c |= operand.c;
+ }
+
+ void clrcc_execute() {
+	 psw.v &= ~operand.v;
+	 psw.slp &= ~operand.slp;
+	 psw.n &= ~operand.n;
+	 psw.z &= ~operand.z;
+	 psw.c &= ~operand.c;
+ }
+
 // MOV LOW BYTES INTO DST
 void movl_execute(unsigned short bytevalue) {
-	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
+	srcconarray.byte[REGISTER][operand.dst][LOW] = bytevalue;
 }
 
 // MOV LOW BYTES INTO DST AND SET HIGH BYTE T0 0X00
 void movlz_execute(unsigned short bytevalue) {
-	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = UNSET_HIGH_BYTE; // clear high byte
-	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
+	srcconarray.byte[REGISTER][operand.dst][HIGH] = UNSET_HIGH_BYTE; // clear high byte
+	srcconarray.byte[REGISTER][operand.dst][LOW] = bytevalue;
 }
 
 // MOV LOW BYTES INTO DST AND SET HIGH BYTE T0 0XFF
 void movls_execute(unsigned short bytevalue) {
-	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = SET_HIGH_BYTE; // set high byte
-	srcconarray.byte[REGISTER][movx_operands.destination][LOW] = bytevalue;
+	srcconarray.byte[REGISTER][operand.dst][HIGH] = SET_HIGH_BYTE; // set high byte
+	srcconarray.byte[REGISTER][operand.dst][LOW] = bytevalue;
 }
 
 // MOV HIGH BYTE INTO DST
 void movh_execute(unsigned short bytevalue) {
-	srcconarray.byte[REGISTER][movx_operands.destination][HIGH] = bytevalue;
+	srcconarray.byte[REGISTER][operand.dst][HIGH] = bytevalue;
 }
 
 // execute function
 void execute0() {
 	// temporary return just until full instruciton set is implemented
-	if (((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH)) != TRUE) // not an instruction to implement in a2
+	if (((opcode >= ADD && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
 		return;
 
-#ifndef DEBUG
-	printf("E0 at clock %d: \n", clock);
-#endif
-	
 	unsigned int dest_value = 0, srccon_value;
 	int wordbyte, bytevalue;
 
 	// initilalize variables to struct contents for readability
 	if (opcode >= ADD && opcode <= BIS) // if opcode is from add to bis
-		add_to_bis_ops(reg_const_operands.destination, reg_const_operands.sourceconstant, reg_const_operands.sourceconstantcheck, &dest_value, &srccon_value, &wordbyte);
+		add_to_bis_ops(operand.dst, operand.srccon, operand.srcconcheck, &dest_value, &srccon_value, &wordbyte);
 
 	else if (opcode >= MOV && opcode <= SXT) // if opcode is from mov to sxt
-		mov_to_sxt_ops(reg_const_operands.destination, reg_const_operands.sourceconstant, &dest_value, &srccon_value, &wordbyte);
+		mov_to_sxt_ops(operand.dst, operand.srccon, &dest_value, &srccon_value, &wordbyte);
 	
 	else if (opcode >= MOVL && opcode <= MOVH) // if opcode is from movl to movh
-		bytevalue = movl_to_movh_ops(movx_operands.bytevalue, &wordbyte);
+		movl_to_movh_ops(&bytevalue);
 
 	// switch case to identify what execute process to go through
 	switch (opcode) {
@@ -298,49 +309,55 @@ void execute0() {
 	case(SUB):
 	case(ADDC):
 	case(SUBC): // ADD to SUBC are all performed in one function
-		add_to_subc_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		add_to_subc_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(DADD):
-		dadd_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		dadd_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(CMP):
 		cmp_execute(dest_value, srccon_value);
 		break;
 	case(XOR):
-		xor_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		xor_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(AND):
-		and_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		and_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(OR):
-		or_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		or_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(BIT):
-		bit_execute(dest_value, srccon_value, reg_const_operands.destination);
+		bit_execute(dest_value, srccon_value, operand.dst);
 		break;
 	case(BIC):
-		bic_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		bic_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(BIS):
-		bis_execute(dest_value, srccon_value, reg_const_operands.destination, wordbyte);
+		bis_execute(dest_value, srccon_value, operand.dst, wordbyte);
 		break;
 	case(MOV):
-		mov_execute(srccon_value, reg_const_operands.destination, wordbyte);
+		mov_execute(srccon_value, operand.dst, wordbyte);
 		break;
 	case(SWAP):
-		swap_execute(dest_value, srccon_value, reg_const_operands.destination, reg_const_operands.sourceconstant);
+		swap_execute(dest_value, srccon_value, operand.dst, operand.srccon);
 		break;
 	case(SRA):
-		sra_execute(dest_value, reg_const_operands.destination, wordbyte);
+		sra_execute(dest_value, operand.dst, wordbyte);
 		break;
 	case(RRC):
-		rrc_execute(dest_value, reg_const_operands.destination, wordbyte);
+		rrc_execute(dest_value, operand.dst, wordbyte);
 		break;
 	case(SWPB):
-		swpb_execute(reg_const_operands.destination);
+		swpb_execute(operand.dst);
 		break;
 	case(SXT):
-		sxt_execute(dest_value, reg_const_operands.destination);
+		sxt_execute(dest_value, operand.dst);
+		break;
+	case(SETCC):
+		setcc_execute();
+		break;
+	case(CLRCC):
+		clrcc_execute();
 		break;
 	case(MOVL):
 		movl_execute(bytevalue);
@@ -360,8 +377,8 @@ void execute0() {
 
 	// called debugging functions for ease of marker
 #ifndef DEBUG
-	reg_display();
-	psw_display();
-	printf("\n");
+	//reg_display();
+	//psw_display();
+	//printf("\n");
 #endif
 }

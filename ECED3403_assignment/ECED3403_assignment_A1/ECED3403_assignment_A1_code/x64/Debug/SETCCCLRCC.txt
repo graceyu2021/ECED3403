@@ -1,0 +1,9 @@
+		org #1000
+MAIN
+	setcc vsnzc
+	clrcc vc
+	clrcc vsnzc
+	setcc snz
+DONE
+	bra	DONE		; loop
+end MAIN

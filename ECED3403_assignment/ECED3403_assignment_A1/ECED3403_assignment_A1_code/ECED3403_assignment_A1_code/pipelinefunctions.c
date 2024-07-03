@@ -24,10 +24,6 @@ psw_struct psw = {
 int fetch0(int* ictrl) {
 	int instructionaddress = srcconarray.word[REGISTER][R7];
 
-#ifndef DEBUG
-	printf("\nF0 at clock %d: Copied PC %04X to IMAR\n", clock, srcconarray.word[REGISTER][R7]);
-#endif
-
 	srcconarray.word[REGISTER][R7] += BYTE; // increment by 2 because of byte memory
 	*ictrl = READ;
 
@@ -43,74 +39,102 @@ int imcontroller(int instructionaddress, int ictrl, int imbr) {
 }
 
 void fetch1(int instructionaddress, int* ictrl) {
-	int imbr = 0;
+#ifndef DEBUG
+	printf("%d\t\t\t\t\t\tE0: %04X\n", clock, instructionbit);
+#endif
 
+	int imbr = 0;
 	instructionbit = imcontroller(instructionaddress, *ictrl, imbr);
 
 #ifndef DEBUG
-	printf("F1 at clock %d: Obtained word %04X\n", clock, instructionbit);
+	printf("\t\tF1: %04X\n", instructionbit);
 #endif
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6], int instructionmnem) {
 	printf("D0 at clock %d: ", clock);
-	if ((opcode >= ADD && opcode <= SXT) || (opcode >= MOVL && opcode <= MOVH))
+
+	if ((opcode >= ADD && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
 		printf("%04X: %-5s ", instructionaddress, mnemarray[instructionmnem]);
 	else {
 		printf("%04X: %04X  \n", instructionaddress, instructionbit);
 		return;
 	}
 
-	if (SOURCECONSTANTCHECK_PRINT(instructionmnem)) // print register/constant check bit?
-		printf("RC: %d ", reg_const_operands.sourceconstantcheck);
+	if (OFF_PRINT(instructionmnem))
+		printf("OFF: %07X ", operand.off); // print offset
 
-	if (WORDBYTE_PRINT(instructionmnem)) // print word/byte?
-		printf("WB: %d ", reg_const_operands.wordbyte);
+	else if (ADDRESSING_PRINT(instructionmnem))
+		printf("PRPO: %d DEC %d INC %d ", operand.prpo, operand.dec, operand.inc); // print addressing
 
-	if (SOURCECONSTANT_PRINT(instructionmnem)){ // print source/constant
-		if (SOURCECONSTANT_SELECT(reg_const_operands.sourceconstantcheck, instructionmnem)) // print source
-			printf("SRC: R%d ", reg_const_operands.sourceconstant);
-		else // print constant
-			printf("CON: %d ", srcconarray.word[CONSTANT][reg_const_operands.sourceconstant]);
+	else if (BYTEVALUE_PRINT(instructionmnem))
+		printf("BYTE: %02X ", operand.bytevalue); // print byte
+
+	else if (SRCCONCHECK_PRINT(instructionmnem))
+		printf("RC: %d ", operand.srcconcheck); // print register/constant check bit
+
+	if (WORDBYTE_PRINT(instructionmnem))
+		printf("WB: %d ", operand.wordbyte); // print word/byte
+	
+	if (SRCCON_PRINT(instructionmnem)) {
+		if (SRCCONCHECK_PRINT(instructionmnem))
+			printf("CON: %d ", srcconarray.word[CONSTANT][operand.srccon]); // print constant
+		else // else srcconcheck = 0
+			printf("SRC: R%d ", operand.srccon); // print source
 	}
-	if (BYTEVALUE_PRINT(instructionmnem)) // print bytes
-		printf("BYTE: %02X ", movx_operands.bytevalue);
 
-	if (opcode >= MOV && opcode <= MOVH)
-		printf("DST: R%d\n", movx_operands.destination);
-	else 
-		printf("DST: R%d\n", reg_const_operands.destination);
+	if (DST_PRINT(instructionmnem))
+		printf("DST: R%d", operand.dst); // print destination
+	else if (FLAG_PRINT(instructionmnem))
+		printf("V: %d SLP %d N: %d Z: %d C: %d", operand.v, operand.slp, operand.n, operand.z, operand.c);
+
+	printf("\n");
 }
 
 void opcode_set(int enum_initial, int enum_offset) {
 	opcode = enum_initial + enum_offset;
 }
 
-void ldststr_operands_set(int instructionbit) {
-	//ldrstr_operands;
+void ldrtstr_operands_set(int instructionbit) {
+	operand.off = OFF_BITS(instructionbit);
+	operand.wordbyte = WORDBYTE_BITS(instructionbit);
+	operand.wordbyte = WORDBYTE_BITS(instructionbit);
+	operand.dst = DST_BITS(instructionbit);
 }
 
 void movx_operands_set(int instructionbit) {
-	movx_operands.destination = DESTINATION_BITS(instructionbit);
-	movx_operands.bytevalue = BYTEVALUE_BITS(instructionbit);
+	operand.dst = DST_BITS(instructionbit);
+	operand.bytevalue = BYTEVALUE_BITS(instructionbit);
 }
 
 void ldst_operands_set(int instructionbit) {
-	ldst_operands.prpo;
-	ldst_operands.dec;
-	ldst_operands.inc;
-	ldst_operands.source;
-	ldst_operands.destination;
+	operand.prpo = PRPO_BITS(instructionbit);
+	operand.dec = DEC_BITS(instructionbit);
+	operand.inc = INC_BITS(instructionbit);
+	operand.wordbyte = WORDBYTE_BITS(instructionbit);
+	operand.dst = DST_BITS(instructionbit);
+}
+
+void cc_operands_set(int instructionbit) {
+	operand.v = V_BITS(instructionbit);
+	operand.slp = SLP_BITS(instructionbit);
+	operand.n = N_BITS(instructionbit);
+	operand.z = Z_BITS(instructionbit);
+	operand.c = C_BITS(instructionbit);
 }
 
 void reg_const_operands_set(int instructionbit) {
-	reg_const_operands.sourceconstantcheck = SOURCECONSTANTCHECK_BITS(instructionbit);
-	reg_const_operands.wordbyte = WORDBYTE_BITS(instructionbit);
-	reg_const_operands.sourceconstant = SOURCECONSTANT_BITS(instructionbit);
-	reg_const_operands.destination = DESTINATION_BITS(instructionbit);
+	operand.srcconcheck = SRCCONCHECK_BITS(instructionbit);
+	operand.wordbyte = WORDBYTE_BITS(instructionbit);
+	operand.srccon = SRCCON_BITS(instructionbit);
+	operand.dst = DST_BITS(instructionbit);
 }
 
 int decode(int instructionaddress) {
+
+#ifndef DEBUG
+	printf("%d\t%04X\tF0: %04X\tD0: %04X\n", clock, srcconarray.word[REGISTER][R7], srcconarray.word[REGISTER][R7], instructionbit);
+#endif
 
 	int arrayplace = 0, nota2 = FALSE;
 	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = {"BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
@@ -119,7 +143,7 @@ int decode(int instructionaddress) {
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
-		ldststr_operands_set(instructionbit);
+		ldrtstr_operands_set(instructionbit);
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
@@ -134,7 +158,13 @@ int decode(int instructionaddress) {
 		opcode_set(LD, LDtoST_ARRAY(instructionbit));
 	}
 	else if (SETPRItoCLRCC_BITS(instructionbit)) { // SETPRI to CLRCC
-		opcode_set(SETPRI, ZERO); // will elaborate in when these opcodes are to be implemented
+		if (SETPRItoSVC_BITS(instructionbit)) { // SETPRI to SVC
+			opcode_set(SETPRI, SETPRItoSVC_ARRAY(instructionbit));
+		}
+		else { // SETCC to CLRCC
+			cc_operands_set(instructionbit);
+			opcode_set(SETCC, SETCCtoCLRCC_ARRAY(instructionbit));
+		}
 	}
 	else if (ADDtoSXT_BITS(instructionbit)) { // ADD to SXT
 		reg_const_operands_set(instructionbit); // set operand values for ADD to SXT
@@ -157,7 +187,7 @@ int decode(int instructionaddress) {
 	}
 
 #ifndef DEBUG
-	printdecode(nota2, instructionaddress, mnemarray, opcode);
+	//printdecode(nota2, instructionaddress, mnemarray, opcode);
 #endif
 }
 
@@ -186,6 +216,10 @@ void pipeline() {
 	// offset this NOP, making the actual first instruction fetched at clock 0
 	printf("Start: PC: %04X PSW: %04X Brkpt: %04X Clk: %d\n", srcconarray.word[REGISTER][R7], psw_word, breakpoint, clock);
 
+#ifndef DEBUG
+	printf("Clock\tPC\tFetch\t\tDecode\t\tExecute\n");
+#endif
+
 	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 
 		// check clock tick
@@ -198,11 +232,11 @@ void pipeline() {
 			execute0();
 		}
 
-		// breaks if increment is set AND if clock is not equal to zero
-		if (increment == TRUE && clock % DIV2REMAINDER == ZERO && clock)
-			break;
-
 		clock++; // increment clock
+
+		// breaks if increment is set AND if clock is not equal to zero
+		if (increment == TRUE && (clock % DIV2REMAINDER == ZERO))
+			break;
 	}
 
 	printf("End: PC: %04X Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);

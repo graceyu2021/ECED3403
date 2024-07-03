@@ -24,7 +24,7 @@ This is the header file of my program.
 #define FALSE 0
 #define HEXRANGE 16
 
-#define CLOCK_INITIALIZE -2
+#define CLOCK_INITIALIZE 0
 
 #define BYTEMEMSIZE (1 << 16) // 65,546 //defined macros for byte/word memory size
 #define WORDMEMSIZE (1 << 15) // 32,768
