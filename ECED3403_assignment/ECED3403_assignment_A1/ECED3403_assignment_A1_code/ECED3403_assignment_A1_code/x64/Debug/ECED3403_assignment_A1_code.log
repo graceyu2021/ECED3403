@@ -1,5 +1,11 @@
-﻿  pipelinefunctions.c
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(54,58): warning C4028: formal parameter 3 different from declaration
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(228,49): warning C4020: 'decode': too many actual parameters
-C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(192): warning C4716: 'decode': must return a value
+﻿  pipelineexecute.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(202,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(202,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(49,47): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(244,50): warning C4244: 'initializing': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(331,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(337,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(343,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(348,50): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(430,42): warning C4020: 'mov_execute': too many actual parameters
   ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe

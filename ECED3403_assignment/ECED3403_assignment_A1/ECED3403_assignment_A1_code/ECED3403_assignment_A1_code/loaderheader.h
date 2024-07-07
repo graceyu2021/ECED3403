@@ -34,6 +34,7 @@ This is the header file of my program.
 #define RECORD_BOUND(a, b) ((a) >= (BYTE * 4) && (a) < (2 * b + BYTE))
 
 // union for byte/word memory size
+
 typedef union memory {
 	unsigned char byte_mem[BYTEMEMSIZE];
 	unsigned short word_mem[WORDMEMSIZE];

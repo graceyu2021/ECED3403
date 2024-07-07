@@ -19,7 +19,7 @@ This is the header file of my program.
 
 #include <stdio.h>
 
-//#define DEBUG
+#define DEBUG 1
 
 #define SREC_MAX 100//67 // defined macros for records
 

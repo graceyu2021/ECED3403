@@ -61,7 +61,9 @@ This is the header file of my program.
 #define ADDtoBIS_ARRAY(a) ((a & 0x0F00) >> 8)
 
 // macros to mask and shift instructionbit to identify operand parameters
-#define OFF_BITS(a) ((a & 0x3F80) >> 7)
+#define MSB_BITS(a) (a & 0x0040)
+#define CLR_OFF_BIT8(a) (a & 0x3F80)
+#define OFF_BITS(a) ((a & 0x7F80) >> 7)
 #define SRCCON_BITS(a) ((a & 0x0038) >> 3)
 #define SRCCONCHECK_BITS(a) ((a & 0x0080) >> 7)
 #define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)
@@ -105,6 +107,16 @@ This is the header file of my program.
 
 #define ONE 1
 #define SUB_ONE -1
+
+#define BYTEINDEX 1
+#define WORDINDEX 2
+#define SUB_BYTEINDEX -1
+#define SUB_WORDINDEX -2
+
+#define PRE 1
+#define POST 0
+
+#define WORD_OFF(a) (a & 0xFFFE)
 
 #define SHIFT_RIGHT 1
 
@@ -163,6 +175,8 @@ typedef union nibble_word_union {
 }nibble_word;
 
 int opcode;
+unsigned short dmar, dmbr;
+int dctrl;
 
 typedef enum instructiontype { // enumerator of s-record types
 	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 
@@ -185,9 +199,16 @@ void fetch1(int instructionaddress, int* ictrl);
 
 void printdecode(int nota2, int instructionaddress, char mnemarray, int instructionmnem);
 
-int decode(int instructionaddress);
+void printdecode(int nota2, int instructionaddress, char mnemarray[][6]);
+
+void decode(int instructionaddress);
+
+// determine whether new dest is a word or byte
+void set_srcconarray(unsigned short dest_value, int dest_num, int wordbyte);
 
 void execute0();
+
+void execute1();
 
 void pipeline();
 

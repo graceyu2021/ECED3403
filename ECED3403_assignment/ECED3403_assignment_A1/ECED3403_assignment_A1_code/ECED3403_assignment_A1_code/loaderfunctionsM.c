@@ -38,7 +38,7 @@ void idmem_print(memory array[], int* lowbound, int* lowboundtemp) {
 }
 
 void mem_display() {
-	char memtype, inumtemp, dnumtemp;
+	char memtype;
 	int lowbound = 0, upbound = 0, lowboundtemp = 0, upboundtemp = 0;
 
 	// prompt user to select instruction or data memory
