@@ -61,7 +61,7 @@ This is the header file of my program.
 #define ADDtoBIS_ARRAY(a) ((a & 0x0F00) >> 8)
 
 // macros to mask and shift instructionbit to identify operand parameters
-#define MSB_BITS(a) (a & 0x0040)
+#define MSB_BITS(a) ((a & 0x2000) << 1)
 #define CLR_OFF_BIT8(a) (a & 0x3F80)
 #define OFF_BITS(a) ((a & 0x7F80) >> 7)
 #define SRCCON_BITS(a) ((a & 0x0038) >> 3)

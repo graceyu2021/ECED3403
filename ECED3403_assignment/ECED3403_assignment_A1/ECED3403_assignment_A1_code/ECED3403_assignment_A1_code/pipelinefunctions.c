@@ -91,10 +91,10 @@ void opcode_set(int enum_initial, int enum_offset) {
 
 void ldrtstr_operands_set() {
 	unsigned short msb = MSB_BITS(instructionbit); // mask 7th bit of offset
-	instructionbit = CLR_OFF_BIT8(instructionbit); // clear 8th bit of offset
-	instructionbit |= msb; // sign extend from 7th bit of offset to 8th
+	int temp_instructionbit = CLR_OFF_BIT8(instructionbit); // clear 8th bit of offset
+	temp_instructionbit |= msb; // sign extend from 7th bit of offset to 8th
 
-	operand.off = OFF_BITS(instructionbit);
+	operand.off = OFF_BITS(temp_instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
 	operand.dst = DST_BITS(instructionbit);
@@ -238,9 +238,11 @@ void pipeline() {
 		// breaks if increment is set AND if clock is not equal to zero
 		if (increment == TRUE && (clock % DIV2REMAINDER == ZERO))
 			break;
+	
+		printf("rah!!\n");
 	}
 
-	if (dctrl != DONE)
+	if (instructionbit == ZERO && dctrl != DONE)
 		execute1();
 
 	printf("End: PC: %04X Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
