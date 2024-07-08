@@ -1,0 +1,145 @@
+X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
+Input file name: stkex.asm
+Time of assembly: Mon 8 Jul 2024 02:10:53 
+  1	    	     	;
+  2	    	     	; Stack frame example
+  3	    	     	; ECED 3403
+  4	    	     	; 25 Jun 2024
+  5	    	     	;
+  6	    	     	; call subr(d0, d1, d2);
+  7	    	     	;
+  8	    	     	; func subr(p0, p1)
+  9	    	     	; auto a0, a1;
+ 10	    	     	;
+ 11	    	     	BP	equ	R4
+ 12	    	     	LR	equ	R5
+ 13	    	     	SP	equ	R6
+ 14	    	     	PC	equ	R7
+ 15	    	     	;
+ 16	    	     	; Offsets into stack
+ 17	    	     	;
+ 18	    	     	A1off	equ	$-2
+ 19	    	     	A0off	equ	$0
+ 20	    	     	BPoff	equ	$+2
+ 21	    	     	D0off	equ	$+4
+ 22	    	     	D1off	equ	$+6
+ 23	    	     	;
+ 24	    	     	; Stack in data memory
+ 25	    	     	;
+ 26	    	     		data
+ 27	    	     		org	#80
+ 28	0080	0000		bss	#7E
+ 29	00FE	0000	StkStrt	bss	#2	; #FE
+ 30	    	     	;
+ 31	    	     	; Caller's parameters
+ 32	    	     	;
+ 33	0100	D0D0	D0	word	#D0D0
+ 34	0102	D1D1	D1	word	#D1D1
+ 35	0104	D2D2	D2	word	#D2D2
+ 36	    	     	;
+ 37	    	     		code
+ 38	    	     		org	#1000
+ 39	    	     	;
+ 40	    	     	; Initialize SP
+ 41	    	     	;
+ 42	    	     	SFEx
+ 43	1000	67F6		movl	StkStrt,SP
+ 44	1002	7806		movh	StkStrt,SP
+ 45	    	     	;
+ 46	    	     	; Assign value to BP (R4)
+ 47	    	     	;
+ 48	1004	77FC		movls	#FF,BP
+ 49	    	     	;
+ 50	    	     	; call subr(data0, data1);
+ 51	    	     	;
+ 52	1006	6020		movl	D2,R0
+ 53	1008	7808		movh	D2,R0
+ 54	    	     	;
+ 55	100A	5901		ld	R0-,R1
+ 56	100C	5D0E		st	R1,SP-
+ 57	    	     	;
+ 58	100E	5901		ld	R0-,R1
+ 59	1010	5D0E		st	R1,SP-
+ 60	    	     	;
+ 61	1012	5801		ld	R0,R1
+ 62	1014	5D0E		st	R1,SP-
+ 63	    	     	;
+ 64	1016	0002		bl	subr
+ 65	    	     	;
+ 66	    	     	; Restore SP
+ 67	    	     	;
+ 68	1018	409E		add	#4,SP
+ 69	101A	4096		add	#2,SP
+ 70	    	     	;
+ 71	    	     	EndOfEx
+ 72	    	     	;
+ 73	    	     	; Subroutine
+ 74	    	     	;
+ 75	    	     	subr
+ 76	101C	5D26		st	BP,SP-	; Caller's BP
+ 77	    	     	;
+ 78	101E	4C34		mov	SP,BP	; 
+ 79	    	     	;
+ 80	    	     	; Reserve 2 words for autos
+ 81	    	     	;
+ 82	1020	429E		sub	#4,SP
+ 83	    	     	;
+ 84	1022	8221		ldr	BP,D0off,R1
+ 85	1024	C00C		str	R1,BP,A0off
+ 86	    	     	;
+ 87	1026	8321		ldr	BP,D1off,R1
+ 88	1028	FF0C		str	R1,BP,A1off
+ 89	    	     	;
+ 90	    	     	; Some processing
+ 91	    	     	; Done...
+ 92	    	     	;
+ 93	102A	4C26		mov	BP,SP	; Restore SP
+ 94	    	     	;
+ 95	102C	5AB4		ld	+SP,BP	; Restore BP
+ 96	    	     	;
+ 97	102E	4C2F		mov	LR,PC	; Return
+ 98	    	     	;
+ 99	    	     		end	SFEx
+
+Successful completion of assembly - 2P
+
+** Symbol table **
+
+Constants (Equates)
+Name                               	Type	Value	Decimal
+D1off                              	CON	0006	6	PRI
+D0off                              	CON	0004	4	PRI
+BPoff                              	CON	0002	2	PRI
+A0off                              	CON	0000	0	PRI
+A1off                              	CON	FFFE	-2	PRI
+
+Labels (Code)
+Name                               	Type	Value	Decimal
+EndOfEx                            	REL	101C	4124	PRI
+subr                               	REL	101C	4124	PRI
+SFEx                               	REL	1000	4096	PRI
+
+Labels (Data)
+Name                               	Type	Value	Decimal
+D2                                 	REL	0104	260	PRI
+D1                                 	REL	0102	258	PRI
+D0                                 	REL	0100	256	PRI
+StkStrt                            	REL	00FE	254	PRI
+
+Registers
+Name                               	Type	Value	Decimal
+PC                                 	REG	0007	7	PRI
+SP                                 	REG	0006	6	PRI
+LR                                 	REG	0005	5	PRI
+BP                                 	REG	0004	4	PRI
+R7                                 	REG	0007	7	PRI
+R6                                 	REG	0006	6	PRI
+R5                                 	REG	0005	5	PRI
+R4                                 	REG	0004	4	PRI
+R3                                 	REG	0003	3	PRI
+R2                                 	REG	0002	2	PRI
+R1                                 	REG	0001	1	PRI
+R0                                 	REG	0000	0	PRI
+
+.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\stkex.xme
+

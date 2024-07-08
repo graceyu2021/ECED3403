@@ -13,7 +13,7 @@ This is the pipeline execute function file of my program.
 #include "MAINHEADER.H"
 
 // shorten variable names from add to bid
-void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
+void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte) {
 	*wordbyte = operand.wordbyte;
 
 	// adding word or byte?
@@ -22,7 +22,7 @@ void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned int*
 }
 
 // shorten variable names from mov to sxt
-void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned int* dest_value, unsigned int* srccon_value, int* wordbyte) {
+void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte) {
 	*wordbyte = operand.wordbyte;
 
 	// adding word or byte?
@@ -31,7 +31,7 @@ void mov_to_sxt_ops(int dest_num, int srccon_num, unsigned int* dest_value, unsi
 }
 
 // shorten variable names from movl to movh
-void movl_to_movh_ops(int* bytevalue) {
+void movl_to_movh_ops(unsigned short* bytevalue) {
 	*bytevalue = operand.bytevalue;
 }
 
@@ -266,7 +266,6 @@ void swpb_execute(int dest_num) {
 
  // get ld or st's index
  unsigned short ldst_index() {
-	 printf("inc %x dec %x prepo %x\n", operand.inc, operand.dec, operand.prpo);
 	 if (operand.inc == SET) // inc bit is set
 		 return (operand.wordbyte == WORD_CHECK) ? WORDINDEX : BYTEINDEX; // word or byte?
 	 else if (operand.dec == SET) // dec bit is set
@@ -320,8 +319,6 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 	unsigned short eff_address;
 
 	srcdst_value += operand.off;
-	//if (operand.wordbyte == BYTE_CHECK)
-		//srcdst_value = WORD_OFF(srcdst_value);
 
 	eff_address = srcdst_value; // set eff_address to ld_src or st_dst
 	dmar = eff_address; // set dmar to eff_address
@@ -331,39 +328,14 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 	dmbr = srcconarray.word[REGISTER][operand.srccon];
 }
 
-/*// LOAD MEMORY INTO DST
-void ldr_execute() {
-	unsigned short ldr_src = srcconarray.word[REGISTER][operand.srccon]; // set srcconarray value to new variable for readability
-
-	ldr_src += ldr_src + operand.off; // index by offset
-	if (operand.wordbyte == BYTE_CHECK)
-		ldr_src = WORD_OFF(ldr_src);
-	
-	ldrstr_buffer_prep(ldr_src, READ); // perform ldr e0
-	srcconarray.word[REGISTER][operand.dst] = ldr_src; // set srcconarray to new ldr_src 
-}
-
-// STORE SRC INTO MEMORY
-void str_execute() {
-	unsigned short str_dst = srcconarray.word[REGISTER][operand.dst]; // set srcconarray value to new variable for readability
-
-	str_dst += str_dst + operand.off; // index by offset
-	if (operand.wordbyte == BYTE_CHECK) // 
-		str_dst = WORD_OFF(str_dst);
-
-	ldrstr_buffer_prep(str_dst, WRITE); // perform str e0
-	srcconarray.word[REGISTER][operand.dst] = str_dst; // set srcconarray to new str_dst 
-	dmbr = srcconarray.word[REGISTER][operand.srccon];
-}*/
-
 // execute function
 void execute0() {
 	// temporary return just until full instruciton set is implemented
 	if (((opcode >= ADD && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
 		return;
 
-	unsigned int dest_value = 0, srccon_value;
-	int wordbyte, bytevalue;
+	unsigned short dest_value, srccon_value, bytevalue;
+	int wordbyte;
 
 	// initilalize variables to struct contents for readability
 	if (opcode >= ADD && opcode <= BIS) // if opcode is from add to bis
@@ -470,8 +442,6 @@ void execute0() {
 }
 
 void dmcontroller() {
-	printf("dctrl = %d operand.dst = %d dmar = %04x ", dctrl, operand.dst, dmar);
-	printf("rah\n");
 	if (dctrl == READ) { // LD
 		if (operand.wordbyte == WORD_CHECK) { // result is word
 			dmbr = dmem.word_mem[dmar / BYTE];
@@ -485,15 +455,10 @@ void dmcontroller() {
 	else if (dctrl == WRITE) { // ST
 		if (operand.wordbyte == WORD_CHECK) { // result is word
 			dmem.word_mem[dmar / BYTE] = dmbr;
-			printf("new dmem %04x at %04x\t", dmem.word_mem[dmar / BYTE], dmar/BYTE);
-			//srcconarray.word[REGISTER][operand.dst] = dmbr;
 		}
 		else // result is byte
 			dmem.byte_mem[dmar] = MASK_BYTE(dmbr);
 	}
-
-	printf("dmbr %04x\n", dmbr);
-
 	dctrl = DONE;
 }
 

@@ -209,22 +209,20 @@ unsigned short psw_bit_to_word() {
 // function to keep track of pipeline
 void pipeline() {
 	int instructionaddress = 0, ictrl = 0;
-
 	unsigned short psw_word = psw_bit_to_word(); // convert bits to word
 
-	// print start status. when program is first loaded in, NOP (MOV R0,R0) is executed. clock is initialized to -2 to
-	// offset this NOP, making the actual first instruction fetched at clock 0
+	// print start status
 	printf("Start: PC: %04X PSW: %04X Brkpt: %04X Clk: %d\n", srcconarray.word[REGISTER][R7], psw_word, breakpoint, clock);
 
 #ifndef DEBUG
 	printf("Clock\tPC\tFetch\t\tDecode\t\tExecute\n");
 #endif
 
-	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
+	while (srcconarray.word[REGISTER][R7] != breakpoint || instructionbit != ZERO) { // 0x0000
 
 		// check clock tick
 		if (clock % DIV2REMAINDER == ZERO) { // odd number
-			if (dctrl != DONE)
+			if (dctrl != DONE) // if dctrl is set to READ or WRITE, perform e1
 				execute1();
 			instructionaddress = fetch0(&ictrl); // fetch program counter
 			 decode(instructionaddress);
@@ -239,11 +237,9 @@ void pipeline() {
 		// breaks if increment is set AND if clock is not equal to zero
 		if (increment == TRUE && (clock % DIV2REMAINDER == ZERO))
 			break;
-	
-		printf("rah!!\n");
 	}
 
-	if (instructionbit == ZERO && dctrl != DONE)
+	if (dctrl != DONE) // if last command before encountering instructionbit 0000 without breakpoint, perform e1
 		execute1();
 
 	printf("End: PC: %04X Clk: %d\n\n", srcconarray.word[REGISTER][R7], clock);
