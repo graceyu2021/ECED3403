@@ -1,18 +1,16 @@
 /*
-file: decodefunctions.c
+file: pieplineexecute.c
 programmer: Grace Yu
 b00: B00902046
 class: ECED3403
 professor: Dr. Larry Hughes
-assignment: A1
-submission date: May 23rd, 2024
 
 This is the pipeline execute function file of my program.
 */
 
 #include "MAINHEADER.H"
 
-// shorten variable names from add to bid
+// shorten variable names from add to bis
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte) {
 	*wordbyte = operand.wordbyte;
 
@@ -75,6 +73,7 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 	psw_update(overflow_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO), carry_update[src_msb][dest_msb][result_msb]);
 }
 
+// ADD to SUBC execute
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	unsigned short temp, temp_srccon_value = srccon_value;
 	
@@ -328,119 +327,7 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 	dmbr = srcconarray.word[REGISTER][operand.srccon];
 }
 
-// execute function
-void execute0() {
-	// temporary return just until full instruciton set is implemented
-	if (((opcode >= ADD && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
-		return;
-
-	unsigned short dest_value, srccon_value, bytevalue;
-	int wordbyte;
-
-	// initilalize variables to struct contents for readability
-	if (opcode >= ADD && opcode <= BIS) // if opcode is from add to bis
-		add_to_bis_ops(operand.dst, operand.srccon, operand.srcconcheck, &dest_value, &srccon_value, &wordbyte);
-
-	else if (opcode >= MOV && opcode <= SXT) // if opcode is from mov to sxt
-		mov_to_sxt_ops(operand.dst, operand.srccon, &dest_value, &srccon_value, &wordbyte);
-	
-	else if (opcode >= MOVL && opcode <= MOVH) // if opcode is from movl to movh
-		movl_to_movh_ops(&bytevalue);
-
-	// switch case to identify what execute process to go through
-	switch (opcode) {
-	case(ADD):
-	case(SUB):
-	case(ADDC):
-	case(SUBC): // ADD to SUBC are all performed in one function
-		add_to_subc_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(DADD):
-		dadd_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(CMP):
-		cmp_execute(dest_value, srccon_value);
-		break;
-	case(XOR):
-		xor_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(AND):
-		and_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(OR):
-		or_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(BIT):
-		bit_execute(dest_value, srccon_value, operand.dst);
-		break;
-	case(BIC):
-		bic_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(BIS):
-		bis_execute(dest_value, srccon_value, operand.dst, wordbyte);
-		break;
-	case(MOV):
-		mov_execute(srccon_value, operand.dst, wordbyte);
-		break;
-	case(SWAP):
-		swap_execute(dest_value, srccon_value, operand.dst, operand.srccon);
-		break;
-	case(SRA):
-		sra_execute(dest_value, operand.dst, wordbyte);
-		break;
-	case(RRC):
-		rrc_execute(dest_value, operand.dst, wordbyte);
-		break;
-	case(SWPB):
-		swpb_execute(operand.dst);
-		break;
-	case(SXT):
-		sxt_execute(dest_value, operand.dst);
-		break;
-	case(SETCC):
-		setcc_execute();
-		break;
-	case(CLRCC):
-		clrcc_execute();
-		break;
-	case (CEX):
-		break;
-	case(LD):
-		ldst_execute(operand.srccon, srcconarray.word[REGISTER][operand.srccon], READ);
-		break;
-	case(ST):
-		ldst_execute(operand.dst, srcconarray.word[REGISTER][operand.dst], WRITE);
-		break;
-	case(MOVL):
-		movl_execute(bytevalue);
-		break;
-	case(MOVLZ):
-		movlz_execute(bytevalue);
-		break;
-	case(MOVLS):
-		movls_execute(bytevalue);
-		break;
-	case(MOVH):
-		movh_execute(bytevalue);
-		break;
-	case(LDR):
-		ldrstr_execute(operand.srccon, srcconarray.word[REGISTER][operand.srccon], READ);
-		break;
-	case(STR):
-		ldrstr_execute(operand.dst, srcconarray.word[REGISTER][operand.dst], WRITE);
-		break;
-	default:
-		break;
-	}
-
-	// called debugging functions for ease of marker
-#ifdef DEBUG
-	reg_display();
-	//psw_display();
-	printf("\n");
-#endif
-}
-
+// dmcontroller function to perform memory modifications
 void dmcontroller() {
 	if (dctrl == READ) { // LD
 		if (operand.wordbyte == WORD_CHECK) { // result is word
@@ -459,7 +346,7 @@ void dmcontroller() {
 		else // result is byte
 			dmem.byte_mem[dmar] = MASK_BYTE(dmbr);
 	}
-	dctrl = DONE;
+	dctrl = DONE; // dctrl is over, set to DONE
 }
 
 void execute1() {

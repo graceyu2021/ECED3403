@@ -218,7 +218,7 @@ void pipeline() {
 	printf("Clock\tPC\tFetch\t\tDecode\t\tExecute\n");
 #endif
 
-	while (srcconarray.word[REGISTER][R7] != breakpoint || instructionbit != ZERO) { // 0x0000
+	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
 
 		// check clock tick
 		if (clock % DIV2REMAINDER == ZERO) { // odd number

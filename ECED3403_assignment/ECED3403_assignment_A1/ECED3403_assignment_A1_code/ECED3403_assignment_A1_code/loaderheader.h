@@ -4,10 +4,8 @@ programmer: Grace Yu
 b00: B00902046
 class: ECED3403
 professor: Dr. Larry Hughes
-assignment: A1
-submission date: May 23rd, 2024
 
-This is the header file of my program.
+This is the loader header file of my program.
 */
 
 #ifndef LOADERHEADER_H
@@ -31,18 +29,11 @@ This is the header file of my program.
 
 #define NULLCHAR 1
 
-#define RECORD_BOUND(a, b) ((a) >= (BYTE * 4) && (a) < (2 * b + BYTE))
-
 // union for byte/word memory size
-
 typedef union memory {
 	unsigned char byte_mem[BYTEMEMSIZE];
 	unsigned short word_mem[WORDMEMSIZE];
 }memory;
-
-// global arrays for imem and dmem
-//extern memory imem;
-//extern memory dmem;
 
 typedef enum srecord { // enumerator of s-record types
 	S0,

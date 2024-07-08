@@ -33,6 +33,9 @@
     <ClCompile Include="pipelineexecute.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="pipelineexecutemenu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="loaderheader.h">
@@ -45,6 +48,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="debugheader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pipelineexecute_header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bit_macro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="struct_header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
