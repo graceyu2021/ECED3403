@@ -274,8 +274,6 @@ void swpb_execute(int dest_num) {
 	 return ZERO; // nothing set, no indexing
  }
 
- //ldst_execute(operand.dst, srcconarray.word[REGISTER][operand.dst], WRITE);
-
  // perform ld and st's e0 instructions
  void ldst_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) {
 	 unsigned short eff_address, 
@@ -294,31 +292,6 @@ void swpb_execute(int dest_num) {
 	 srcconarray.word[REGISTER][srcdst] = srcdst_value; // set srcconarray to new value
 	 dmbr = srcconarray.word[REGISTER][operand.srccon]; // set dmbr to new value for st, will get overwritten if its ld
  }
-
- /*
- // DST <- mem[SRC plus addressing]
- void ld_execute() {
-	 unsigned short ld_src = srcconarray.word[REGISTER][operand.srccon];
-
-	 printf("before and after index dst %04x:", ld_src);
-
-	 //ld_src = ldst_buffer_prep(ld_src, READ); // get new ld_src and perform ld e0
-	 srcconarray.word[REGISTER][operand.srccon] = ld_src; // set srcconarray to new_src
-
-	 printf("%04x\n", srcconarray.word[REGISTER][operand.srccon]);
- }
-
- // mem[DST plus addressing] = SRC
- void st_execute() {
-	 unsigned short st_dst = srcconarray.word[REGISTER][operand.dst];
-
-	 //st_dst = ldst_buffer_prep(st_dst, WRITE); // get new_dst and perform st e0
-	 srcconarray.word[REGISTER][operand.dst] = st_dst; // set srcconarray to new st_dst 
-	 dmbr = st_dst; // set dmbr to new_dst
-
-	 printf("st e0: dmbr %04x dctrl %d\n", dmbr, dctrl);
-	 printf("%04x\n", srcconarray.word[REGISTER][operand.dst]);
- }*/
 
 // MOV LOW BYTES INTO DST
 void movl_execute(unsigned short bytevalue) {
@@ -342,17 +315,23 @@ void movh_execute(unsigned short bytevalue) {
 	srcconarray.byte[REGISTER][operand.dst][HIGH] = bytevalue;
 }
 
-void ldrstr_buffer_prep(unsigned short ldrstr_address, int RW) {
+// ldrstr_execute(operand.srccon, srcconarray.word[REGISTER][operand.srccon], READ);
+void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) {
 	unsigned short eff_address;
 
-	//if ()
+	srcdst_value += operand.off;
+	//if (operand.wordbyte == BYTE_CHECK)
+		//srcdst_value = WORD_OFF(srcdst_value);
 
-	eff_address = ldrstr_address; // set eff_address to ld_src or st_dst
+	eff_address = srcdst_value; // set eff_address to ld_src or st_dst
 	dmar = eff_address; // set dmar to eff_address
 	dctrl = RW; // dctrl != DONE
+
+	//srcconarray.word[REGISTER][srcdst] = srcdst_value;
+	dmbr = srcconarray.word[REGISTER][operand.srccon];
 }
 
-// LOAD MEMORY INTO DST
+/*// LOAD MEMORY INTO DST
 void ldr_execute() {
 	unsigned short ldr_src = srcconarray.word[REGISTER][operand.srccon]; // set srcconarray value to new variable for readability
 
@@ -375,7 +354,7 @@ void str_execute() {
 	ldrstr_buffer_prep(str_dst, WRITE); // perform str e0
 	srcconarray.word[REGISTER][operand.dst] = str_dst; // set srcconarray to new str_dst 
 	dmbr = srcconarray.word[REGISTER][operand.srccon];
-}
+}*/
 
 // execute function
 void execute0() {
@@ -473,10 +452,10 @@ void execute0() {
 		movh_execute(bytevalue);
 		break;
 	case(LDR):
-		ldr_execute();
+		ldrstr_execute(operand.srccon, srcconarray.word[REGISTER][operand.srccon], READ);
 		break;
 	case(STR):
-		str_execute();
+		ldrstr_execute(operand.dst, srcconarray.word[REGISTER][operand.dst], WRITE);
 		break;
 	default:
 		break;
@@ -505,8 +484,9 @@ void dmcontroller() {
 	}
 	else if (dctrl == WRITE) { // ST
 		if (operand.wordbyte == WORD_CHECK) { // result is word
-			dmem.word_mem[operand.dst / BYTE] = dmbr;
-			srcconarray.word[REGISTER][operand.dst] = dmbr;
+			dmem.word_mem[dmar / BYTE] = dmbr;
+			printf("new dmem %04x at %04x\t", dmem.word_mem[dmar / BYTE], dmar/BYTE);
+			//srcconarray.word[REGISTER][operand.dst] = dmbr;
 		}
 		else // result is byte
 			dmem.byte_mem[dmar] = MASK_BYTE(dmbr);

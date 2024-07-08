@@ -83,7 +83,7 @@ This is the header file of my program.
 #define BYTEVALUE_PRINT(a) (a >= MOVL && a <= MOVH)
 #define SRCCONCHECK_PRINT(a) (a >= ADD && a <= BIS)
 #define WORDBYTE_PRINT(a) ((a >= ADD && a <= MOV) || a == SRA || a == RRC || a == LD || a == ST || a == LDR || a == STR)
-#define SRCCON_PRINT(a) ((a >= ADD && a <= SWAP) || a == LD || a == ST || a == LDR || a == ST)
+#define SRCCON_PRINT(a) ((a >= ADD && a <= SWAP) || a == LD || a == ST || a == LDR || a == STR)
 #define SRCCON_CHECK(a) (rec_const.srccon == CONSTANT && (a >= ADD && a <= BIS))
 #define DST_PRINT(a) ((a >= ADD && a <= SXT) || (a >= LD && a <= STR))
 #define FLAG_PRINT(a) (a == SETCC || a == CLRCC)
@@ -94,7 +94,7 @@ This is the header file of my program.
 #define MASK_MSB_WORD(a) (a & 0x8000)
 #define MASK_MSB_BYTE(a) (a & 0x0080)
 #define MASK_LSB(a) (a & 0x0001)
-#define MASK_BYTE(a) (a & 0x0FF)
+#define MASK_BYTE(a) (a & 0x00FF)
 
 #define MNEMARRAY_MAX 40
 #define MNEMARRAY_WORDMAX 6

@@ -71,7 +71,7 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6]) {
 		printf("WB: %d ", operand.wordbyte); // print word/byte
 	
 	if (SRCCON_PRINT(opcode)) {
-		if (SRCCONCHECK_PRINT(opcode))
+		if (SRCCONCHECK_PRINT(opcode) && operand.srcconcheck == CONSTANT)
 			printf("CON: %d ", srcconarray.word[CONSTANT][operand.srccon]); // print constant
 		else // else srcconcheck = 0
 			printf("SRC: R%d ", operand.srccon); // print source
@@ -97,6 +97,7 @@ void ldrtstr_operands_set() {
 	operand.off = OFF_BITS(temp_instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
+	operand.srccon = SRCCON_BITS(instructionbit);
 	operand.dst = DST_BITS(instructionbit);
 }
 
