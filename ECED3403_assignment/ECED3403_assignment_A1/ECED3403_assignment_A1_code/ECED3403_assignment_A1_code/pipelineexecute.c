@@ -323,7 +323,6 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 	dmar = eff_address; // set dmar to eff_address
 	dctrl = RW; // dctrl != DONE
 
-	//srcconarray.word[REGISTER][srcdst] = srcdst_value;
 	dmbr = srcconarray.word[REGISTER][operand.srccon];
 }
 
@@ -331,8 +330,8 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 void dmcontroller() {
 	if (dctrl == READ) { // LD
 		if (operand.wordbyte == WORD_CHECK) { // result is word
-			dmbr = dmem.word_mem[dmar / BYTE];
-			srcconarray.word[REGISTER][operand.dst] = dmbr;
+			dmbr = dmem.word_mem[dmar / BYTE]; // save data to dmbr
+			srcconarray.word[REGISTER][operand.dst] = dmbr; // set srcconarray to dmbr
 		}
 		else { // result is byte
 			 dmbr = dmem.byte_mem[dmar];
@@ -340,9 +339,8 @@ void dmcontroller() {
 		}
 	}
 	else if (dctrl == WRITE) { // ST
-		if (operand.wordbyte == WORD_CHECK) { // result is word
-			dmem.word_mem[dmar / BYTE] = dmbr;
-		}
+		if (operand.wordbyte == WORD_CHECK)  // result is word
+			dmem.word_mem[dmar / BYTE] = dmbr; // set data memory to dmbr
 		else // result is byte
 			dmem.byte_mem[dmar] = MASK_BYTE(dmbr);
 	}

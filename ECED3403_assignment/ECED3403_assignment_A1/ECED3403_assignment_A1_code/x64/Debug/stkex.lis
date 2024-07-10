@@ -1,6 +1,6 @@
 X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
 Input file name: stkex.asm
-Time of assembly: Mon 8 Jul 2024 02:10:53 
+Time of assembly: Mon 8 Jul 2024 13:14:34 
   1	    	     	;
   2	    	     	; Stack frame example
   3	    	     	; ECED 3403
@@ -33,9 +33,9 @@ Time of assembly: Mon 8 Jul 2024 02:10:53
  30	    	     	;
  31	    	     	; Caller's parameters
  32	    	     	;
- 33	0100	D0D0	D0	word	#D0D0
- 34	0102	D1D1	D1	word	#D1D1
- 35	0104	D2D2	D2	word	#D2D2
+ 33	0100	7247	D0	word	#7247
+ 34	0102	6361	D1	word	#6361
+ 35	0104	2065	D2	word	#2065
  36	    	     	;
  37	    	     		code
  38	    	     		org	#1000
@@ -90,16 +90,7 @@ Time of assembly: Mon 8 Jul 2024 02:10:53
  87	1026	8321		ldr	BP,D1off,R1
  88	1028	FF0C		str	R1,BP,A1off
  89	    	     	;
- 90	    	     	; Some processing
- 91	    	     	; Done...
- 92	    	     	;
- 93	102A	4C26		mov	BP,SP	; Restore SP
- 94	    	     	;
- 95	102C	5AB4		ld	+SP,BP	; Restore BP
- 96	    	     	;
- 97	102E	4C2F		mov	LR,PC	; Return
- 98	    	     	;
- 99	    	     		end	SFEx
+ 90	    	     		end	SFEx
 
 Successful completion of assembly - 2P
 

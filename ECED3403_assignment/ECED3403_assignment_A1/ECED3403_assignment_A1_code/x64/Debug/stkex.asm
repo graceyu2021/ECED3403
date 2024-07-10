@@ -30,9 +30,9 @@ StkStrt	bss	#2	; #FE
 ;
 ; Caller's parameters
 ;
-D0	word	#D0D0
-D1	word	#D1D1
-D2	word	#D2D2
+D0	word	#7247
+D1	word	#6361
+D2	word	#2065
 ;
 	code
 	org	#1000
@@ -86,14 +86,5 @@ subr
 ;
 	ldr	BP,D1off,R1
 	str	R1,BP,A1off
-;
-; Some processing
-; Done...
-;
-	mov	BP,SP	; Restore SP
-;
-	ld	+SP,BP	; Restore BP
-;
-	mov	LR,PC	; Return
 ;
 	end	SFEx

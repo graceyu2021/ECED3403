@@ -7,7 +7,7 @@
 ;
 	data
 	org	#100
-S1	ascii	"abc"
+S1	ascii	"Grace Yu"
 	org	#110
 S2	ascii	"XXX"
 ;
@@ -39,14 +39,26 @@ LDST4
 ; 111 <- 101
 ; 112 <- 102
 ;
-	LD.B	R0+,R2		; R1 <- mem[R0]
-	ST.B	R2,R1+		; mem[R1] <- R1
+	LD	R0+,R2		; R1 <- mem[R0]
+	ST	R2,R1+		; mem[R1] <- R1
 ;
-	LD.b	R0+,R2		; R1 <- mem[R0]
+	LD	R0+,R2		; R1 <- mem[R0]
+	ST	R2,R1+		; mem[R1] <- R1
+;
+	LD.B	R0+,R2		; R1 <- mem[R0]
 	ST.b	R2,R1+		; mem[R1] <- R1
 ;
 	LD.B	R0+,R2		; R1 <- mem[R0]
 	ST.b	R2,R1+		; mem[R1] <- R1
+;
+	add	$1,R0
+	add	$1,R1
+;
+	LD.b	R0-,R2		; R1 <- mem[R0]
+	ST.b	R2,R1-		; mem[R1] <- R1
+;
+	LD.b	R0-,R2		; R1 <- mem[R0]
+	ST.b	R2,R1-		; mem[R1] <- R1
 ;
 ; Put breakpoint on next address
 ;

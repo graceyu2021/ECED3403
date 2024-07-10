@@ -1,6 +1,6 @@
 X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
 Input file name: struct.asm
-Time of assembly: Sun 7 Jul 2024 18:30:09 
+Time of assembly: Mon 8 Jul 2024 14:52:44 
   1	    	     	;
   2	    	     	; Structure example
   3	    	     	; ECED 3403
@@ -20,59 +20,63 @@ Time of assembly: Sun 7 Jul 2024 18:30:09
  17	    	     	V0	equ	$0
  18	    	     	V1	equ	$2
  19	    	     	V2	equ	$4
- 20	    	     	;
- 21	    	     	; Data - reserve space for structures
- 22	    	     	;
- 23	    	     		DATA
- 24	    	     		org	#100
- 25	0100	0000	S1	bss	$6	; 6 bytes
- 26	0106	0000		bss	$2	; Fill
- 27	0108	0000	S2	bss	$6	; 6 bytes
- 28	    	     	;
- 29	    	     	; Code - initialize S1
- 30	    	     	;
- 31	    	     		CODE
- 32	    	     		org	#1000
- 33	    	     	;
- 34	1000	6800	StrtEx	movlz	S1,R0
- 35	1002	7808		movh	S1,R0
- 36	    	     	;
- 37	    	     	; Initialize S1
- 38	    	     	;
- 39	1004	77F9		movls	#FF,R1
- 40	1006	C008		str	R1,R0,V0
- 41	    	     	;
- 42	1008	6A09		movlz	'A',R1
- 43	100A	C148		str.b	R1,R0,V1
- 44	    	     	;
- 45	100C	6F71		movlz	#EE,R1
- 46	100E	C208		str	R1,R0,V2
- 47	    	     	;
- 48	    	     	; Initialize S2 from S1
+ 20	    	     	V3	equ	$-1
+ 21	    	     	;
+ 22	    	     	; Data - reserve space for structures
+ 23	    	     	;
+ 24	    	     		DATA
+ 25	    	     		org	#100
+ 26	0100	0000	S1	bss	$6	; 6 bytes
+ 27	0106	0000		bss	$2	; Fill
+ 28	0108	0000	S2	bss	$6	; 6 bytes
+ 29	    	     	;
+ 30	    	     	; Code - initialize S1
+ 31	    	     	;
+ 32	    	     		CODE
+ 33	    	     		org	#1000
+ 34	    	     	;
+ 35	1000	6800	StrtEx	movlz	S1,R0
+ 36	1002	7808		movh	S1,R0
+ 37	    	     	;
+ 38	    	     	; Initialize S1
+ 39	    	     	;
+ 40	1004	7889		movh	#1100,R1
+ 41	1006	6089		movl	#11,R1
+ 42	1008	C008		str	R1,R0,V0
+ 43	    	     	;
+ 44	100A	6A09		movlz	'A',R1
+ 45	100C	C148		str.b	R1,R0,V1
+ 46	    	     	;
+ 47	100E	6FF9		movlz	#FF,R1
+ 48	1010	C208		str	R1,R0,V2
  49	    	     	;
- 50	1010	4C02		mov	R0,R2
- 51	1012	40A2		add	#8,R2	; Addr of S2
- 52	    	     	;
- 53	    	     	; s2.v0 <- s1.v0 + 2
+ 50	    	     	; Initialize S2 from S1
+ 51	    	     	;
+ 52	1012	4C02		mov	R0,R2
+ 53	1014	40A2		add	#8,R2	; Addr of S2
  54	    	     	;
- 55	1014	8001		ldr	R0,V0,R1
- 56	1016	4091		add	#2,R1
- 57	1018	C00A		str	R1,R2,V0
- 58	    	     	;
- 59	    	     	; S2.v1 <- S1.v1 + 1
+ 55	    	     	; s2.v0 <- s1.v0 + 2
+ 56	    	     	;
+ 57	1016	8001		ldr	R0,V0,R1
+ 58	1018	4091		add	#2,R1
+ 59	101A	C00A		str	R1,R2,V0
  60	    	     	;
- 61	101A	8141		ldr.b	R0,V1,R1
- 62	101C	4089		add	#1,R1
- 63	101E	C14A		str.b	R1,R2,V1
- 64	    	     	;
- 65	    	     	; S2.v2 <- S1.v2 - 2
+ 61	    	     	; S2.v1 <- S1.v1 + 1
+ 62	    	     	;
+ 63	101C	8141		ldr.b	R0,V1,R1
+ 64	101E	4089		add	#1,R1
+ 65	1020	C14A		str.b	R1,R2,V1
  66	    	     	;
- 67	1020	8201		ldr	R0,V2,R1
- 68	1022	4291		sub	#2,R1
- 69	1024	C20A		str	R1,R2,V2
- 70	    	     	;
- 71	    	     	Done
- 72	    	     		end	StrtEx
+ 67	    	     	; S2.v2 <- S1.v2 - 2
+ 68	    	     	;
+ 69	1022	409A		add	$4,R2
+ 70	1024	408A		add	$1,R2
+ 71	1026	8201		ldr	R0,V2,R1
+ 72	1028	4291		sub	#2,R1
+ 73	102A	FF8A		str	R1,R2,V3
+ 74	    	     	;
+ 75	    	     	Done
+ 76	    	     		end	StrtEx
 
 Successful completion of assembly - 1P
 
@@ -80,13 +84,14 @@ Successful completion of assembly - 1P
 
 Constants (Equates)
 Name                               	Type	Value	Decimal
+V3                                 	CON	FFFF	-1	PRI
 V2                                 	CON	0004	4	PRI
 V1                                 	CON	0002	2	PRI
 V0                                 	CON	0000	0	PRI
 
 Labels (Code)
 Name                               	Type	Value	Decimal
-Done                               	REL	1026	4134	PRI
+Done                               	REL	102C	4140	PRI
 StrtEx                             	REL	1000	4096	PRI
 
 Labels (Data)

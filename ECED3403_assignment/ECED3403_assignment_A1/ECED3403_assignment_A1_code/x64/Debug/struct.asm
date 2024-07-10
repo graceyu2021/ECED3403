@@ -17,6 +17,7 @@
 V0	equ	$0
 V1	equ	$2
 V2	equ	$4
+V3	equ	$-1
 ;
 ; Data - reserve space for structures
 ;
@@ -36,13 +37,14 @@ StrtEx	movlz	S1,R0
 ;
 ; Initialize S1
 ;
-	movls	#FF,R1
+	movh	#1100,R1
+	movl	#11,R1
 	str	R1,R0,V0
 ;
 	movlz	'A',R1
 	str.b	R1,R0,V1
 ;
-	movlz	#EE,R1
+	movlz	#FF,R1
 	str	R1,R0,V2
 ;
 ; Initialize S2 from S1
@@ -64,9 +66,11 @@ StrtEx	movlz	S1,R0
 ;
 ; S2.v2 <- S1.v2 - 2
 ;
+	add	$4,R2
+	add	$1,R2
 	ldr	R0,V2,R1
 	sub	#2,R1
-	str	R1,R2,V2
+	str	R1,R2,V3
 ;
 Done
 	end	StrtEx

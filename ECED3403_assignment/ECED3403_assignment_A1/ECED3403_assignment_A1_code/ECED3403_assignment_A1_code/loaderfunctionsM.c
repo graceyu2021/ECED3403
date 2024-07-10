@@ -19,7 +19,7 @@ void idmem_print(memory array[], int* lowbound, int* lowboundtemp) {
 
 	// print hexadecimal at memory addresses
 	for (*lowboundtemp; *lowboundtemp < upboundtemp; (*lowboundtemp)++) {
-		printf("%02x ", array->byte_mem[*lowboundtemp]);
+		printf("%02X ", array->byte_mem[*lowboundtemp]);
 	}
 
 	// print ascii at memory addresses
@@ -46,7 +46,7 @@ void mem_display() {
 	scanf(" %c", &memtype);
 
 	printf("Enter lower and upper bound\n");
-	scanf(" %x %x", &lowbound, &upbound);
+	scanf(" %X %X", &lowbound, &upbound);
 	lowboundtemp = lowbound; // duplicate lowbound, one for each for loop
 
 	while (lowbound < upbound) {

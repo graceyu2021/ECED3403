@@ -1,6 +1,6 @@
 X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
 Input file name: LDST4.asm
-Time of assembly: Sun 7 Jul 2024 01:35:24 
+Time of assembly: Mon 8 Jul 2024 13:05:35 
   1	    	     	;
   2	    	     	; Example of index addressing #2
   3	    	     	; Load and store using bytes and indexing
@@ -10,8 +10,10 @@ Time of assembly: Sun 7 Jul 2024 01:35:24
   7	    	     	;
   8	    	     		data
   9	    	     		org	#100
- 10	0100	6261	S1	ascii	"abc"
- 10	0102	0063
+ 10	0100	7247	S1	ascii	"Grace Yu"
+ 10	0102	6361
+ 10	0104	2065
+ 10	0106	7559
  11	    	     		org	#110
  12	0110	5858	S2	ascii	"XXX"
  12	0112	0058
@@ -44,20 +46,32 @@ Time of assembly: Sun 7 Jul 2024 01:35:24
  39	    	     	; 111 <- 101
  40	    	     	; 112 <- 102
  41	    	     	;
- 42	0208	58C2		LD.B	R0+,R2		; R1 <- mem[R0]
- 43	020A	5CD1		ST.B	R2,R1+		; mem[R1] <- R1
+ 42	0208	5882		LD	R0+,R2		; R1 <- mem[R0]
+ 43	020A	5C91		ST	R2,R1+		; mem[R1] <- R1
  44	    	     	;
- 45	020C	58C2		LD.b	R0+,R2		; R1 <- mem[R0]
- 46	020E	5CD1		ST.b	R2,R1+		; mem[R1] <- R1
+ 45	020C	5882		LD	R0+,R2		; R1 <- mem[R0]
+ 46	020E	5C91		ST	R2,R1+		; mem[R1] <- R1
  47	    	     	;
  48	0210	58C2		LD.B	R0+,R2		; R1 <- mem[R0]
  49	0212	5CD1		ST.b	R2,R1+		; mem[R1] <- R1
  50	    	     	;
- 51	    	     	; Put breakpoint on next address
- 52	    	     	;
- 53	    	     	BrkPtHere
- 54	    	     	;
- 55	    	     		end LDST4
+ 51	0214	58C2		LD.B	R0+,R2		; R1 <- mem[R0]
+ 52	0216	5CD1		ST.b	R2,R1+		; mem[R1] <- R1
+ 53	    	     	;
+ 54	0218	4088		add	$1,R0
+ 55	021A	4089		add	$1,R1
+ 56	    	     	;
+ 57	021C	5942		LD.b	R0-,R2		; R1 <- mem[R0]
+ 58	021E	5D51		ST.b	R2,R1-		; mem[R1] <- R1
+ 59	    	     	;
+ 60	0220	5942		LD.b	R0-,R2		; R1 <- mem[R0]
+ 61	0222	5D51		ST.b	R2,R1-		; mem[R1] <- R1
+ 62	    	     	;
+ 63	    	     	; Put breakpoint on next address
+ 64	    	     	;
+ 65	    	     	BrkPtHere
+ 66	    	     	;
+ 67	    	     		end LDST4
 
 Successful completion of assembly - 1P
 
@@ -68,7 +82,7 @@ Name                               	Type	Value	Decimal
 
 Labels (Code)
 Name                               	Type	Value	Decimal
-BrkPtHere                          	REL	0214	532	PRI
+BrkPtHere                          	REL	0224	548	PRI
 LDST4                              	REL	0200	512	PRI
 
 Labels (Data)

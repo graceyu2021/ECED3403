@@ -55,8 +55,10 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6]) {
 		return;
 	}
 
-	if (OFF_PRINT(opcode))
-		printf("OFF: %07X ", operand.off); // print offset
+	if (OFF_PRINT(opcode)) {
+		unsigned char temp_off = MASK_BYTE(operand.off);
+		printf("OFF: %02X ", temp_off); // print offset
+	}
 
 	else if (ADDRESSING_PRINT(opcode))
 		printf("PRPO: %d DEC %d INC %d ", operand.prpo, operand.dec, operand.inc); // print addressing
@@ -91,14 +93,15 @@ void opcode_set(int enum_initial, int enum_offset) {
 
 void ldrtstr_operands_set() {
 	unsigned short msb = MSB_BITS(instructionbit); // mask 7th bit of offset
-	int temp_instructionbit = CLR_OFF_BIT8(instructionbit); // clear 8th bit of offset
-	temp_instructionbit |= msb; // sign extend from 7th bit of offset to 8th
 
-	operand.off = OFF_BITS(temp_instructionbit);
+	operand.off = OFF_BITS(instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
 	operand.wordbyte = WORDBYTE_BITS(instructionbit);
 	operand.srccon = SRCCON_BITS(instructionbit);
 	operand.dst = DST_BITS(instructionbit);
+
+	if (msb != ZERO)
+		operand.off |= SXT_OFF_BITS;
 }
 
 void movx_operands_set() {
