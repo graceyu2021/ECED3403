@@ -1,4 +1,50 @@
-﻿  pipelinefunctions.c
+﻿  debugfunctions.c
 C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
 C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+  loaderfunctionsL.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(113,13): warning C4013: 'strlen' undefined; assuming extern returning int
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(140,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4047: 'function': 'const char *' differs in levels of indirection from 'char (*)[101]'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,17): warning C4024: 'memory_save': different types for formal and actual parameter 1
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(144,52): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(154,17): warning C4553: '==': result of expression not used; did you intend '='?
+  loaderfunctionsM.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(60,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsM.c(65,20): warning C4133: 'function': incompatible types - from 'unsigned char [65536]' to 'memory *'
+  loadermain.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loadermain.c(59,4): warning C4013: 'mem_display' undefined; assuming extern returning int
+  pipelineexecute.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(79,47): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(275,50): warning C4244: 'initializing': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(328,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(334,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(340,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(345,50): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+  pipelineexecutemenu.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecutemenu.c(35,3): warning C4013: 'bl_execute' undefined; assuming extern returning int
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecutemenu.c(53,44): warning C4554: '^': check operator precedence for possible error; use parentheses to clarify precedence
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecutemenu.c(56,42): warning C4554: '^': check operator precedence for possible error; use parentheses to clarify precedence
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecutemenu.c(92,42): warning C4020: 'mov_execute': too many actual parameters
+  pipelinefunctions.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(50,47): warning C4028: formal parameter 2 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(50,63): warning C4029: declared formal parameter list different from definition
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(60,10): warning C4778: 'printf' : unterminated format string '%04 '
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(60,23): warning C4474: 'printf' : too many arguments passed for format string
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelinefunctions.c(60,23): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+  Generating Code...
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\loaderfunctionsL.c(178): warning C4715: 'load_file': not all control paths return a value
   ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe

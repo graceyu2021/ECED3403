@@ -24,6 +24,11 @@ This is the header file of my program.
 
 #define SREC_MAX 100//67 // defined macros for records
 
+#define BP 4
+#define LR 5
+#define SP 6
+#define PC 7
+
 int clock;
 int instructionbit;
 int breakpoint;

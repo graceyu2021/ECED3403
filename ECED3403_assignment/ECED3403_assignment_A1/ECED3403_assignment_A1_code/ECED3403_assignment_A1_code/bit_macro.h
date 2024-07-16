@@ -49,12 +49,15 @@ This is the bit macro header file of my program.
 // macros to mask and shift instructionbit to identify operand parameters
 #define MSB_BITS(a) ((a & 0x2000) << 1)
 #define SXT_OFF_BITS 0xFF80
-#define OFF_BITS(a) ((a & 0x3F80) >> 7)
+#define OFF_BITS(a) ((a & 0x3F80) >> 7 || ((a & 0xC000) == 0))
 #define SRCCON_BITS(a) ((a & 0x0038) >> 3)
 #define SRCCONCHECK_BITS(a) ((a & 0x0080) >> 7)
 #define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)
 #define BYTEVALUE_BITS(a) ((a & 0x07F8) >> 3)
 #define DST_BITS(a) (a & 0x0007)
+#define OFFBL_BITS(a) ((a & 0x1FFF) << 1)
+#define OFFB_BITS(a)((a & 0x03FF) << 1)
+
 #define PRPO_BITS(a) ((a & 0x0200) >> 9)
 #define DEC_BITS(a) ((a & 0x0100) >> 8)
 #define INC_BITS(a) ((a & 0x0080) >> 7)

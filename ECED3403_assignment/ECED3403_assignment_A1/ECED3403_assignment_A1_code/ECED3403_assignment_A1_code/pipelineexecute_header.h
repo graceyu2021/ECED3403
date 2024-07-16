@@ -13,6 +13,37 @@ This is the pipeline execute header file of my program.
 
 #include <stdio.h>
 
+/*
+// BL execute
+void bl_execute();
+
+// BEQBZ execute
+void beqbz_execute();
+
+// BNEBNZ execute
+void bnebz_execute();
+
+// BCBHS execute
+void bcbhs_execute();
+
+// BNCBLO_execute();
+void bncblo_execute();
+
+// BN execute
+void bn_execute();
+
+// BGE execute
+void bge_execute();
+
+// BLT execute
+void blt_execute();
+
+// BRA execute
+void bra_execute();*/
+
+//
+void beq_to_bra_execute(int condition);
+
 // shorten variable names from add to bid
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte);
 

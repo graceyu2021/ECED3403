@@ -10,6 +10,38 @@ This is the pipeline execute function file of my program.
 
 #include "MAINHEADER.H"
 
+void bl_execute() {
+	srcconarray.word[REGISTER][LR] = srcconarray.word[REGISTER][PC];
+	srcconarray.word[REGISTER][PC] = operand.off;
+}
+
+/*
+void beqbz_execute() {
+	srcconarray.word[REGISTER][PC] = (psw.z == SET) ? 
+		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
+}
+
+void bnebnz_execute() {
+	srcconarray.word[REGISTER][PC] = (psw.z == CLEAR) ?
+		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
+}
+
+void bcbhs_execute() {
+	srcconarray.word[REGISTER][PC] = (psw.c == SET) ?
+		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
+}
+
+void bncblo_execute() {
+	srcconarray.word[REGISTER][PC] = (psw.c == CLEAR) ?
+		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
+}*/
+
+// BRANCH instructions
+void beq_to_bra_execute(int condition) {
+	srcconarray.word[REGISTER][PC] = (condition) ?
+		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
+}
+
 // shorten variable names from add to bis
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte) {
 	*wordbyte = operand.wordbyte;

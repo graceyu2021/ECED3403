@@ -31,6 +31,33 @@ void execute0() {
 
 	// switch case to identify what execute process to go through
 	switch (opcode) {
+	case(BL):
+		bl_execute();
+		break;
+	case(BEQBZ):
+		beq_to_bra_execute(psw.z == SET);
+		break;
+	case(BNEBNZ):
+		beq_to_bra_execute(psw.z == CLEAR);
+		break;
+	case(BCBHS):
+		beq_to_bra_execute(psw.c == SET);
+		break;
+	case(BNCBLO):
+		beq_to_bra_execute(psw.c == CLEAR);
+		break;
+	case(BN):
+		beq_to_bra_execute(psw.n == SET);
+		break;
+	case(BGE):
+		beq_to_bra_execute(psw.n ^ psw.v == CLEAR);
+		break;
+	case(BLT):
+		beq_to_bra_execute(psw.n ^ psw.v == SET);
+		break;
+	case(BRA):
+		beq_to_bra_execute(TRUE);
+		break;
 	case(ADD):
 	case(SUB):
 	case(ADDC):
