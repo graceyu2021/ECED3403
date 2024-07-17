@@ -10,38 +10,6 @@ This is the pipeline execute function file of my program.
 
 #include "MAINHEADER.H"
 
-void bl_execute() {
-	srcconarray.word[REGISTER][LR] = srcconarray.word[REGISTER][PC];
-	srcconarray.word[REGISTER][PC] = operand.off;
-}
-
-/*
-void beqbz_execute() {
-	srcconarray.word[REGISTER][PC] = (psw.z == SET) ? 
-		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
-}
-
-void bnebnz_execute() {
-	srcconarray.word[REGISTER][PC] = (psw.z == CLEAR) ?
-		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
-}
-
-void bcbhs_execute() {
-	srcconarray.word[REGISTER][PC] = (psw.c == SET) ?
-		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
-}
-
-void bncblo_execute() {
-	srcconarray.word[REGISTER][PC] = (psw.c == CLEAR) ?
-		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
-}*/
-
-// BRANCH instructions
-void beq_to_bra_execute(int condition) {
-	srcconarray.word[REGISTER][PC] = (condition) ?
-		srcconarray.word[REGISTER][PC] + operand.off : srcconarray.word[REGISTER][PC];
-}
-
 // shorten variable names from add to bis
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte) {
 	*wordbyte = operand.wordbyte;
@@ -84,7 +52,7 @@ void psw_update(unsigned short v, unsigned short n, unsigned short z, unsigned s
 	psw.v = v;
 	psw.n = n;
 	psw.z = z,
-	psw.c = c;
+		psw.c = c;
 }
 
 // precursor to psw_update for arithmetic operations
@@ -100,7 +68,7 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 		temp_result = MASK_BYTE(temp_result);
 
 	if (opcode == SUB || opcode == SUBC) // if a subtraction was performed, ~the msb of source 
-		src_msb = src_msb^ ONE; // invert src_msb
+		src_msb = src_msb ^ ONE; // invert src_msb
 
 	psw_update(overflow_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO), carry_update[src_msb][dest_msb][result_msb]);
 }
@@ -108,12 +76,12 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 // ADD to SUBC execute
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	unsigned short temp, temp_srccon_value = srccon_value;
-	
+
 	if (opcode == ADD || opcode == SUB)
 		psw.c = CLEAR; // set carry to 0 so following arithmetic is not affected by previous carry
 
 	if (opcode == SUB) // is this sub?
-		temp_srccon_value = ~(temp_srccon_value) + ONE; // set source/constant to negative
+		temp_srccon_value = ~(temp_srccon_value)+ONE; // set source/constant to negative
 	else if (opcode == SUBC) // is this subc?
 		temp_srccon_value = ~(temp_srccon_value); // in subc instruction, no + ONE
 
@@ -137,7 +105,7 @@ unsigned short bcd(unsigned short dest_nib, unsigned short src_nib) {
 // DECIMAL ADD
 void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	psw.c = CLEAR; // clear carry for first nib
-	nibble_word res = {.word = CLEAR };
+	nibble_word res = { .word = CLEAR };
 
 	// decimal add the nibbles
 	res.word = NIB_0_SET(res.word, (bcd(NIB_0(dest_value), NIB_0(srccon_value))));
@@ -150,7 +118,7 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 	if (wordbyte == WORD_CHECK)  // result is word
 		srcconarray.word[REGISTER][dest_num] = res.word;
 	else // result is byte
-		srcconarray.byte[REGISTER][dest_num][LOW] = res.byte[LOW]; 
+		srcconarray.byte[REGISTER][dest_num][LOW] = res.byte[LOW];
 
 	// set temporary variable to resultt to use in psw update function
 	unsigned char res_temp = (wordbyte == WORD_CHECK) ? res.word : res.byte[LOW];
@@ -168,7 +136,7 @@ void cmp_execute(unsigned short dest_value, unsigned short srccon_value) {
 void xor_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	dest_value ^= srccon_value;
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // mask msb
-	
+
 	set_srcconarray(dest_value, dest_num, wordbyte); // set srcconarray with new destination value
 	psw_update(CLEAR, dest_msb, (dest_value == ZERO), psw.c);
 }
@@ -235,7 +203,7 @@ void sra_execute(unsigned short dest_value, int dest_num, int wordbyte) {
 
 	dest_value = (dest_value >> SHIFT_RIGHT) | dest_msb; // roll dest right while extending sign
 	dest_msb = mask_shift_msb(dest_msb, wordbyte); // shift msb to bit 0 to use in psw_update
-	
+
 	set_srcconarray(dest_value, dest_num, wordbyte);
 	psw_update(CLEAR, dest_msb, (dest_value == ZERO), dest_lsb);
 }
@@ -250,7 +218,7 @@ void rrc_execute(unsigned short dest_value, int dest_num, int wordbyte) {
 		dest_value = (dest_value >> SHIFT_RIGHT) | CARRY_TO_MSB_BYTE(psw.c); // shift dest right through carry
 
 	unsigned short dest_msb = mask_shift_msb(dest_value, wordbyte); // save msb to determine negative flag in psw
-	
+
 	set_srcconarray(dest_value, dest_num, wordbyte);
 	psw_update(CLEAR, dest_msb, (dest_value == ZERO), dest_lsb);
 }
@@ -266,62 +234,62 @@ void swpb_execute(int dest_num) {
 }
 
 // SIGN EXTEND BYTES TO WORD
- void sxt_execute(unsigned short dest_value, int dest_num) {
-	 int dest_msb = MASK_SHIFT_MSB_BYTE(dest_value);
-	 if (dest_msb == SET)	// dest_msb = 1, negative
-		 srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_SET; // sign extend low byte to be negative, 0xFF
-	 else					// dest_msb = 0, positive
-		 srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_CLEAR; // sign extend high byte to be positive, 0x00
-	 unsigned char temp = srcconarray.word[REGISTER][dest_num];
+void sxt_execute(unsigned short dest_value, int dest_num) {
+	int dest_msb = MASK_SHIFT_MSB_BYTE(dest_value);
+	if (dest_msb == SET)	// dest_msb = 1, negative
+		srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_SET; // sign extend low byte to be negative, 0xFF
+	else					// dest_msb = 0, positive
+		srcconarray.byte[REGISTER][dest_num][HIGH] = MSBYTE_CLEAR; // sign extend high byte to be positive, 0x00
+	unsigned char temp = srcconarray.word[REGISTER][dest_num];
 
-	 psw_update(psw.v, dest_msb, (temp == ZERO), psw.c);
- }
+	psw_update(psw.v, dest_msb, (temp == ZERO), psw.c);
+}
 
- // SET PSW bits (1 = SET)
- void setcc_execute() {
-	 psw.v |= operand.v;
-	 psw.slp |= operand.slp;
-	 psw.n |= operand.n;
-	 psw.z |= operand.z;
-	 psw.c |= operand.c;
- }
+// SET PSW bits (1 = SET)
+void setcc_execute() {
+	psw.v |= operand.v;
+	psw.slp |= operand.slp;
+	psw.n |= operand.n;
+	psw.z |= operand.z;
+	psw.c |= operand.c;
+}
 
- // CLEAR PSW bits (1 = CLEAR)
- void clrcc_execute() {
-	 psw.v &= ~operand.v;
-	 psw.slp &= ~operand.slp;
-	 psw.n &= ~operand.n;
-	 psw.z &= ~operand.z;
-	 psw.c &= ~operand.c;
- }
+// CLEAR PSW bits (1 = CLEAR)
+void clrcc_execute() {
+	psw.v &= ~operand.v;
+	psw.slp &= ~operand.slp;
+	psw.n &= ~operand.n;
+	psw.z &= ~operand.z;
+	psw.c &= ~operand.c;
+}
 
- // get ld or st's index
- unsigned short ldst_index() {
-	 if (operand.inc == SET) // inc bit is set
-		 return (operand.wordbyte == WORD_CHECK) ? WORDINDEX : BYTEINDEX; // word or byte?
-	 else if (operand.dec == SET) // dec bit is set
-		 return (operand.wordbyte == WORD_CHECK) ? SUB_WORDINDEX : SUB_BYTEINDEX; // word or byte?
-	 return ZERO; // nothing set, no indexing
- }
+// get ld or st's index
+unsigned short ldst_index() {
+	if (operand.inc == SET) // inc bit is set
+		return (operand.wordbyte == WORD_CHECK) ? WORDINDEX : BYTEINDEX; // word or byte?
+	else if (operand.dec == SET) // dec bit is set
+		return (operand.wordbyte == WORD_CHECK) ? SUB_WORDINDEX : SUB_BYTEINDEX; // word or byte?
+	return ZERO; // nothing set, no indexing
+}
 
- // perform ld and st's e0 instructions
- void ldst_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) {
-	 unsigned short eff_address, 
-		 index = ldst_index(); // get index value
+// perform ld and st's e0 instructions
+void ldst_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) {
+	unsigned short eff_address,
+		index = ldst_index(); // get index value
 
-	 if (operand.prpo == PRE) // if prpo = 1, pre index
-		 srcdst_value += index;
+	if (operand.prpo == PRE) // if prpo = 1, pre index
+		srcdst_value += index;
 
-	 eff_address = srcdst_value; // set eff_address to ld_src or st_dst
-	 dmar = eff_address; // set dmar to eff_address
-	 dctrl = RW; // dctrl != DONE
+	eff_address = srcdst_value; // set eff_address to ld_src or st_dst
+	dmar = eff_address; // set dmar to eff_address
+	dctrl = RW; // dctrl != DONE
 
-	 if (operand.prpo == POST) // if prpo = 0, post index
-		 srcdst_value += index;
+	if (operand.prpo == POST) // if prpo = 0, post index
+		srcdst_value += index;
 
-	 srcconarray.word[REGISTER][srcdst] = srcdst_value; // set srcconarray to new value
-	 dmbr = srcconarray.word[REGISTER][operand.srccon]; // set dmbr to new value for st, will get overwritten if its ld
- }
+	srcconarray.word[REGISTER][srcdst] = srcdst_value; // set srcconarray to new value
+	dmbr = srcconarray.word[REGISTER][operand.srccon]; // set dmbr to new value for st, will get overwritten if its ld
+}
 
 // MOV LOW BYTES INTO DST
 void movl_execute(unsigned short bytevalue) {
@@ -366,8 +334,8 @@ void dmcontroller() {
 			srcconarray.word[REGISTER][operand.dst] = dmbr; // set srcconarray to dmbr
 		}
 		else { // result is byte
-			 dmbr = dmem.byte_mem[dmar];
-			 srcconarray.byte[REGISTER][operand.dst][LOW] = MASK_BYTE(dmbr);
+			dmbr = dmem.byte_mem[dmar];
+			srcconarray.byte[REGISTER][operand.dst][LOW] = MASK_BYTE(dmbr);
 		}
 	}
 	else if (dctrl == WRITE) { // ST

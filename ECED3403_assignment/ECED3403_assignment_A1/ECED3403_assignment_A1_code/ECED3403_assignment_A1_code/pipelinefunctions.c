@@ -47,8 +47,8 @@ void fetch1(int instructionaddress, int* ictrl) {
 #endif
 }
 
-void printdecode(int instructionaddress, char mnemarray[][6]) {
-	if ((opcode >= BL && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
+void printdecode(int nota2, int instructionaddress, char mnemarray[][6]) {
+	if ((opcode >= ADD && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
 		printf("%04X: %s\t", instructionaddress, mnemarray[opcode]);
 	else {
 		printf("%04X: %04X\t\n", instructionaddress, instructionbit);
@@ -57,7 +57,7 @@ void printdecode(int instructionaddress, char mnemarray[][6]) {
 
 	if (OFF_PRINT(opcode)) {
 		unsigned char temp_off = MASK_BYTE(operand.off);
-		printf("OFF: %04 ", temp_off); // print offset
+		printf("OFF: %02X ", temp_off); // print offset
 	}
 
 	else if (ADDRESSING_PRINT(opcode))
@@ -71,7 +71,7 @@ void printdecode(int instructionaddress, char mnemarray[][6]) {
 
 	if (WORDBYTE_PRINT(opcode))
 		printf("WB: %d ", operand.wordbyte); // print word/byte
-	
+
 	if (SRCCON_PRINT(opcode)) {
 		if (SRCCONCHECK_PRINT(opcode) && operand.srcconcheck == CONSTANT)
 			printf("CON: %d ", srcconarray.word[CONSTANT][operand.srccon]); // print constant
@@ -91,7 +91,7 @@ void opcode_set(int enum_initial, int enum_offset) {
 	opcode = enum_initial + enum_offset;
 }
 
-void ldrtostr_operands_set() {
+void ldrtstr_operands_set() {
 	unsigned short msb = MSB_BITS(instructionbit); // mask 7th bit of offset
 
 	operand.off = OFF_BITS(instructionbit);
@@ -102,14 +102,6 @@ void ldrtostr_operands_set() {
 
 	if (msb != ZERO)
 		operand.off |= SXT_OFF_BITS;
-}
-
-void bltobra_operands_set() {
-	if (opcode == BL) {
-		operand.off = OFFBL_BITS(instructionbit);
-		return;
-	}
-	operand.off = OFFB_BITS(instructionbit);
 }
 
 void movx_operands_set() {
@@ -147,21 +139,20 @@ void decode(int instructionaddress) {
 	printf("%d\t%04X\tF0: %04X\tD0: %04X\n", clock, srcconarray.word[REGISTER][R7], srcconarray.word[REGISTER][R7], instructionbit);
 #endif
 
-	int arrayplace = 0;
-	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = {"BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
+	int arrayplace = 0, nota2 = FALSE;
+	char mnemarray[MNEMARRAY_MAX][MNEMARRAY_WORDMAX] = { "BL", "BEQBZ", "BNEBNZ", "BCBHS", "BNCBLO", "BN", "BGE", "BLT", "BRA",
 	"ADD", "ADDC", "SUB", "SUBC", "DADD", "CMP", "XOR", "AND", "OR", "BIT",
 	"BIC", "BIS", "MOV", "SWAP", "SRA", "RRC", "SWPB", "SXT", "SETPRI", "SVC",
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
-		//ldrtostr_operands_set();
+		ldrtstr_operands_set();
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
-		bltobra_operands_set();
 		opcode_set(BL, BLtoBRA_ARRAY(instructionbit));
 	}
-	else if (MOVLtoMOVH_BITS(instructionbit)){ // MOVL to MOVH
+	else if (MOVLtoMOVH_BITS(instructionbit)) { // MOVL to MOVH
 		movx_operands_set();
 		opcode_set(MOVL, MOVLtoMOVH_ARRAY(instructionbit));
 	}
@@ -199,7 +190,7 @@ void decode(int instructionaddress) {
 	}
 
 #ifdef DEBUG
-	printdecode(instructionaddress, mnemarray);
+	printdecode(nota2, instructionaddress, mnemarray);
 #endif
 }
 
@@ -237,7 +228,7 @@ void pipeline() {
 			if (dctrl != DONE) // if dctrl is set to READ or WRITE, perform e1
 				execute1();
 			instructionaddress = fetch0(&ictrl); // fetch program counter
-			 decode(instructionaddress);
+			decode(instructionaddress);
 		}
 		else { // odd number
 			fetch1(instructionaddress, &ictrl); // fet

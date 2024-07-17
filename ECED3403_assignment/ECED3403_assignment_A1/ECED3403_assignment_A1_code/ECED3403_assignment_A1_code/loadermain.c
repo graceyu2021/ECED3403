@@ -13,7 +13,7 @@ This is the main file of my program.
 #include "MAINHEADER.H"
 #include <stdio.h>
 
-int main() {	
+int main() {
 	char option = ' ';
 	increment = FALSE;
 
@@ -22,7 +22,7 @@ int main() {
 
 
 	while (option != 'X' && option != 'x') {
-		
+
 		switch (option) {
 		case '?': // lists the options (below)
 			option = print_menu();

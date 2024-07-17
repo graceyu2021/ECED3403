@@ -164,7 +164,8 @@ int load_file(FILE* file) {
 
 	file_origin_print(recname, recnamecount);
 
-	if (recvalidity == TRUE) {; // all records are valid !
+	if (recvalidity == TRUE) {
+		; // all records are valid !
 		printf("\nFile read - no errors detected. Starting address: %.4x\n", srcconarray.word[REGISTER][R7]);
 		srcconarray.word[REGISTER][R7] -= BYTE; // set PC to be one byte less to accomadate for NOP
 		instructionbit = NOP; // initialize NOP mov r0, r0
@@ -200,7 +201,7 @@ void prompt_file() {
 		printf("Can't open >%s<\n", filename);
 		return;
 	}
-	
+
 	// load in file
 	load_file(file);
 }

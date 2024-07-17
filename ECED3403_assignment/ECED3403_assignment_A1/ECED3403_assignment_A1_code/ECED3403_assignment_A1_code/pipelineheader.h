@@ -79,9 +79,9 @@ unsigned short dmar, dmbr;
 int dctrl;
 
 typedef enum instructiontype { // enumerator of s-record types
-	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA, 
+	BL, BEQBZ, BNEBNZ, BCBHS, BNCBLO, BN, BGE, BLT, BRA,
 	ADD, ADDC, SUB, SUBC, DADD, CMP, XOR, AND, OR, BIT,
-	BIC, BIS, MOV, SWAP, SRA, RRC, SWPB, SXT, SETPRI, SVC, 
+	BIC, BIS, MOV, SWAP, SRA, RRC, SWPB, SXT, SETPRI, SVC,
 	SETCC, CLRCC, CEX, LD, ST, MOVL, MOVLZ, MOVLS, MOVH, LDR, STR
 } instructiontype;
 
