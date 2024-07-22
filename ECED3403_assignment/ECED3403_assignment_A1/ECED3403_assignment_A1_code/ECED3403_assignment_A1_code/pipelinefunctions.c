@@ -48,7 +48,7 @@ void fetch1(int instructionaddress, int* ictrl) {
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][6]) {
-	if ((opcode >= ADD && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
+	if ((opcode >= BL && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
 		printf("%04X: %s\t", instructionaddress, mnemarray[opcode]);
 	else {
 		printf("%04X: %04X\t\n", instructionaddress, instructionbit);
@@ -91,7 +91,7 @@ void opcode_set(int enum_initial, int enum_offset) {
 	opcode = enum_initial + enum_offset;
 }
 
-void ldrtstr_operands_set() {
+void ldrtostr_operands_set() {
 	unsigned short msb = MSB_BITS(instructionbit); // mask 7th bit of offset
 
 	operand.off = OFF_BITS(instructionbit);
@@ -102,6 +102,25 @@ void ldrtstr_operands_set() {
 
 	if (msb != ZERO)
 		operand.off |= SXT_OFF_BITS;
+}
+
+void bltobra_operands_set() {
+	unsigned short msb;
+
+	switch (opcode) {
+	case(BL):
+		msb = BL_MSB_BITS(instructionbit); // mask 7th bit of offset
+		operand.off = BL_OFF_BITS(instructionbit);
+		if (msb != ZERO)
+			operand.off |= SXT_BL_OFF_BITS;
+		break;
+	default:
+		msb = BRANCH_MSB_BITS(instructionbit); // mask 7th bit of offset
+		operand.off = BRANCH_OFF_BITS(instructionbit);
+		if (msb != ZERO)
+			operand.off |= SXT_BRANCH_OFF_BITS;
+		break;
+	}
 }
 
 void movx_operands_set() {
@@ -146,10 +165,11 @@ void decode(int instructionaddress) {
 	"SETCC", "CLRCC", "CEX", "LD", "ST", "MOVL", "MOVLZ", "MOVLS", "MOVH", "LDR", "STR" };
 
 	if (LDRtoSTR_BITS(instructionbit)) { // LDR to STR
-		ldrtstr_operands_set();
+		ldrtostr_operands_set();
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
 	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
+		bltobra_operands_set();
 		opcode_set(BL, BLtoBRA_ARRAY(instructionbit));
 	}
 	else if (MOVLtoMOVH_BITS(instructionbit)) { // MOVL to MOVH

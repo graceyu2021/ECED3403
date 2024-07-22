@@ -13,6 +13,10 @@ This is the pipeline execute header file of my program.
 
 #include <stdio.h>
 
+void bl_execute();
+
+void beq_to_bra_execute(int condition);
+
 // shorten variable names from add to bid
 void add_to_bis_ops(int dest_num, int srccon_num, int srcconcheck, unsigned short* dest_value, unsigned short* srccon_value, int* wordbyte);
 
@@ -33,6 +37,9 @@ void psw_update(unsigned short v, unsigned short n, unsigned short z, unsigned s
 
 // precursor to psw_update for arithmetic operations
 void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value, unsigned short srccon_value, int wordbyte);
+
+// BEQ to BRA execute
+void beq_to_bra_execute(int condition);
 
 // ADD to SUBC execute
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte);

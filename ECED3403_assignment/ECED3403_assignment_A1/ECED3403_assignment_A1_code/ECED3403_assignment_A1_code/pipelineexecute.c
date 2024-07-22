@@ -73,6 +73,21 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 	psw_update(overflow_update[src_msb][dest_msb][result_msb], result_msb, (temp_result == ZERO), carry_update[src_msb][dest_msb][result_msb]);
 }
 
+// BL execute
+void bl_execute() {
+	srcconarray.word[REGISTER][LR] = srcconarray.word[REGISTER][PC];
+	srcconarray.word[REGISTER][PC] = operand.off;
+	instructionbit = NOP;
+}
+
+// BRANCH instructions
+void beq_to_bra_execute(int condition) {
+	if (condition) {
+		srcconarray.word[REGISTER][PC] += operand.off;
+		instructionbit = NOP;
+	}
+}
+
 // ADD to SUBC execute
 void add_to_subc_execute(unsigned short dest_value, unsigned short srccon_value, int dest_num, int wordbyte) {
 	unsigned short temp, temp_srccon_value = srccon_value;

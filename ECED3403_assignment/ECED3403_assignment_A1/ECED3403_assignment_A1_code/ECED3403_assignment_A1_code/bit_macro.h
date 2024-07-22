@@ -1,5 +1,5 @@
 /*
-file:bit_ macro.h
+file:bit_macro.h
 programmer: Grace Yu
 b00: B00902046
 class: ECED3403
@@ -47,9 +47,15 @@ This is the bit macro header file of my program.
 #define ADDtoBIS_ARRAY(a) ((a & 0x0F00) >> 8)
 
 // macros to mask and shift instructionbit to identify operand parameters
-#define MSB_BITS(a) ((a & 0x2000) << 1)
+#define MSB_BITS(a) (a & 0x2000)
+#define BL_MSB_BITS(a) (a & 0x1000)
+#define BRANCH_MSB_BITS(a) (a & 0x0200)
 #define SXT_OFF_BITS 0xFF80
+#define SXT_BL_OFF_BITS 0xC000
+#define SXT_BRANCH_OFF_BITS 0xF800
 #define OFF_BITS(a) ((a & 0x3F80) >> 7)
+#define BL_OFF_BITS(a) ((a & 0x1FFF) << 1)
+#define BRANCH_OFF_BITS(a) ((a & 0x03FF) << 1)
 #define SRCCON_BITS(a) ((a & 0x0038) >> 3)
 #define SRCCONCHECK_BITS(a) ((a & 0x0080) >> 7)
 #define WORDBYTE_BITS(a) ((a & 0x0040) >> 6)

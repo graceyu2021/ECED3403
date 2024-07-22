@@ -13,7 +13,7 @@ This is the pipeline execute menu function file of my program.
 // execute function
 void execute0() {
 	// temporary return just until full instruciton set is implemented
-	if (((opcode >= ADD && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
+	if (((opcode >= BL && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
 		return;
 
 	unsigned short dest_value, srccon_value, bytevalue;
@@ -31,6 +31,33 @@ void execute0() {
 
 	// switch case to identify what execute process to go through
 	switch (opcode) {
+	case(BL):
+		bl_execute();
+		break;
+	case(BEQBZ):
+		beq_to_bra_execute(psw.z == SET);
+		break;
+	case(BNEBNZ):
+		beq_to_bra_execute(psw.z == CLEAR);
+		break;
+	case(BCBHS):
+		beq_to_bra_execute(psw.c == SET);
+		break;
+	case(BNCBLO):
+		beq_to_bra_execute(psw.c == CLEAR);
+		break;
+	case(BN):
+		beq_to_bra_execute(psw.n == SET);
+		break;
+	case(BGE):
+		beq_to_bra_execute(psw.n ^ psw.v == CLEAR);
+		break;
+	case(BLT):
+		beq_to_bra_execute(psw.n ^ psw.v == SET);
+		break;
+	case(BRA):
+		beq_to_bra_execute(TRUE);
+		break;
 	case(ADD):
 	case(SUB):
 	case(ADDC):
