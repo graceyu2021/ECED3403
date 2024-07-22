@@ -100,7 +100,7 @@ void ldrtostr_operands_set() {
 	operand.srccon = SRCCON_BITS(instructionbit);
 	operand.dst = DST_BITS(instructionbit);
 
-	if (msb != ZERO)
+	if (msb != ZERO) // if msb is not zero, have to sign extend the off
 		operand.off |= SXT_OFF_BITS;
 }
 
