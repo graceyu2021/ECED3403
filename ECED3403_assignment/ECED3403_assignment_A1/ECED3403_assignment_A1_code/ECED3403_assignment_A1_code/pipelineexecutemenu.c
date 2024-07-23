@@ -18,6 +18,7 @@ void execute0() {
 
 	unsigned short dest_value, srccon_value, bytevalue;
 	int wordbyte;
+	int temp_pc = srcconarray.word[REGISTER][PC];
 
 	// initilalize variables to struct contents for readability
 	if (opcode >= ADD && opcode <= BIS) // if opcode is from add to bis
@@ -142,10 +143,13 @@ void execute0() {
 		break;
 	}
 
+	if (temp_pc != srcconarray.word[REGISTER][PC]) // if PC has been modified, have to bubble
+		bubble = TRUE;
+
 	// called debugging functions for ease of marker
 #ifdef DEBUG
 	reg_display();
-	//psw_display();
+	psw_display();
 	printf("\n");
 #endif
 }

@@ -76,16 +76,13 @@ void psw_arithmetic_update(unsigned short temp_result, unsigned short dest_value
 // BL execute
 void bl_execute() {
 	srcconarray.word[REGISTER][LR] = srcconarray.word[REGISTER][PC];
-	srcconarray.word[REGISTER][PC] = operand.off;
-	instructionbit = NOP;
+	srcconarray.word[REGISTER][PC] += operand.off;
 }
 
 // BRANCH instructions
 void beq_to_bra_execute(int condition) {
-	if (condition) {
-		srcconarray.word[REGISTER][PC] += operand.off;
-		instructionbit = NOP;
-	}
+	srcconarray.word[REGISTER][PC] += (condition) ?
+		operand.off : ZERO;
 }
 
 // ADD to SUBC execute

@@ -12,7 +12,7 @@ This is the bit macro header file of my program.
 #define BIT_MACRO_H
 
 // opcode verify macros
-#define OFF_PRINT(a) (a == LDR || a == STR)
+#define OFF_PRINT(a) ((a >= BL && a <= BRA) || a == LDR || a == STR)
 #define ADDRESSING_PRINT(a) (a == LD || a == ST)
 #define BYTEVALUE_PRINT(a) (a >= MOVL && a <= MOVH)
 #define SRCCONCHECK_PRINT(a) (a >= ADD && a <= BIS)
@@ -24,7 +24,8 @@ This is the bit macro header file of my program.
 
 // macros to mask instructionbit to identify instruction groups
 #define LDRtoSTR_BITS(a) ((a & 0x8000) == 0x8000)
-#define BLtoBRA_BITS(a) ((a & 0x4000) == 0)
+#define BL_BITS(a) ((a & 0x6000) == 0)
+#define BEQtoBRA_BITS(a) ((a & 0x6000) == 0x2000)
 #define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
 #define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
 #define SETPRItoCLRCC_BITS(a) ((a & 0x0D80) == 0x0D80)

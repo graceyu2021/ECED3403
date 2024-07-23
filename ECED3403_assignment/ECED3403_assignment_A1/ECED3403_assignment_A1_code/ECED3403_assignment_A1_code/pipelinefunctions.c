@@ -55,10 +55,8 @@ void printdecode(int nota2, int instructionaddress, char mnemarray[][6]) {
 		return;
 	}
 
-	if (OFF_PRINT(opcode)) {
-		unsigned char temp_off = MASK_BYTE(operand.off);
-		printf("OFF: %02X ", temp_off); // print offset
-	}
+	if (OFF_PRINT(opcode))
+		printf("OFF: %04X ", operand.off); // print offset
 
 	else if (ADDRESSING_PRINT(opcode))
 		printf("PRPO: %d DEC %d INC %d ", operand.prpo, operand.dec, operand.inc); // print addressing
@@ -104,23 +102,18 @@ void ldrtostr_operands_set() {
 		operand.off |= SXT_OFF_BITS;
 }
 
-void bltobra_operands_set() {
-	unsigned short msb;
+void bl_operands_set() {
+	unsigned short msb = BL_MSB_BITS(instructionbit); // mask 7th bit of offset
+	operand.off = BL_OFF_BITS(instructionbit);
+	if (msb != ZERO)
+		operand.off |= SXT_BL_OFF_BITS;
+}
 
-	switch (opcode) {
-	case(BL):
-		msb = BL_MSB_BITS(instructionbit); // mask 7th bit of offset
-		operand.off = BL_OFF_BITS(instructionbit);
-		if (msb != ZERO)
-			operand.off |= SXT_BL_OFF_BITS;
-		break;
-	default:
-		msb = BRANCH_MSB_BITS(instructionbit); // mask 7th bit of offset
-		operand.off = BRANCH_OFF_BITS(instructionbit);
-		if (msb != ZERO)
-			operand.off |= SXT_BRANCH_OFF_BITS;
-		break;
-	}
+void beqtobra_operands_set() {
+	unsigned short msb = BRANCH_MSB_BITS(instructionbit); // mask 7th bit of offset
+	operand.off = BRANCH_OFF_BITS(instructionbit);
+	if (msb != ZERO)
+		operand.off |= SXT_BRANCH_OFF_BITS;
 }
 
 void movx_operands_set() {
@@ -168,10 +161,15 @@ void decode(int instructionaddress) {
 		ldrtostr_operands_set();
 		opcode_set(LDR, LDRtoSTR_ARRAY(instructionbit));
 	}
-	else if (BLtoBRA_BITS(instructionbit)) { // BL to BRA
-		bltobra_operands_set();
-		opcode_set(BL, BLtoBRA_ARRAY(instructionbit));
+	else if (BL_BITS(instructionbit)) { // BL
+		bl_operands_set();
+		opcode_set(BL, ZERO); // bl is the instruction 0 in the array
 	}
+	else if (BEQtoBRA_BITS(instructionbit)) { // BL to BRA
+		beqtobra_operands_set();
+		opcode_set(BEQBZ, BLtoBRA_ARRAY(instructionbit));
+	}
+
 	else if (MOVLtoMOVH_BITS(instructionbit)) { // MOVL to MOVH
 		movx_operands_set();
 		opcode_set(MOVL, MOVLtoMOVH_ARRAY(instructionbit));
@@ -209,6 +207,7 @@ void decode(int instructionaddress) {
 		opcode = CEX;
 	}
 
+	printf("errehjbehe %04x\n", instructionaddress);
 #ifdef DEBUG
 	printdecode(nota2, instructionaddress, mnemarray);
 #endif
@@ -241,18 +240,28 @@ void pipeline() {
 	printf("Clock\tPC\tFetch\t\tDecode\t\tExecute\n");
 #endif
 
-	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO) { // 0x0000
+	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO && clock != 1200) { // 0x0000
 
 		// check clock tick
 		if (clock % DIV2REMAINDER == ZERO) { // odd number
 			if (dctrl != DONE) // if dctrl is set to READ or WRITE, perform e1
 				execute1();
+			
+			if (bubble == TRUE)						// if bubble
+				srcconarray.word[REGISTER][R7] -= BYTE; // decrease pc to fetch previous instructions
+
 			instructionaddress = fetch0(&ictrl); // fetch program counter
-			decode(instructionaddress);
+
+			if (bubble == FALSE)						// if no bubble
+				decode(instructionaddress);				// decode
 		}
 		else { // odd number
 			fetch1(instructionaddress, &ictrl); // fet
-			execute0();
+			
+			if (bubble == FALSE) // if no bubble		
+				execute0();		 // execute
+			else				 // if bubble
+				bubble = FALSE;	 // bubble finished, set FALSE to turn it off
 		}
 
 		clock++; // increment clock

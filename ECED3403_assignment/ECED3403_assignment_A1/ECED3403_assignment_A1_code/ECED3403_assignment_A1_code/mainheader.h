@@ -20,7 +20,7 @@ This is the header file of my program.
 
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG
 
 #define SREC_MAX 100//67 // defined macros for records
 #define BP 4
@@ -32,5 +32,6 @@ int clock;
 int instructionbit;
 int breakpoint;
 int increment;
+int bubble;
 
 #endif //MAINHEADER_H
