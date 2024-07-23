@@ -1,4 +1,14 @@
-﻿  pipelinefunctions.c
+﻿  pipelineexecute.c
 C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
 C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(47,47): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(255,49): warning C4244: 'initializing': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(308,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(314,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(320,49): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\pipelineexecute.c(325,50): warning C4244: '=': conversion from 'unsigned short' to 'unsigned char', possible loss of data
+  pipelinefunctions.c
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4030: first formal parameter list longer than the second list
+C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\ECED3403_assignment_A1_code\PIPELINEHEADER.H(102,73): warning C4028: formal parameter 3 different from declaration
+  Generating Code...
   ECED3403_assignment_A1_code.vcxproj -> C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\ECED3403_assignment_A1_code.exe

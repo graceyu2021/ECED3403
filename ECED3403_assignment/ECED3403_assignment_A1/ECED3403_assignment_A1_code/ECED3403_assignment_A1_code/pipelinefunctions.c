@@ -207,7 +207,6 @@ void decode(int instructionaddress) {
 		opcode = CEX;
 	}
 
-	printf("errehjbehe %04x\n", instructionaddress);
 #ifdef DEBUG
 	printdecode(nota2, instructionaddress, mnemarray);
 #endif

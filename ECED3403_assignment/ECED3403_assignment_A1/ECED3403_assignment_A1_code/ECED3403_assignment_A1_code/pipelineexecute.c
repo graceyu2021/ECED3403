@@ -52,7 +52,7 @@ void psw_update(unsigned short v, unsigned short n, unsigned short z, unsigned s
 	psw.v = v;
 	psw.n = n;
 	psw.z = z,
-		psw.c = c;
+	psw.c = c;
 }
 
 // precursor to psw_update for arithmetic operations
@@ -141,7 +141,7 @@ void dadd_execute(unsigned short dest_value, unsigned short srccon_value, int de
 // COMPARE: dst - src/con
 void cmp_execute(unsigned short dest_value, unsigned short srccon_value) {
 	int temp = dest_value - srccon_value;
-	psw_update(psw.v, (temp < ZERO), (temp == ZERO), (temp >= ZERO));
+	psw_update(psw.v, (temp < ZERO), (temp == ZERO), (temp > ZERO));
 }
 
 // EXCLUSIVE: dst <- dst ^ src/con
