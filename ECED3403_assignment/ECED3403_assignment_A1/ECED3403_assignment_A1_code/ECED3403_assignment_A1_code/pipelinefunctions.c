@@ -12,6 +12,17 @@ This is the decode functions file of my program.
 
 #include "MAINHEADER.H"
 
+void sigint_hdlr()
+{
+	/*
+	- Invoked when SIGINT (control-C) is detected
+	- changes state of ctrl_c_fnd
+	- signal must be reinitialized
+	*/
+	ctrl_c_fnd = TRUE;
+	signal(SIGINT, (_crt_signal_t)sigint_hdlr); /* Reinitialize SIGINT */
+}
+
 srcconarray_union srcconarray = {
 	.word = {{0}, {0, 1, 2, 4, 8, 16, 32, -1}}
 };
@@ -190,18 +201,17 @@ void decode(int instructionaddress) {
 	else if (ADDtoSXT_BITS(instructionbit)) { // ADD to SXT
 		reg_const_operands_set(instructionbit); // set operand values for ADD to SXT
 
-		if (MOVtoSWAP_BITS(instructionbit)) { // MOV to SWAP
+		if (MOVtoSWAP_BITS(instructionbit)) // MOV to SWAP
 			opcode_set(MOV, MOVtoSWAP_ARRAY(instructionbit));
-		}
-		else if (SRAtoRRC_BITS(instructionbit)) { // SRA to RRC
+
+		else if (SRAtoRRC_BITS(instructionbit)) // SRA to RRC
 			opcode_set(SRA, SRAtoRRC_ARRAY(instructionbit));
-		}
-		else if (SWPBtoSXT(instructionbit)) { // SWPB to SXT
+
+		else if (SWPBtoSXT(instructionbit)) // SWPB to SXT
 			opcode_set(SWPB, SWPBtoSXT_ARRAY(instructionbit));
-		}
-		else {// ADD to BIS
+
+		else// ADD to BIS
 			opcode_set(ADD, ADDtoBIS_ARRAY(instructionbit));
-		}
 	}
 	else { // CEX
 		opcode = CEX;
@@ -227,6 +237,29 @@ unsigned short psw_bit_to_word() {
 	return psw_word;
 }
 
+void odd(int* instructionaddress, int* ictrl) {
+	if (dctrl != DONE) // if dctrl is set to READ or WRITE, perform e1
+		execute1();
+
+	if (bubble == TRUE)						// if bubble
+		srcconarray.word[REGISTER][R7] -= BYTE; // decrease pc to fetch previous instructions
+
+	*instructionaddress = fetch0(ictrl); // fetch program counter
+
+	if (bubble == FALSE)						// if no bubble
+		decode(*instructionaddress);				// decode
+}
+
+void even(int* instructionaddress, int* ictrl, int* even_check) {
+	fetch1(*instructionaddress, ictrl); // fet
+	*even_check = TRUE;
+
+	if (bubble == FALSE) // if no bubble		
+		execute0();		 // execute
+	else				 // if bubble
+		bubble = FALSE;	 // bubble finished, set FALSE to turn it off
+}
+
 // function to keep track of pipeline
 void pipeline() {
 	int instructionaddress = 0, ictrl = 0;
@@ -239,35 +272,20 @@ void pipeline() {
 	printf("Clock\tPC\tFetch\t\tDecode\t\tExecute\n");
 #endif
 
-	while (srcconarray.word[REGISTER][R7] != breakpoint && instructionbit != ZERO && clock != 1200) { // 0x0000
+	int cpu_go = TRUE, even_check = 0;
+	ctrl_c_fnd = FALSE;
+
+	while ((srcconarray.word[REGISTER][R7] != breakpoint && cpu_go == !ctrl_c_fnd && increment == FALSE) || // increment OFF
+		(even_check == FALSE && increment == TRUE)) { // increment ON
 
 		// check clock tick
-		if (clock % DIV2REMAINDER == ZERO) { // odd number
-			if (dctrl != DONE) // if dctrl is set to READ or WRITE, perform e1
-				execute1();
-			
-			if (bubble == TRUE)						// if bubble
-				srcconarray.word[REGISTER][R7] -= BYTE; // decrease pc to fetch previous instructions
-
-			instructionaddress = fetch0(&ictrl); // fetch program counter
-
-			if (bubble == FALSE)						// if no bubble
-				decode(instructionaddress);				// decode
-		}
-		else { // odd number
-			fetch1(instructionaddress, &ictrl); // fet
-			
-			if (bubble == FALSE) // if no bubble		
-				execute0();		 // execute
-			else				 // if bubble
-				bubble = FALSE;	 // bubble finished, set FALSE to turn it off
-		}
-
+		if (clock % DIV2REMAINDER == ZERO) // odd number
+			odd(&instructionaddress, &ictrl);
+		
+		else // odd number
+			even(&instructionaddress, &ictrl, &even_check);
+		
 		clock++; // increment clock
-
-		// breaks if increment is set AND if clock is not equal to zero
-		if (increment == TRUE && (clock % DIV2REMAINDER == ZERO))
-			break;
 	}
 
 	if (dctrl != DONE) // if last command before encountering instructionbit 0000 without breakpoint, perform e1

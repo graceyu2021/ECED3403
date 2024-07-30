@@ -19,8 +19,9 @@ This is the header file of my program.
 #include "STRUCT_HEADER.H"
 
 #include <stdio.h>
+#include <signal.h>
 
-#define DEBUG
+//#define DEBUG 1
 
 #define SREC_MAX 100//67 // defined macros for records
 #define BP 4
@@ -33,5 +34,6 @@ int instructionbit;
 int breakpoint;
 int increment;
 int bubble;
+volatile sig_atomic_t ctrl_c_fnd; /* T|F - indicates whether ^C detected */
 
 #endif //MAINHEADER_H

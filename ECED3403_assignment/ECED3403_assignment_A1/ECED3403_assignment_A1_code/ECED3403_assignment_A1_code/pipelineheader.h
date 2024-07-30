@@ -93,6 +93,8 @@ typedef enum idmar { // imar and dmar enum values
 	DONE, READ, WRITE
 } dmar_enum;
 
+void sigint_hdlr();
+
 int fetch0(int* ictrl);
 
 void fetch1(int instructionaddress, int* ictrl);

@@ -17,6 +17,10 @@ int main() {
 	char option = ' ';
 	increment = FALSE;
 
+	/* Call signal() - bind sigint_hdlr to SIGINT */
+	ctrl_c_fnd = FALSE;
+	signal(SIGINT, (_crt_signal_t)sigint_hdlr);
+
 	// print user and send user input to variable option
 	option = print_menu();
 

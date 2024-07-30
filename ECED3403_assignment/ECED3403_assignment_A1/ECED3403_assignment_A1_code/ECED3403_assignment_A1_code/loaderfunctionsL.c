@@ -122,9 +122,9 @@ int load_file(FILE* file) {
 		// read address field
 		reccount = read_address(srecord, &address, reccount, &checksumcount);
 
-		if (srectype == S9) { // S9 address records the starting address
+		if (srectype == S9) // S9 address records the starting address
 			srcconarray.word[REGISTER][R7] = address;
-		}
+
 
 		while (RECORD_BOUND(reccount, reclength) && recvalidity == TRUE) { // BYTE * 4 to skip first 8 bytes, reclength - BYTE because of checksum
 			switch (srectype) {
