@@ -1,0 +1,20 @@
+	BP	equ	R4 
+     	LR	equ	R5
+    	SP	equ	R6
+	PC	equ	R7
+		org #1000
+MAIN
+	clrcc	z
+	bne	TRUE
+	bra	DONE
+DONE
+	bra	DONE
+TRUE
+	movl	#FF,R0		; loop
+	setcc	z
+	bne	FALSE
+	bra	DONE
+FALSE
+	movl 	#FF,R0
+	bra	DONE
+end MAIN

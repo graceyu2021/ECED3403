@@ -1,0 +1,57 @@
+X-Makina Assembler - Version XM-23P Single Pass+ Assembler - Release 24.04.17
+Input file name: beqbz.txt
+Time of assembly: Wed 31 Jul 2024 09:55:13 
+  1	    	     		BP	equ	R4 
+  2	    	     	     	LR	equ	R5
+  3	    	     	    	SP	equ	R6
+  4	    	     		PC	equ	R7
+  5	    	     			org #1000
+  6	    	     	MAIN
+  7	1000	4DA2		setcc	z
+  8	1002	2002		beq	EQUAL
+  9	1004	3C00		bra	DONE
+ 10	    	     	DONE
+ 11	1006	3FFF		bra	DONE
+ 12	    	     	EQUAL
+ 13	1008	67F8		movl	#FF,R0		; loop
+ 14	100A	4DC2		clrcc	z
+ 15	100C	2001		beq	UNEQUAL
+ 16	100E	3FFB		bra	DONE
+ 17	    	     	UNEQUAL
+ 18	1010	67F8		movl 	#FF,R0
+ 19	1012	3FF9		bra	DONE
+ 20	    	     	end MAIN
+Successful completion of assembly - 2P
+
+** Symbol table **
+
+Constants (Equates)
+Name                               	Type	Value	Decimal
+
+Labels (Code)
+Name                               	Type	Value	Decimal
+UNEQUAL                            	REL	1010	4112	PRI
+DONE                               	REL	1006	4102	PRI
+EQUAL                              	REL	1008	4104	PRI
+MAIN                               	REL	1000	4096	PRI
+
+Labels (Data)
+Name                               	Type	Value	Decimal
+
+Registers
+Name                               	Type	Value	Decimal
+PC                                 	REG	0007	7	PRI
+SP                                 	REG	0006	6	PRI
+LR                                 	REG	0005	5	PRI
+BP                                 	REG	0004	4	PRI
+R7                                 	REG	0007	7	PRI
+R6                                 	REG	0006	6	PRI
+R5                                 	REG	0005	5	PRI
+R4                                 	REG	0004	4	PRI
+R3                                 	REG	0003	3	PRI
+R2                                 	REG	0002	2	PRI
+R1                                 	REG	0001	1	PRI
+R0                                 	REG	0000	0	PRI
+
+.XME file: C:\git\ECED3403\ECED3403_assignment\ECED3403_assignment_A1\ECED3403_assignment_A1_code\x64\Debug\beqbz.xme
+

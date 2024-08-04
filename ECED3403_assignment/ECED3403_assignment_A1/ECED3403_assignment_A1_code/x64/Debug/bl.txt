@@ -1,0 +1,14 @@
+	BP	equ	R4 
+     	LR	equ	R5
+    	SP	equ	R6
+	PC	equ	R7
+		org #1000
+MAIN
+	bl	LOOP
+	bra	DONE
+LOOP
+	movl	#FF,R0		; loop
+	mov	LR,PC
+DONE
+	bra	DONE
+end MAIN
