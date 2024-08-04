@@ -277,15 +277,15 @@ void clrcc_execute() {
 
 // check cex condition
 void cex_check(int condition) {
-	if (condition == TRUE)
-		operand.cstate == TRUE;
-	
+	if (condition == TRUE) // is condition true?
+		operand.cstate = TRUE;
+	else
+		operand.cstate = FALSE;
 }
-
 
 // conditional execution
 void cex_execute() {
-	switch (operand.cond) {
+	switch (operand.cond) { // determine whether cex is true or false depending on the condition
 	case(EQ):
 		cex_check(psw.z == SET);
 		break;
@@ -333,6 +333,8 @@ void cex_execute() {
 		break;
 	case(FL):
 		cex_check(TRUE);
+		break;
+	default:
 		break;
 	}
 }

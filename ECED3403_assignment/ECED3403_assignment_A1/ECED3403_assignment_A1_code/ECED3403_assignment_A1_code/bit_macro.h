@@ -27,7 +27,7 @@ This is the bit macro header file of my program.
 #define BL_BITS(a) ((a & 0x6000) == 0)
 #define BEQtoBRA_BITS(a) ((a & 0x6000) == 0x2000)
 #define MOVLtoMOVH_BITS(a) ((a & 0x2000) == 0x2000)
-#define LDtoST_BITS(a) ((a & 0x1000) == 0x1000)
+#define LDtoST_BITS(a) ((a & 0x1800) == 0x1800)
 #define SETPRItoCLRCC_BITS(a) ((a & 0x0D80) == 0x0D80)
 #define SETPRItoSVC_BITS(a) ((a & 0x0060) == 0)
 #define ADDtoSXT_BITS(a) ((a & 0x1000) == 0)

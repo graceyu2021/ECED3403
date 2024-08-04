@@ -1,0 +1,11 @@
+		org #1000
+MAIN
+	setcc 	z
+	cex	eq,$2,$2
+	movl	#11,R0
+	bn	DONE
+	movl	#11,R2
+	movl	#22,R3
+DONE	
+	bra	DONE
+end MAIN

@@ -23,6 +23,8 @@ This is the header file of my program.
 
 #define BIT_ON_OFF 2
 
+#define OFF 2
+
 #define ZERO 0
 
 #define NOP 0x4C40 // NOP mov r0, r0

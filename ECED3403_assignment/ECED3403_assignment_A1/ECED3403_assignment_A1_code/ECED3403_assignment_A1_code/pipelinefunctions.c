@@ -59,7 +59,7 @@ void fetch1(int instructionaddress, int* ictrl) {
 }
 
 void printdecode(int nota2, int instructionaddress, char mnemarray[][MNEMARRAY_WORDMAX]) {
-	if ((opcode >= BL && opcode <= SXT) || (opcode >= LD && opcode <= STR) || opcode == SETCC || opcode == CLRCC)
+	if (opcode != SETPRI && opcode != SVC)
 		printf("%04X: %s\t", instructionaddress, mnemarray[opcode]);
 	else {
 		printf("%04X: %04X\t\n", instructionaddress, instructionbit);
@@ -160,6 +160,9 @@ void cex_operands_set() {
 	operand.cond = COND_BITS(instructionbit);
 	operand.ctrue = TRUE_BITS(instructionbit);
 	operand.cfalse = FALSE_BITS(instructionbit);
+
+	if (operand.ctrue == ZERO) // if 0 true instructions
+		operand.ctrue++;	   // increment by 1
 }
 
 void decode(int instructionaddress) {
@@ -261,10 +264,10 @@ void even(int* instructionaddress, int* ictrl, int* even_check) {
 	fetch1(*instructionaddress, ictrl); // fet
 	*even_check = TRUE;
 
-	if (bubble == FALSE) // if no bubble		
-		execute0();		 // execute
-	else				 // if bubble
-		bubble = FALSE;	 // bubble finished, set FALSE to turn it off
+	if (bubble == FALSE)		// if no bubble		
+		execute0();				// execute
+	else 						// if bubble
+		bubble = FALSE;			// bubble finished, set FALSE to turn it off
 }
 
 // function to keep track of pipeline
@@ -284,7 +287,6 @@ void pipeline() {
 
 	while ((srcconarray.word[REGISTER][R7] != breakpoint && cpu_go == !ctrl_c_fnd && increment == FALSE) || // increment OFF
 		(even_check == FALSE && increment == TRUE)) { // increment ON
-
 		// check clock tick
 		if (clock % DIV2REMAINDER == ZERO) // odd number
 			odd(&instructionaddress, &ictrl);

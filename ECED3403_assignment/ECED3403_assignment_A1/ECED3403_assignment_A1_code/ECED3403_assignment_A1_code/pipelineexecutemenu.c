@@ -10,10 +10,37 @@ This is the pipeline execute menu function file of my program.
 
 #include "MAINHEADER.H"
 
+// check if need to skip execute due to cex
+// return TRUE to return out of execute0() function, skipping execution of current instruction
+int cex_loop() {
+	// if cex condition is TRUE
+	if (operand.cstate == TRUE && operand.ctrue > ZERO) {		// if cex still has true instructions left
+		operand.ctrue -= ONE;
+		return FALSE;
+	}
+	else if (operand.cstate == TRUE && operand.cfalse > ZERO) { // if cex still has false instructions left
+		operand.cfalse -= ONE;
+		return TRUE;
+	}
+	else if (operand.cstate == FALSE && operand.ctrue > ZERO) { // if cex still has true instructions left
+		operand.ctrue -= ONE;
+		return TRUE;
+	}
+	else if (operand.cstate == FALSE && operand.ctrue > ZERO) { // if cex stull has false instructions left
+		operand.cfalse -= ONE;
+		return FALSE;
+	}
+	operand.cstate == OFF;
+	return FALSE;
+}
+
 // execute function
 void execute0() {
 	// temporary return just until full instruciton set is implemented
-	if (((opcode >= BL && opcode <= SXT) || (opcode >= SETCC && opcode <= STR)) != TRUE) // not an instruction to implement in a2
+	if (opcode == SETPRI || opcode == SVC) // not an instruction to implement in a2
+		return;
+
+	if (operand.cstate != OFF && cex_loop())
 		return;
 
 	unsigned short dest_value, srccon_value, bytevalue;
@@ -144,8 +171,10 @@ void execute0() {
 		break;
 	}
 
-	if (temp_pc != srcconarray.word[REGISTER][PC]) // if PC has been modified, have to bubble
+	if (temp_pc != srcconarray.word[REGISTER][PC]) { // if PC has been modified, have to bubble
 		bubble = TRUE;
+		operand.cstate = OFF;	// turn off cex because of branching!
+	}
 
 	// called debugging functions for ease of marker
 #ifdef DEBUG
