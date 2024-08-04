@@ -114,6 +114,7 @@ void execute0() {
 		clrcc_execute();
 		break;
 	case (CEX):
+		cex_execute();
 		break;
 	case(LD):
 		ldst_execute(operand.srccon, srcconarray.word[REGISTER][operand.srccon], READ);

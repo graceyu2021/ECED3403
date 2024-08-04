@@ -275,6 +275,68 @@ void clrcc_execute() {
 	psw.c &= ~operand.c;
 }
 
+// check cex condition
+void cex_check(int condition) {
+	if (condition == TRUE)
+		operand.cstate == TRUE;
+	
+}
+
+
+// conditional execution
+void cex_execute() {
+	switch (operand.cond) {
+	case(EQ):
+		cex_check(psw.z == SET);
+		break;
+	case(NE):
+		cex_check(psw.z == CLEAR);
+		break;
+	case(CSHS):
+		cex_check(psw.c == SET);
+		break;
+	case(CCLO):
+		cex_check(psw.c == CLEAR);
+		break;
+	case(MI):
+		cex_check(psw.n == SET);
+		break;
+	case(PL):
+		cex_check(psw.n == CLEAR);
+		break;
+	case(VS):
+		cex_check(psw.v == SET);
+		break;
+	case(VC):
+		cex_check(psw.v == CLEAR);
+		break;
+	case(HI):
+		cex_check(psw.c == SET && psw.z == CLEAR);
+		break;
+	case(LS):
+		cex_check(psw.c == CLEAR && psw.z == SET);
+		break;
+	case(GE):
+		cex_check(psw.n == psw.v);
+		break;
+	case(LT):
+		cex_check(psw.n != psw.v);
+		break;
+	case(GT):
+		cex_check(psw.z == CLEAR && (psw.n == psw.v));
+		break;
+	case(LE):
+		cex_check(psw.z == SET && (psw.n != psw.v));
+		break;
+	case(TR):
+		cex_check(TRUE);
+		break;
+	case(FL):
+		cex_check(TRUE);
+		break;
+	}
+}
+
 // get ld or st's index
 unsigned short ldst_index() {
 	if (operand.inc == SET) // inc bit is set
@@ -338,24 +400,37 @@ void ldrstr_execute(unsigned short srcdst, unsigned short srcdst_value, int RW) 
 	dmbr = srcconarray.word[REGISTER][operand.srccon];
 }
 
+// dmcontroller_read
+void dmcontroller_read() {
+	if (operand.wordbyte == WORD_CHECK) { // result is word
+		dmbr = dmem.word_mem[dmar / BYTE]; // save data to dmbr
+		srcconarray.word[REGISTER][operand.dst] = dmbr; // set srcconarray to dmbr
+	}
+	else { // result is byte
+		dmbr = dmem.byte_mem[dmar];
+		srcconarray.byte[REGISTER][operand.dst][LOW] = MASK_BYTE(dmbr);
+	}
+}
+
+// dmcontroller_write
+void dmcontroller_write() {
+	if (operand.wordbyte == WORD_CHECK)  // result is word
+		dmem.word_mem[dmar / BYTE] = dmbr; // set data memory to dmbr
+	else // result is byte
+		dmem.byte_mem[dmar] = MASK_BYTE(dmbr);
+}
+
 // dmcontroller function to perform memory modifications
 void dmcontroller() {
-	if (dctrl == READ) { // LD
-		if (operand.wordbyte == WORD_CHECK) { // result is word
-			dmbr = dmem.word_mem[dmar / BYTE]; // save data to dmbr
-			srcconarray.word[REGISTER][operand.dst] = dmbr; // set srcconarray to dmbr
-		}
-		else { // result is byte
-			dmbr = dmem.byte_mem[dmar];
-			srcconarray.byte[REGISTER][operand.dst][LOW] = MASK_BYTE(dmbr);
-		}
+	switch (dctrl) {
+	case(READ):
+		dmcontroller_read();
+		break;
+	case(WRITE):
+		dmcontroller_write();
+		break;
 	}
-	else if (dctrl == WRITE) { // ST
-		if (operand.wordbyte == WORD_CHECK)  // result is word
-			dmem.word_mem[dmar / BYTE] = dmbr; // set data memory to dmbr
-		else // result is byte
-			dmem.byte_mem[dmar] = MASK_BYTE(dmbr);
-	}
+
 	dctrl = DONE; // dctrl is over, set to DONE
 }
 

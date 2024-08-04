@@ -95,6 +95,9 @@ void setcc_execute();
 // CLEAR PSW bits (1 = CLEAR)
 void clrcc_execute();
 
+// condition execution
+void cex_execute();
+
 // get ld or st's index
 unsigned short ldst_index();
 

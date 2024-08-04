@@ -25,8 +25,6 @@ This is the header file of my program.
 
 #define ZERO 0
 
-#define INSTRUCTIONPRINTMAX 
-
 #define NOP 0x4C40 // NOP mov r0, r0
 
 #define SRCCON 2
@@ -92,6 +90,11 @@ typedef enum registers { // register enum values
 typedef enum idmar { // imar and dmar enum values
 	DONE, READ, WRITE
 } dmar_enum;
+
+typedef enum cex_condition {
+	EQ, NE, CSHS, CCLO, MI, PL, VS, VC, 
+	HI, LS, GE, LT, GT, LE, TR, FL
+} cex_condition;
 
 void sigint_hdlr();
 

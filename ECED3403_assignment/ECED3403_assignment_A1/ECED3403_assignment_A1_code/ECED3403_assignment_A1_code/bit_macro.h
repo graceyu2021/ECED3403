@@ -70,6 +70,9 @@ This is the bit macro header file of my program.
 #define N_BITS(a) ((a & 0x0004) >> 2)
 #define Z_BITS(a) ((a & 0x0002) >> 1)
 #define C_BITS(a) (a & 0x0001)
+#define COND_BITS(a) ((a & 0x03C0) >> 6)
+#define TRUE_BITS(a) ((a & 0x0038) >> 3)
+#define FALSE_BITS(a) (a & 0x0007)
 
 #define MASK_SHIFT_MSB_WORD(a) ((a & 0x8000) >> 15)
 #define MASK_SHIFT_MSB_BYTE(a) ((a & 0x0080) >> 7)

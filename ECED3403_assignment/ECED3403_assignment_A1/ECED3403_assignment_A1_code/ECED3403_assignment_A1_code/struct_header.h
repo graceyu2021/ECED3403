@@ -24,7 +24,8 @@ extern srcconarray_union srcconarray;
 
 // structure of operands
 typedef struct operands_struct {
-	unsigned short off, bytevalue, prpo, dec, inc, wordbyte, srcconcheck, srccon, dst, v, slp, n, z, c;
+	unsigned short off, bytevalue, prpo, dec, inc, wordbyte, srcconcheck, srccon, 
+		dst, v, slp, n, z, c, cond, ctrue, cfalse, cstate;
 }operands_struct;
 
 operands_struct operand;

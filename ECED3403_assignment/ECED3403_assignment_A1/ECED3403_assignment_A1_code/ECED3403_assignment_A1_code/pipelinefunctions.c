@@ -156,6 +156,12 @@ void reg_const_operands_set() {
 	operand.dst = DST_BITS(instructionbit);
 }
 
+void cex_operands_set() {
+	operand.cond = COND_BITS(instructionbit);
+	operand.ctrue = TRUE_BITS(instructionbit);
+	operand.cfalse = FALSE_BITS(instructionbit);
+}
+
 void decode(int instructionaddress) {
 
 #ifndef DEBUG
@@ -214,6 +220,7 @@ void decode(int instructionaddress) {
 			opcode_set(ADD, ADDtoBIS_ARRAY(instructionbit));
 	}
 	else { // CEX
+		cex_operands_set();
 		opcode = CEX;
 	}
 
